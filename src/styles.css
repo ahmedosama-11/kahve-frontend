@@ -1,0 +1,856 @@
+/* ============================================================
+   KAHVE — Global Design System
+   Phase 1: Design Tokens, Typography, Utility Classes
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. CSS Custom Properties (Design Tokens)
+   ------------------------------------------------------------ */
+:root {
+  /* --- Color Palette --- */
+  --kahve-bg-primary:    #FAF8F5;
+  --kahve-bg-secondary:  #F2EDE6;
+  --kahve-bg-dark:       #1C1310;
+  --kahve-bg-darker:     #0F0B09;
+  --kahve-bg-card:       #FFFFFF;
+  --kahve-bg-card-dark:  #2A1F1A;
+
+  /* Brand Colors */
+  --kahve-espresso:      #2C1A0E;
+  --kahve-dark-roast:    #3D2314;
+  --kahve-medium-roast:  #6B3A2A;
+  --kahve-light-roast:   #A0522D;
+  --kahve-gold:          #C8973F;
+  --kahve-gold-light:    #E4B96A;
+  --kahve-cream:         #F5EDD8;
+  --kahve-cream-dark:    #E8D9C0;
+
+  /* Text Colors */
+  --kahve-text-primary:   #1C1310;
+  --kahve-text-secondary: #5C4033;
+  --kahve-text-muted:     #9E8272;
+  --kahve-text-light:     #F5EDD8;
+  --kahve-text-on-dark:   #E8D9C0;
+
+  /* Semantic */
+  --kahve-success:  #4A7C59;
+  --kahve-danger:   #B5451B;
+  --kahve-warning:  #C8973F;
+  --kahve-info:     #5B7FA6;
+
+  /* Borders */
+  --kahve-border:      rgba(168, 120, 80, 0.2);
+  --kahve-border-dark: rgba(44, 26, 14, 0.15);
+  --kahve-border-gold: rgba(200, 151, 63, 0.4);
+
+  /* --- Typography --- */
+  --font-serif:   'Playfair Display', 'Georgia', serif;
+  --font-sans:    'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Cormorant Garamond', 'Playfair Display', serif;
+
+  /* Font Sizes */
+  --fs-xs:   0.75rem;
+  --fs-sm:   0.875rem;
+  --fs-base: 1rem;
+  --fs-md:   1.125rem;
+  --fs-lg:   1.25rem;
+  --fs-xl:   1.5rem;
+  --fs-2xl:  1.875rem;
+  --fs-3xl:  2.25rem;
+  --fs-4xl:  3rem;
+  --fs-5xl:  3.75rem;
+  --fs-6xl:  4.5rem;
+
+  /* Line Heights */
+  --lh-tight:   1.2;
+  --lh-snug:    1.375;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.625;
+  --lh-loose:   2;
+
+  /* Font Weights */
+  --fw-light:     300;
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+  --fw-extrabold: 800;
+  --fw-black:     900;
+
+  /* Letter Spacing */
+  --ls-tight:   -0.025em;
+  --ls-normal:  0;
+  --ls-wide:    0.05em;
+  --ls-wider:   0.1em;
+  --ls-widest:  0.2em;
+
+  /* --- Spacing --- */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* --- Border Radius --- */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-3xl:  32px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-xs:  0 1px 2px rgba(44, 26, 14, 0.05);
+  --shadow-sm:  0 2px 8px rgba(44, 26, 14, 0.08);
+  --shadow-md:  0 4px 16px rgba(44, 26, 14, 0.12);
+  --shadow-lg:  0 8px 30px rgba(44, 26, 14, 0.15);
+  --shadow-xl:  0 16px 48px rgba(44, 26, 14, 0.18);
+  --shadow-2xl: 0 24px 64px rgba(44, 26, 14, 0.22);
+  --shadow-gold: 0 8px 30px rgba(200, 151, 63, 0.25);
+
+  /* --- Transitions --- */
+  --transition-fast:   150ms ease;
+  --transition-base:   300ms ease;
+  --transition-slow:   500ms ease;
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Z-index --- */
+  --z-below:    -1;
+  --z-base:      0;
+  --z-raised:   10;
+  --z-dropdown: 1000;
+  --z-sticky:   1020;
+  --z-overlay:  1050;
+  --z-modal:    1060;
+  --z-toast:    1080;
+}
+
+
+/* ------------------------------------------------------------
+   2. Reset & Base
+   ------------------------------------------------------------ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--kahve-text-primary);
+  background-color: var(--kahve-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--kahve-gold);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--kahve-light-roast);
+}
+
+
+/* ------------------------------------------------------------
+   3. Typography Scale
+   ------------------------------------------------------------ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-bold);
+  color: var(--kahve-espresso);
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+}
+
+h1 { font-size: var(--fs-4xl); letter-spacing: var(--ls-tight); }
+h2 { font-size: var(--fs-3xl); letter-spacing: var(--ls-tight); }
+h3 { font-size: var(--fs-2xl); }
+h4 { font-size: var(--fs-xl); }
+h5 { font-size: var(--fs-lg); }
+h6 { font-size: var(--fs-md); }
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+  color: var(--kahve-text-secondary);
+  line-height: var(--lh-relaxed);
+}
+
+small {
+  font-size: var(--fs-sm);
+  color: var(--kahve-text-muted);
+}
+
+/* Eyebrow / overline text */
+.kahve-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--kahve-gold);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+/* Display heading */
+.kahve-display {
+  font-family: var(--font-display);
+  font-weight: var(--fw-light);
+  font-size: var(--fs-5xl);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color: var(--kahve-espresso);
+}
+
+/* Section heading */
+.kahve-heading {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-3xl);
+  color: var(--kahve-espresso);
+  line-height: var(--lh-tight);
+}
+
+/* Gold underline accent */
+.kahve-heading-underline {
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: var(--kahve-gold);
+  border-radius: var(--radius-full);
+  margin-top: var(--space-3);
+}
+
+/* Text color utilities */
+.text-kahve-gold     { color: var(--kahve-gold) !important; }
+.text-kahve-espresso { color: var(--kahve-espresso) !important; }
+.text-kahve-cream    { color: var(--kahve-cream) !important; }
+.text-kahve-muted    { color: var(--kahve-text-muted) !important; }
+.text-kahve-light    { color: var(--kahve-text-light) !important; }
+
+
+/* ------------------------------------------------------------
+   4. Buttons
+   ------------------------------------------------------------ */
+
+/* Shared base — resets the hazard-stripes background from old theme */
+.btn-kahve,
+.btn-kahve-outline,
+.btn-kahve-ghost,
+.btn-kahve-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: var(--radius-full);
+  padding: 0.75rem 2rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  line-height: 1;
+  width: auto;
+  height: auto;
+  background-image: none;
+  position: relative;
+}
+.btn-kahve::before,
+.btn-kahve-outline::before,
+.btn-kahve-ghost::before,
+.btn-kahve-dark::before {
+  display: none;
+}
+
+/* Primary — warm gold */
+.btn-kahve {
+  background: var(--kahve-gold);
+  color: var(--kahve-espresso);
+  border-color: var(--kahve-gold);
+  box-shadow: var(--shadow-gold);
+}
+.btn-kahve:hover {
+  background: var(--kahve-light-roast);
+  border-color: var(--kahve-light-roast);
+  color: #fff;
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-2px);
+}
+.btn-kahve:active  { transform: translateY(0); }
+.btn-kahve:focus   { outline: 3px solid rgba(200, 151, 63, 0.4); outline-offset: 2px; }
+
+/* Outline */
+.btn-kahve-outline {
+  background: transparent;
+  color: var(--kahve-gold);
+  border-color: var(--kahve-gold);
+}
+.btn-kahve-outline:hover {
+  background: var(--kahve-gold);
+  color: var(--kahve-espresso);
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-2px);
+}
+
+/* Ghost */
+.btn-kahve-ghost {
+  background: transparent;
+  color: var(--kahve-medium-roast);
+  border-color: transparent;
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+.btn-kahve-ghost:hover {
+  color: var(--kahve-gold);
+  background: rgba(200, 151, 63, 0.08);
+}
+
+/* Dark fill */
+.btn-kahve-dark {
+  background: var(--kahve-espresso);
+  color: var(--kahve-cream);
+  border-color: var(--kahve-espresso);
+}
+.btn-kahve-dark:hover {
+  background: var(--kahve-dark-roast);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  color: var(--kahve-cream);
+}
+
+/* Size modifiers */
+.btn-kahve-sm { padding: 0.5rem 1.25rem; font-size: var(--fs-xs); }
+.btn-kahve-lg { padding: 1rem 2.5rem;    font-size: var(--fs-md); }
+
+
+/* ------------------------------------------------------------
+   5. Cards
+   ------------------------------------------------------------ */
+
+.card-kahve {
+  background: var(--kahve-bg-card);
+  border: 1px solid var(--kahve-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+.card-kahve:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-4px);
+}
+
+.card-kahve-product {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--kahve-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  text-align: center;
+  transition: all var(--transition-base);
+  position: relative;
+}
+.card-kahve-product:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-6px);
+  border-color: var(--kahve-gold);
+}
+.card-kahve-product img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+.card-kahve-product:hover img {
+  transform: scale(1.05);
+}
+
+.card-kahve-dark {
+  background: var(--kahve-bg-card-dark);
+  border: 1px solid rgba(200, 151, 63, 0.15);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  color: var(--kahve-text-on-dark);
+}
+
+.card-kahve-glass {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+}
+
+
+/* ------------------------------------------------------------
+   6. Inputs & Form Controls
+   ------------------------------------------------------------ */
+
+.input-kahve {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--kahve-text-primary);
+  background: #fff;
+  border: 1px solid var(--kahve-border-dark);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.25rem;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  outline: none;
+  line-height: var(--lh-normal);
+}
+.input-kahve::placeholder {
+  color: var(--kahve-text-muted);
+  opacity: 1;
+}
+.input-kahve:focus {
+  border-color: var(--kahve-gold);
+  box-shadow: 0 0 0 3px rgba(200, 151, 63, 0.15);
+}
+.input-kahve:hover:not(:focus) {
+  border-color: var(--kahve-light-roast);
+}
+
+.input-kahve-dark {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(200, 151, 63, 0.25);
+  border-radius: var(--radius-lg);
+  color: var(--kahve-cream);
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  outline: none;
+  width: 100%;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.input-kahve-dark::placeholder { color: rgba(232, 217, 192, 0.4); }
+.input-kahve-dark:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--kahve-gold);
+  box-shadow: 0 0 0 3px rgba(200, 151, 63, 0.2);
+}
+
+.label-kahve {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--kahve-text-secondary);
+  margin-bottom: var(--space-2);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+
+/* ------------------------------------------------------------
+   7. Badges
+   ------------------------------------------------------------ */
+
+.badge-kahve {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+.badge-kahve-gold {
+  background: rgba(200, 151, 63, 0.12);
+  color: var(--kahve-gold);
+  border-color: rgba(200, 151, 63, 0.3);
+}
+.badge-kahve-dark {
+  background: var(--kahve-espresso);
+  color: var(--kahve-cream);
+}
+.badge-kahve-light {
+  background: var(--kahve-cream);
+  color: var(--kahve-espresso);
+  border-color: var(--kahve-cream-dark);
+}
+.badge-kahve-success {
+  background: rgba(74, 124, 89, 0.12);
+  color: var(--kahve-success);
+  border-color: rgba(74, 124, 89, 0.3);
+}
+.badge-kahve-danger {
+  background: rgba(181, 69, 27, 0.12);
+  color: var(--kahve-danger);
+  border-color: rgba(181, 69, 27, 0.3);
+}
+
+
+/* ------------------------------------------------------------
+   8. Dividers
+   ------------------------------------------------------------ */
+
+.divider-kahve {
+  border: none;
+  height: 1px;
+  background: var(--kahve-border);
+  margin: var(--space-8) 0;
+}
+
+.divider-kahve-gold {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--kahve-gold), transparent);
+  border: none;
+  margin: var(--space-8) 0;
+}
+
+
+/* ------------------------------------------------------------
+   9. Layout Utilities
+   ------------------------------------------------------------ */
+
+.section-kahve {
+  padding: var(--space-20) var(--space-4);
+}
+.section-kahve-sm {
+  padding: var(--space-12) var(--space-4);
+}
+.section-kahve-dark {
+  background: var(--kahve-bg-dark);
+  color: var(--kahve-text-on-dark);
+  padding: var(--space-20) var(--space-4);
+}
+
+.container-kahve {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  width: 100%;
+}
+.container-kahve-wide {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  width: 100%;
+}
+
+/* Background utilities */
+.bg-kahve-primary   { background-color: var(--kahve-bg-primary) !important; }
+.bg-kahve-secondary { background-color: var(--kahve-bg-secondary) !important; }
+.bg-kahve-dark      { background-color: var(--kahve-bg-dark) !important; }
+.bg-kahve-espresso  { background-color: var(--kahve-espresso) !important; }
+.bg-kahve-cream     { background-color: var(--kahve-cream) !important; }
+.bg-kahve-gold      { background-color: var(--kahve-gold) !important; }
+
+
+/* ------------------------------------------------------------
+   10. Back-to-Top
+   ------------------------------------------------------------ */
+
+.back-to-top-kahve {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  width: 48px;
+  height: 48px;
+  background: var(--kahve-espresso);
+  color: var(--kahve-cream);
+  border: 1px solid rgba(200, 151, 63, 0.4);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-lg);
+  cursor: pointer;
+  z-index: var(--z-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-lg);
+}
+.back-to-top-kahve.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.back-to-top-kahve:hover {
+  background: var(--kahve-gold);
+  color: var(--kahve-espresso);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-gold);
+}
+
+
+/* ------------------------------------------------------------
+   11. Animations
+   ------------------------------------------------------------ */
+
+@keyframes kahve-fade-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes kahve-slide-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes kahve-slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes kahve-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-kahve-fade-in     { animation: kahve-fade-in 0.6s ease forwards; }
+.animate-kahve-slide-left  { animation: kahve-slide-in-left 0.6s ease forwards; }
+.animate-kahve-slide-right { animation: kahve-slide-in-right 0.6s ease forwards; }
+.animate-kahve-scale       { animation: kahve-scale-in 0.5s ease forwards; }
+
+
+/* ------------------------------------------------------------
+   12. Responsive Overrides
+   ------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+  :root {
+    --fs-4xl: 2.25rem;
+    --fs-3xl: 1.875rem;
+    --fs-5xl: 2.75rem;
+    --fs-6xl: 3.25rem;
+  }
+  h1 { font-size: var(--fs-3xl); }
+  h2 { font-size: var(--fs-2xl); }
+  .section-kahve    { padding: var(--space-12) var(--space-4); }
+  .section-kahve-sm { padding: var(--space-8)  var(--space-4); }
+  .container-kahve  { padding: 0 var(--space-4); }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --fs-4xl: 1.875rem;
+    --fs-3xl: 1.5rem;
+  }
+  .btn-kahve,
+  .btn-kahve-outline,
+  .btn-kahve-dark { padding: 0.625rem 1.5rem; }
+}
+
+/* ============================================================
+   KAHVE — Arabic/English + Responsive helpers
+   ============================================================ */
+html[dir='rtl'] body {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Inter', 'Tahoma', Arial, sans-serif;
+}
+
+html[dir='rtl'] .ms-auto { margin-left: 0 !important; margin-right: auto !important; }
+html[dir='rtl'] .me-2 { margin-right: 0 !important; margin-left: .5rem !important; }
+html[dir='rtl'] .text-start { text-align: right !important; }
+html[dir='rtl'] .text-end { text-align: left !important; }
+html[dir='rtl'] input,
+html[dir='rtl'] textarea,
+html[dir='rtl'] select { direction: rtl; text-align: right; }
+html[dir='ltr'] input,
+html[dir='ltr'] textarea,
+html[dir='ltr'] select { direction: ltr; }
+
+img { max-width: 100%; height: auto; }
+
+.table-responsive,
+.responsive-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1200px) {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container-xl,
+  .container-xxl {
+    max-width: 100%;
+    padding-inline: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: clamp(2rem, 10vw, 3.2rem) !important; }
+  h2 { font-size: clamp(1.7rem, 7vw, 2.6rem) !important; }
+  h3 { font-size: clamp(1.25rem, 5vw, 1.8rem) !important; }
+
+  .row { --bs-gutter-x: 1rem; }
+
+  table {
+    min-width: 720px;
+  }
+
+  .btn,
+  button,
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container,
+  .container-fluid {
+    padding-inline: 12px;
+  }
+
+  .card,
+  .kahve-auth-card {
+    border-radius: 20px !important;
+  }
+}
+
+/* ============================================================
+   KAHVE — Arabic complete polish
+   Bigger readable Arabic type + cleaner RTL layouts
+   ============================================================ */
+html[dir='rtl'] body {
+  font-family: Tahoma, Arial, 'Helvetica Neue', sans-serif;
+  font-size: 17px;
+}
+
+html[dir='rtl'] h1,
+html[dir='rtl'] h2,
+html[dir='rtl'] h3,
+html[dir='rtl'] h4,
+html[dir='rtl'] h5,
+html[dir='rtl'] h6,
+html[dir='rtl'] .kahve-display,
+html[dir='rtl'] .kahve-heading,
+html[dir='rtl'] .content-header h2,
+html[dir='rtl'] .delivery-summary-card h2,
+html[dir='rtl'] .delivery-form h2,
+html[dir='rtl'] .about-card h1 {
+  font-family: Tahoma, Arial, sans-serif !important;
+  letter-spacing: 0 !important;
+  line-height: 1.22 !important;
+  font-weight: 800 !important;
+}
+
+html[dir='rtl'] .kahve-links .nav-link,
+html[dir='rtl'] .nav-link,
+html[dir='rtl'] .login-link,
+html[dir='rtl'] .lang-btn,
+html[dir='rtl'] button,
+html[dir='rtl'] .btn,
+html[dir='rtl'] .kahve-action-btn,
+html[dir='rtl'] .btn-action-premium,
+html[dir='rtl'] .checkout-all-btn,
+html[dir='rtl'] .submit-delivery,
+html[dir='rtl'] label,
+html[dir='rtl'] th,
+html[dir='rtl'] td,
+html[dir='rtl'] p,
+html[dir='rtl'] small,
+html[dir='rtl'] span,
+html[dir='rtl'] a {
+  letter-spacing: 0 !important;
+}
+
+html[dir='rtl'] .kahve-links .nav-link,
+html[dir='rtl'] .cart-kicker,
+html[dir='rtl'] .orders-eyebrow,
+html[dir='rtl'] .delivery-kicker,
+html[dir='rtl'] .about-eyebrow,
+html[dir='rtl'] .table thead th,
+html[dir='rtl'] .checkout-total span,
+html[dir='rtl'] .cart-summary-bar span {
+  text-transform: none !important;
+  font-size: 0.98rem !important;
+}
+
+html[dir='rtl'] .kahve-links .nav-link {
+  font-size: 0.98rem !important;
+  padding-inline: 16px !important;
+}
+
+html[dir='rtl'] .content-header p,
+html[dir='rtl'] .about-card p,
+html[dir='rtl'] .value-card p,
+html[dir='rtl'] .delivery-summary-card p,
+html[dir='rtl'] .cart-summary-bar p {
+  font-size: 1.05rem !important;
+  line-height: 1.9 !important;
+}
+
+html[dir='rtl'] .table thead th,
+html[dir='rtl'] .table tbody td {
+  font-size: 0.98rem !important;
+}
+
+html[dir='rtl'] .product-name,
+html[dir='rtl'] .order-title,
+html[dir='rtl'] .checkout-item strong {
+  font-size: 1.05rem !important;
+}
+
+html[dir='rtl'] .ms-1 { margin-left: 0 !important; margin-right: .25rem !important; }
+html[dir='rtl'] .me-1 { margin-right: 0 !important; margin-left: .25rem !important; }
+html[dir='rtl'] .me-3 { margin-right: 0 !important; margin-left: 1rem !important; }
+html[dir='rtl'] .ps-4 { padding-left: .75rem !important; padding-right: 1.5rem !important; }
+
+html[dir='rtl'] .checkout-item {
+  grid-template-columns: 70px 1fr auto;
+}
+
+html[dir='rtl'] .cart-summary-bar,
+html[dir='rtl'] .checkout-total {
+  direction: rtl;
+}
+
+@media (max-width: 768px) {
+  html[dir='rtl'] body { font-size: 16px; }
+  html[dir='rtl'] .kahve-links .nav-link { font-size: 1rem !important; }
+  html[dir='rtl'] .content-header h2,
+  html[dir='rtl'] .delivery-summary-card h2,
+  html[dir='rtl'] .delivery-form h2,
+  html[dir='rtl'] .about-card h1 {
+    font-size: clamp(2rem, 8vw, 3.2rem) !important;
+  }
+}

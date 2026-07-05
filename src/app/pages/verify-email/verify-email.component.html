@@ -1,0 +1,45 @@
+<section class="signup-section auth-responsive-section">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-xl-8 col-lg-10">
+        <div class="kahve-auth-card single-auth-card">
+          <div class="card-body p-md-5 mx-md-4 w-100">
+            <div class="text-center mb-4">
+              <div class="auth-brand-mark">K</div>
+              <h4 class="mt-3 fw-bold">{{ 'verify.title' | t }}</h4>
+              <p>{{ 'verify.subtitle' | t }}</p>
+            </div>
+
+            <form [formGroup]="verifyForm" (ngSubmit)="onVerify()">
+              <div class="form-outline mb-3">
+                <input type="email" class="kahve-input" [placeholder]="'auth.email' | t" formControlName="email" />
+              </div>
+
+              <div class="form-outline mb-4">
+                <input type="text" maxlength="6" class="kahve-input code-input" [placeholder]="'verify.code' | t" formControlName="code" />
+              </div>
+
+              <div *ngIf="errorMessage" class="alert-danger-glass mb-3">
+                <i class="fa fa-exclamation-circle me-2"></i>{{ errorMessage }}
+              </div>
+              <div *ngIf="successMessage" class="alert-success-glass mb-3">
+                <i class="fa fa-check-circle me-2"></i>{{ successMessage }}
+              </div>
+
+              <button class="btn-signup-main" type="submit" [disabled]="verifyForm.invalid || loading">
+                {{ loading ? ('common.loading' | t) : ('verify.button' | t) }}
+              </button>
+
+              <div class="auth-inline-actions mt-4">
+                <button type="button" class="auth-text-btn" (click)="resendCode()" [disabled]="resendLoading">
+                  {{ resendLoading ? ('common.loading' | t) : ('verify.resend' | t) }}
+                </button>
+                <a routerLink="/login" class="auth-link fw-bold text-decoration-none">{{ 'common.backToLogin' | t }}</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

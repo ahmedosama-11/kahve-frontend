@@ -1,0 +1,292 @@
+.vto-page-wrapper {
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px 40px;
+  font-family: 'Inter', sans-serif;
+}
+
+.vto-glass-card {
+  width: 100%;
+  max-width: 850px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  position: relative;
+}
+
+.card-header-vto {
+  padding: 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-header-vto h3 {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.live-indicator {
+  font-size: 0.7rem;
+  color: #38bdf8;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #ff4b2b;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff4b2b;
+  animation: pulse 1.5s infinite;
+}
+
+.camera-container {
+  height: 500px;
+  background: #000;
+  position: relative;
+}
+
+::ng-deep #JeelizVTOWidget canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transition: all 0.5s ease;
+}
+
+.vto-control-panel {
+  padding: 30px;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.4));
+}
+
+.selection-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-group-vto {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.vto-premium-btn {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: 0.3s all cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vto-premium-btn:hover {
+  background: #38bdf8;
+  color: #0f172a;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
+}
+
+.vto-premium-btn:active {
+  transform: scale(0.95);
+}
+
+.vto-loader {
+  position: absolute;
+  inset: 0;
+  background: #080c14;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.vto-tips {
+  margin-top: 30px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 1s ease-out 0.5s backwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+#JeelizVTOWidget {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: #000;
+}
+
+#jeezWidgetCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
+.vto-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #080c14;
+  z-index: 10; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.vto-control-panel {
+  padding: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+}
+
+.glass-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 8px 10px;
+  transition: 0.3s;
+}
+
+.glass-input-wrapper:focus-within {
+  border-color: #38bdf8;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+}
+
+.search-icon { color: #38bdf8; font-size: 1.2rem; margin: 0 15px; }
+
+.glass-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 12px 5px;
+  outline: none;
+  font-weight: 500;
+}
+
+.btn-load-sku {
+  background: #38bdf8;
+  color: #020617;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 15px;
+  font-weight: 800;
+  transition: 0.3s;
+}
+
+.btn-load-sku:hover {
+  background: white;
+  transform: scale(1.02);
+}
+
+.selection-label {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.btn-group-vto {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.vto-premium-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 14px 35px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.vto-premium-btn:hover {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(56, 189, 248, 0.2);
+}
+
+.vto-loader {
+  position: absolute;
+  inset: 0;
+  background: #020617;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: 0.5s ease-out;
+}
+
+.loader-content { text-align: center; }
+
+.vto-footer-tips {
+  margin-top: 30px;
+  color: #64748b;
+  font-size: 0.85rem;
+}

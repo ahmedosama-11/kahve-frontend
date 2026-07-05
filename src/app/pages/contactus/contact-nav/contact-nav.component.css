@@ -1,0 +1,17 @@
+:host { position: sticky; top: 0; z-index: 1100; display: block; }
+.kahve-contact-nav {
+  min-height: 78px;
+  background: rgba(255, 250, 242, 0.92);
+  border-bottom: 1px solid rgba(91, 54, 31, 0.12);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 10px 30px rgba(45, 23, 13, 0.06);
+}
+.contact-nav-inner { width: min(1280px, calc(100% - 32px)); margin: 0 auto; padding: 12px 0; }
+.kahve-brand { display: inline-flex; align-items: center; gap: 12px; color: #2d170d; text-decoration: none; font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; letter-spacing: -0.06em; font-weight: 800; }
+.brand-mark { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: #17100c; color: #fff8ee; font-size: 1.45rem; box-shadow: 0 12px 24px rgba(45, 23, 13, 0.18); }
+.nav-link { color: #52311d !important; font-size: 0.84rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; padding: 10px 14px !important; border-radius: 999px; transition: all 0.25s ease; }
+.nav-link:hover { color: #fff8ee !important; background: #5b361f; }
+.login-pill { border: 1px solid rgba(91, 54, 31, 0.16); background: #5b361f; color: #fff8ee !important; padding-inline: 20px !important; }
+.login-pill:hover { background: #b98545; color: #251008 !important; }
+.kahve-toggler { border: 1px solid rgba(91, 54, 31, 0.16); border-radius: 14px; padding: 10px; background: #f4e8d8; }
+@media (max-width: 991px) { .navbar-collapse { margin-top: 16px; padding: 16px; background: rgba(255, 250, 242, 0.96); border: 1px solid rgba(91, 54, 31, 0.1); border-radius: 22px; box-shadow: 0 16px 34px rgba(45, 23, 13, 0.1); } }

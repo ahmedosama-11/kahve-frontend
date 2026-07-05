@@ -1,0 +1,307 @@
+<div class="kahve-home-page">
+  <section class="kahve-category-nav">
+    <div class="kahve-category-inner">
+      <a [routerLink]="['/home']" fragment="newArrivals">{{ 'home.bestSellers' | t }}</a>
+      <a
+        *ngFor="let category of categories"
+        [routerLink]="['/home']"
+        [fragment]="getCategoryId(category.name)">
+        {{ category.name }}
+      </a>
+      <a [routerLink]="['/aboutUs']">{{ 'home.ourStory' | t }}</a>
+    </div>
+  </section>
+
+  <section class="hero-container">
+    <div class="hero-slider">
+      <div class="hero-slide" *ngFor="let slide of heroSlides; let i = index" [class.active]="i === currentSlide">
+        <img [src]="slide.image" [alt]="slide.titleKey | t" />
+        <div class="hero-overlay">
+          <div class="hero-content" *ngIf="i === currentSlide">
+            <span class="hero-tag">{{ slide.tagKey | t }}</span>
+            <h1>{{ slide.titleKey | t }}</h1>
+            <p>{{ slide.descKey | t }}</p>
+            <div class="hero-btns">
+              <a [href]="slide.link1" class="btn-main">{{ slide.link1TextKey | t }}</a>
+              <a [href]="slide.link2" class="btn-outline">{{ slide.link2TextKey | t }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="hero-arrow hero-arrow-left" type="button" (click)="setSlide(currentSlide === 0 ? heroSlides.length - 1 : currentSlide - 1)">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <button class="hero-arrow hero-arrow-right" type="button" (click)="nextSlide()">
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+      <div class="hero-dots">
+        <span *ngFor="let slide of heroSlides; let i = index" [class.active]="i === currentSlide" (click)="setSlide(i)"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="kahve-feature-strip">
+    <div class="feature-item">
+      <i class="fa-solid fa-mug-hot"></i>
+      <div>
+        <strong>{{ 'home.feature1Title' | t }}</strong>
+        <span>{{ 'home.feature1Text' | t }}</span>
+      </div>
+    </div>
+    <div class="feature-item">
+      <i class="fa-solid fa-seedling"></i>
+      <div>
+        <strong>{{ 'home.feature2Title' | t }}</strong>
+        <span>{{ 'home.feature2Text' | t }}</span>
+      </div>
+    </div>
+    <div class="feature-item">
+      <i class="fa-solid fa-truck-fast"></i>
+      <div>
+        <strong>{{ 'home.feature3Title' | t }}</strong>
+        <span>{{ 'home.feature3Text' | t }}</span>
+      </div>
+    </div>
+    <div class="feature-item">
+      <i class="fa-solid fa-gift"></i>
+      <div>
+        <strong>{{ 'home.feature4Title' | t }}</strong>
+        <span>{{ 'home.feature4Text' | t }}</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="kahve-main">
+    <section class="kahve-story-section">
+      <div class="story-copy">
+        <span class="section-eyebrow">{{ 'home.productEyebrow' | t }}</span>
+        <h2>{{ 'home.storyTitle' | t }}</h2>
+        <p>
+          {{ 'home.storyText' | t }}
+        </p>
+        <div class="story-note">
+          {{ 'home.storyNote' | t }}
+        </div>
+        <a [routerLink]="['/aboutUs']" class="story-link">{{ 'home.aboutKahve' | t }}</a>
+      </div>
+      <div class="story-collage">
+        <img class="collage-main" src="/assets/images/kahve-products.jpg" alt="KAHVE coffee products" />
+        <div class="floating-card floating-card-top">{{ 'home.premiumRoast' | t }}</div>
+        <div class="floating-card floating-card-bottom">{{ 'home.freshDaily' | t }}</div>
+      </div>
+    </section>
+
+    <section class="search-section">
+      <span class="section-eyebrow">{{ 'home.findFlavor' | t }}</span>
+      <h2>{{ 'home.shopTitle' | t }}</h2>
+      <form class="kahve-search" (submit)="$event.preventDefault()">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          id="searchInput"
+          name="searchInput"
+          type="search"
+          [placeholder]="'home.searchPlaceholder' | t"
+          (input)="onSearchChange($event)" />
+      </form>
+    </section>
+
+    <div *ngIf="products.length === 0" class="kahve-empty-state">
+      <i class="fa-solid fa-mug-saucer"></i>
+      <h3>{{ 'home.emptyTitle' | t }}</h3>
+      <p>{{ 'home.emptyText' | t }}</p>
+    </div>
+
+    <section *ngIf="searchTerm.trim() !== ''" class="product-section">
+      <div class="section-heading">
+        <span class="section-eyebrow">{{ 'home.searchResults' | t }}</span>
+        <h2>{{ 'home.resultsFor' | t }} "{{ searchTerm }}"</h2>
+      </div>
+      <div *ngIf="filteredProducts.length === 0" class="kahve-empty-state small">
+        {{ 'home.noMatch' | t }}
+      </div>
+      <div class="items-container">
+        <ng-container *ngFor="let product of filteredProducts; trackBy: trackByProductId">
+          <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
+        </ng-container>
+      </div>
+    </section>
+
+    <ng-container *ngIf="searchTerm.trim() === ''">
+      <section id="newArrivals" class="product-section category-section">
+        <div class="section-heading">
+          <span class="section-eyebrow">{{ 'home.freshPicks' | t }}</span>
+          <h2>{{ 'home.bestSelling' | t }}</h2>
+          <p>{{ 'home.bestSellingText' | t }}</p>
+        </div>
+        <div class="items-container">
+          <ng-container *ngFor="let product of products | slice:0:8; trackBy: trackByProductId">
+            <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
+          </ng-container>
+        </div>
+      </section>
+
+      <section *ngFor="let category of categories" [id]="getCategoryId(category.name)" class="product-section category-section" [class.is-empty]="getProductsByCategory(category.name).length === 0">
+        <div class="section-heading" *ngIf="getProductsByCategory(category.name).length > 0">
+          <span class="section-eyebrow">{{ 'home.collection' | t }}</span>
+          <h2>{{ category.name }}</h2>
+        </div>
+        <div class="items-container" *ngIf="getProductsByCategory(category.name).length > 0">
+          <ng-container *ngFor="let product of getProductsByCategory(category.name); trackBy: trackByProductId">
+            <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
+          </ng-container>
+        </div>
+      </section>
+    </ng-container>
+  </main>
+
+  <ng-template #productCard let-product>
+    <article class="kahve-product-card">
+      <button class="favorite-btn" type="button" (click)="toggleFavorite(product)" aria-label="Add to favorites">
+        <i class="fa-solid fa-heart" [style.color]="product.isFavorite ? '#9b271a' : '#b79b7d'"></i>
+      </button>
+
+      <div class="product-image-wrap">
+        <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'" />
+      </div>
+
+      <div class="product-info">
+        <span class="product-category">{{ getDisplayCategory(getProductCategory(product)) }}</span>
+        <h3 class="product-title">{{ getProductTitle(product) }}</h3>
+        <p class="product-description" *ngIf="getProductDescription(product)">{{ getProductDescription(product) }}</p>
+        <div class="product-meta">
+          <span class="product-price">{{ product.price | number }} {{ moneyLabel() }}</span>
+          <span class="product-stock" [class.out]="product.Quantity <= 0">
+            {{ product.Quantity > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="product-quantity-panel" *ngIf="product.Quantity > 0 && !product.isInCart">
+        <span>{{ 'home.quantity' | t }}</span>
+        <div class="product-qty-control">
+          <button type="button" (click)="decreaseProductQuantity(product)" aria-label="Decrease quantity">−</button>
+          <input
+            type="number"
+            min="1"
+            [max]="getAvailableQuantity(product)"
+            [ngModel]="getSelectedQuantity(product)"
+            (ngModelChange)="setProductQuantity(product, $event)" />
+          <button type="button" (click)="increaseProductQuantity(product)" aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+
+      <p class="product-inline-message" *ngIf="getProductMessage(product)">
+        <i class="fa-solid" [ngClass]="product.isInCart ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+        {{ getProductMessage(product) }}
+      </p>
+
+      <div class="product-actions">
+        <button class="view-button" type="button" (click)="openProductModal(product)">{{ 'home.view' | t }} <i class="fa-solid fa-eye"></i></button>
+        <button *ngIf="product.Quantity <= 0" class="add-to-cart disabled" disabled>{{ 'home.outOfStock' | t }}</button>
+        <a *ngIf="product.isInCart" [routerLink]="['/cart']" class="add-to-cart added">
+          {{ 'home.added' | t }} ✓ <span *ngIf="product.cartAmount">({{ product.cartAmount }})</span>
+        </a>
+        <button
+          *ngIf="product.Quantity > 0 && !product.isInCart"
+          class="add-to-cart"
+          [disabled]="isAddingProduct(product)"
+          (click)="addToCart(product)">
+          <ng-container *ngIf="!isAddingProduct(product)">{{ 'home.addToCart' | t }} ({{ getSelectedQuantity(product) }}) <i class="fa-solid fa-cart-plus"></i></ng-container>
+          <ng-container *ngIf="isAddingProduct(product)">{{ 'home.adding' | t }}</ng-container>
+        </button>
+      </div>
+    </article>
+  </ng-template>
+
+
+  <div class="product-view-backdrop" *ngIf="selectedProduct as modalProduct" (click)="closeProductModal()">
+    <section class="product-view-modal" role="dialog" aria-modal="true" [attr.aria-label]="getProductTitle(modalProduct)" (click)="$event.stopPropagation()">
+      <button class="product-modal-close" type="button" (click)="closeProductModal()" [attr.aria-label]="'home.close' | t">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="product-modal-image-panel">
+        <span class="product-modal-stock" [class.out]="modalProduct.Quantity <= 0">
+          {{ modalProduct.Quantity > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
+        </span>
+        <img [src]="modalProduct.image" [alt]="getProductTitle(modalProduct)" />
+      </div>
+
+      <div class="product-modal-content">
+        <span class="product-modal-kicker">{{ getDisplayCategory(getProductCategory(modalProduct)) }}</span>
+        <h2>{{ getProductTitle(modalProduct) }}</h2>
+
+        <p class="product-modal-description" *ngIf="getProductDescription(modalProduct); else noModalDescription">
+          {{ getProductDescription(modalProduct) }}
+        </p>
+        <ng-template #noModalDescription>
+          <p class="product-modal-description muted">{{ 'home.noDescription' | t }}</p>
+        </ng-template>
+
+        <div class="product-modal-info-grid">
+          <div>
+            <span>{{ 'home.price' | t }}</span>
+            <strong>{{ modalProduct.price | number }} {{ moneyLabel() }}</strong>
+          </div>
+          <div>
+            <span>{{ 'home.available' | t }}</span>
+            <strong>{{ getAvailableQuantity(modalProduct) }}</strong>
+          </div>
+          <div *ngIf="getProductSku(modalProduct)">
+            <span>{{ 'home.sku' | t }}</span>
+            <strong>{{ getProductSku(modalProduct) }}</strong>
+          </div>
+        </div>
+
+        <div class="product-modal-qty" *ngIf="modalProduct.Quantity > 0 && !modalProduct.isInCart">
+          <span>{{ 'home.quantity' | t }}</span>
+          <div class="product-qty-control">
+            <button type="button" (click)="decreaseProductQuantity(modalProduct)">−</button>
+            <input
+              type="number"
+              min="1"
+              [max]="getAvailableQuantity(modalProduct)"
+              [ngModel]="getSelectedQuantity(modalProduct)"
+              (ngModelChange)="setProductQuantity(modalProduct, $event)" />
+            <button type="button" (click)="increaseProductQuantity(modalProduct)">+</button>
+          </div>
+        </div>
+
+        <p class="product-inline-message modal-message" *ngIf="getProductMessage(modalProduct)">
+          <i class="fa-solid" [ngClass]="modalProduct.isInCart ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+          {{ getProductMessage(modalProduct) }}
+        </p>
+
+        <div class="product-modal-actions">
+          <button *ngIf="modalProduct.Quantity <= 0" class="add-to-cart disabled" disabled>{{ 'home.outOfStock' | t }}</button>
+          <a *ngIf="modalProduct.isInCart" [routerLink]="['/cart']" class="add-to-cart added" (click)="closeProductModal()">
+            {{ 'home.goCart' | t }} <i class="fa-solid fa-arrow-left"></i>
+          </a>
+          <button
+            *ngIf="modalProduct.Quantity > 0 && !modalProduct.isInCart"
+            class="add-to-cart"
+            [disabled]="isAddingProduct(modalProduct)"
+            (click)="addToCart(modalProduct)">
+            <ng-container *ngIf="!isAddingProduct(modalProduct)">{{ 'home.addToCart' | t }} ({{ getSelectedQuantity(modalProduct) }}) <i class="fa-solid fa-cart-plus"></i></ng-container>
+            <ng-container *ngIf="isAddingProduct(modalProduct)">{{ 'home.adding' | t }}</ng-container>
+          </button>
+          <button class="view-button modal-secondary" type="button" (click)="toggleFavorite(modalProduct)">
+            {{ modalProduct.isFavorite ? ('home.removeFavorite' | t) : ('home.addFavorite' | t) }} <i class="fa-solid fa-heart"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="kahve-floating-actions">
+    <a [routerLink]="['/cart']" title="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
+    <a [routerLink]="['/contactUs']" title="Contact"><i class="fa-solid fa-message"></i></a>
+    <button type="button" (click)="scrollToTop()" title="Go to top"><i class="fa-solid fa-arrow-up"></i></button>
+  </div>
+
+  <button class="back-to-top" [class.show]="showScrollBtn" (click)="scrollToTop()" title="Go to top">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+</div>

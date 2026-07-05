@@ -1,0 +1,90 @@
+<div class="add-product-page">
+  <div class="form-shell">
+    <div class="form-heading">
+      <span class="form-kicker">KAHVE Dashboard</span>
+      <h2>Add New Coffee Product</h2>
+      <p>Create bilingual Arabic / English KAHVE products.</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit(addProductForm)" #addProductForm="ngForm" class="product-form">
+      <div class="form-grid two">
+        <div class="form-group">
+          <label for="code">Product Code / Barcode</label>
+          <input type="text" class="form-control" name="code" id="code" ngModel placeholder="e.g. KHV-001" required>
+        </div>
+
+        <div class="form-group">
+          <label for="title_en">Product Name EN</label>
+          <input type="text" class="form-control" name="title_en" id="title_en" ngModel placeholder="KAHVE Turkish Coffee Medium" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="title_ar">Product Name AR</label>
+        <input type="text" class="form-control" name="title_ar" id="title_ar" ngModel placeholder="قهوة كافيه تركي وسط" dir="rtl" required>
+      </div>
+
+      <div class="form-grid two">
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input type="number" class="form-control" name="price" id="price" ngModel placeholder="Enter price" required>
+        </div>
+
+        <div class="form-group">
+          <label for="Quantity">Quantity</label>
+          <input type="number" class="form-control" name="Quantity" id="Quantity" ngModel placeholder="Enter quantity" required>
+        </div>
+      </div>
+
+      <div class="form-grid two">
+        <div class="form-group">
+          <label for="description_en">Description EN <span class="optional-label">Optional</span></label>
+          <textarea class="form-control" name="description_en" id="description_en" ngModel rows="4" placeholder="Optional product description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="description_ar">Description AR <span class="optional-label">اختياري</span></label>
+          <textarea class="form-control" name="description_ar" id="description_ar" ngModel rows="4" placeholder="وصف المنتج بالعربي اختياري" dir="rtl"></textarea>
+        </div>
+      </div>
+
+      <div class="form-grid two">
+        <div class="form-group">
+          <label for="category_en">Category EN</label>
+          <input type="text" class="form-control" name="category_en" id="category_en" ngModel placeholder="Hot Drinks / Turkish Coffee" required>
+        </div>
+
+        <div class="form-group">
+          <label for="category_ar">Category AR</label>
+          <input type="text" class="form-control" name="category_ar" id="category_ar" ngModel placeholder="مشروبات ساخنة / قهوة تركية" dir="rtl" required>
+        </div>
+      </div>
+
+      <div class="form-grid two">
+        <div class="form-group">
+          <label for="flavorNotes">Flavor Notes</label>
+          <ng-select name="flavorNotes" [items]="flavorNotes" bindLabel="label" bindValue="value" [(ngModel)]="selectedFlavorNotes" [multiple]="true" placeholder="Select coffee notes">
+          </ng-select>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Upload Product Image</label>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" required>
+            <label class="custom-file-label" for="image">Choose product image</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="image-preview" *ngIf="previewImage">
+        <img [src]="previewImage" alt="Product preview">
+      </div>
+
+      <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="!addProductForm.valid">
+          Add Coffee Product
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<section class="cart-section">
+  <div class="container py-5">
+    <div class="content-header mb-5">
+      <span class="cart-kicker">{{ 'cart.kicker' | t }}</span>
+      <h2 class="fw-bold display-4">{{ 'cart.title' | t }}</h2>
+      <p>{{ getCartSummaryText() }}</p>
+    </div>
+
+    <div class="cart-card shadow-lg" *ngIf="items.length > 0">
+      <div class="table-responsive">
+        <table class="table table-borderless align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4" width="5%">{{ 'cart.colNumber' | t }}</th>
+              <th width="36%">{{ 'cart.colProduct' | t }}</th>
+              <th width="20%">{{ 'cart.colQuantity' | t }}</th>
+              <th width="17%">{{ 'cart.colTotal' | t }}</th>
+              <th class="text-center" width="22%">{{ 'cart.colActions' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items; let i = index" [class.out-stock-row]="isOutOfStock(item)">
+              <td class="ps-4 cart-index cart-number-cell" [attr.data-label]="'cart.colNumber' | t">{{ i + 1 }}</td>
+              <td class="cart-product-cell" [attr.data-label]="'cart.colProduct' | t">
+                <div class="d-flex align-items-center product-line">
+                  <div class="product-img-box-premium me-3">
+                    <img [src]="item.image" [alt]="getItemName(item)">
+                  </div>
+                  <div class="d-flex flex-column">
+                    <span class="product-name fs-5">{{ getItemName(item) }}</span>
+                    <small>{{ 'cart.sku' | t }}: {{ getSku(item) }}</small>
+                    <small>{{ 'cart.unit' | t }}: {{ item.price | number }} {{ moneyLabel() }}</small>
+                    <small class="stock-hint" [class.out]="isOutOfStock(item)">
+                      {{ isOutOfStock(item) ? ('cart.outOfStock' | t) : (('cart.available' | t) + ': ' + getAvailableQuantity(item)) }}
+                    </small>
+                  </div>
+                </div>
+              </td>
+              <td class="cart-quantity-cell" [attr.data-label]="'cart.colQuantity' | t">
+                <div class="cart-qty-control" [class.disabled]="isOutOfStock(item)">
+                  <button type="button" (click)="decreaseItem(item)" [disabled]="isOutOfStock(item)">−</button>
+                  <input
+                    type="number"
+                    class="cart-input"
+                    [(ngModel)]="item.amount"
+                    min="1"
+                    [max]="getAvailableQuantity(item)"
+                    [disabled]="isOutOfStock(item)"
+                    (ngModelChange)="onAmountChange(item)" />
+                  <button type="button" (click)="increaseItem(item)" [disabled]="isOutOfStock(item)">+</button>
+                </div>
+                <div class="stock-warning" *ngIf="item.stockMessage">{{ item.stockMessage }}</div>
+              </td>
+
+              <td class="cart-total-cell" [attr.data-label]="'cart.colTotal' | t">
+                <span class="cart-price">
+                  {{ getItemTotal(item) | number }}
+                  <small>{{ moneyLabel() }}</small>
+                </span>
+                <div class="unit-price-hint" *ngIf="item.amount > 1">
+                  <small>{{ item.amount }} × {{ item.price | number }} {{ moneyLabel() }}</small>
+                </div>
+              </td>
+
+              <td class="text-center cart-actions-cell" [attr.data-label]="'cart.colActions' | t">
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                  <button
+                    (click)="saveItem(item._id, item.amount)"
+                    [disabled]="isOutOfStock(item)"
+                    [ngClass]="item.isSaved ? 'btn-success-premium' : 'save'"
+                    class="btn-action-premium">
+                    <i class="fa" [ngClass]="item.isSaved ? 'fa-check' : 'fa-save'"></i>
+                    <span class="ms-1">{{ item.isSaved ? ('cart.saved' | t) : ('cart.saveQty' | t) }}</span>
+                  </button>
+
+                  <button (click)="deleteItem(item._id)" class="btn-action-premium delete">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cart-summary-bar">
+        <div>
+          <span>{{ 'cart.totalCart' | t }}</span>
+          <strong>{{ getCartTotal() | number }} <small>{{ moneyLabel() }}</small></strong>
+          <p>{{ getItemsAcrossText() }}</p>
+          <p class="stock-warning summary" *ngIf="hasStockIssue()">{{ 'cart.stockSummary' | t }}</p>
+        </div>
+        <button type="button" class="checkout-all-btn" (click)="checkoutAll()" [disabled]="hasStockIssue()">
+          {{ 'cart.checkoutAll' | t }} <i class="fa-solid" [ngClass]="languageService.isArabic ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
+        </button>
+      </div>
+    </div>
+
+    <p class="checkout-message" *ngIf="checkoutMessage">{{ checkoutMessage }}</p>
+
+    <div class="cart-empty text-center py-5" *ngIf="items.length === 0 && !loading">
+      <i class="fa fa-shopping-basket fa-5x mb-4"></i>
+      <h3>{{ 'cart.emptyTitle' | t }}</h3>
+      <button routerLink="/home" class="btn mt-3">{{ 'cart.goShopping' | t }}</button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,86 @@
+<nav class="kahve-navbar navbar navbar-expand-lg">
+  <div class="container-fluid kahve-nav-container">
+    <a class="kahve-brand" [routerLink]="['/home']" [attr.aria-label]="'nav.home' | t">
+      <span class="kahve-brand-mark">K</span>
+      <span class="kahve-brand-text">KAHVE</span>
+    </a>
+
+    <button class="navbar-toggler kahve-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" [attr.aria-label]="'nav.account' | t">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav kahve-links mx-auto my-2 my-lg-0">
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/home']" routerLinkActive="active">{{ 'nav.home' | t }}</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/home']" fragment="newArrivals">{{ 'nav.products' | t }}</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/aboutUs']" routerLinkActive="active">{{ 'nav.about' | t }}</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/contactUs']" routerLinkActive="active">{{ 'nav.contact' | t }}</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/orders']">{{ 'nav.orders' | t }}</a></li>
+        <li class="nav-item" *ngIf="isAdmin"><a class="nav-link dashboard-link" [routerLink]="['/dashboard']">{{ 'nav.dashboard' | t }}</a></li>
+        <li class="nav-item dropdown" *ngIf="isLoggedIn">
+          <a class="nav-link dropdown-toggle" role="button" (click)="toggleMenu()" [class.show]="isMenuOpen">{{ 'nav.account' | t }}</a>
+          <ul class="dropdown-menu" [class.show]="isMenuOpen">
+            <li><a class="dropdown-item logout-item" [routerLink]="['/logout']" (click)="isMenuOpen = false">{{ 'nav.logout' | t }}</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="kahve-actions">
+      <button class="lang-btn" type="button" (click)="toggleLanguage()">{{ 'nav.language' | t }}</button>
+
+      <ng-container *ngIf="isLoggedIn; else loginAction">
+        <div class="fav-wrapper">
+          <button id="favoritesIcon" class="nav-icon-btn" type="button" (click)="toggleFavorites()" [attr.aria-label]="'nav.favorites' | t">
+            <i class="fa fa-heart" [style.color]="isFavOpen ? '#9b271a' : '#5b361f'"></i>
+          </button>
+
+          <div class="favorites-panel" *ngIf="isFavOpen">
+            <div class="fav-panel-inner">
+              <span class="fav-panel-title">{{ 'nav.favorites' | t }}</span>
+              <div *ngIf="favLoading" class="fav-loading"><div class="spinner-border spinner-border-sm text-warning"></div></div>
+              <div *ngIf="favError" class="fav-error">{{ favError }}</div>
+
+              <ul *ngIf="!favLoading && favorites.length > 0" id="favoritesList">
+                <li class="favorite-item" *ngFor="let item of favorites">
+                  <img [src]="item.image" [alt]="getFavoriteName(item)" />
+                  <div class="favorite-details">
+                    <h4 class="product-title">{{ getFavoriteName(item) }}</h4>
+                    <span class="product-price">{{ item.price | number }} {{ moneyLabel() }}</span>
+
+                    <div class="item-actions">
+                      <button class="action-btn remove-fav" (click)="removeFromFavorites(item.productId)" [attr.title]="'nav.favorites' | t">
+                        <i class="fa-solid fa-heart-crack"></i>
+                      </button>
+
+                      <div class="cart-actions-wrapper">
+                        <button *ngIf="!item.isInCart" class="action-btn add-to-cart" (click)="handleAddToCart(item)" [attr.title]="'home.addToCart' | t">
+                          <i class="fa-solid fa-cart-plus"></i>
+                        </button>
+
+                        <button *ngIf="item.isInCart" class="action-btn in-cart" (click)="handleRemoveFromCart(item)" [attr.title]="'footer.cart' | t">
+                          <i class="fa-solid fa-check check-icon"></i>
+                          <i class="fa-solid fa-cart-minus remove-icon"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div *ngIf="!favLoading && favorites.length === 0 && !favError" class="fav-empty">{{ 'nav.noFavorites' | t }}</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="nav-icon-btn cart-btn" type="button" [routerLink]="['/cart']" [attr.aria-label]="'footer.cart' | t">
+          <i id="cart" class="fa-solid fa-cart-shopping"></i>
+          <span class="cart-badge">{{ cartCount }}</span>
+        </button>
+      </ng-container>
+
+      <ng-template #loginAction>
+        <a class="login-link" [routerLink]="['/login']">{{ 'nav.login' | t }}</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,89 @@
+<section class="orders-section">
+  <div class="orders-container">
+    <div class="content-header">
+      <span class="orders-eyebrow">{{ 'orders.kicker' | t }}</span>
+      <h2>{{ 'orders.title' | t }}</h2>
+      <p>{{ 'orders.subtitle' | t }}</p>
+    </div>
+
+    <div *ngIf="loading" class="kahve-state text-center py-5">
+      <div class="spinner-border" role="status"></div>
+      <h4>{{ 'orders.loading' | t }}</h4>
+    </div>
+
+    <div *ngIf="errorMessage && !loading" class="kahve-state error text-center py-5">
+      <i class="fa fa-triangle-exclamation mb-3"></i>
+      <h4>{{ errorMessage }}</h4>
+      <button class="kahve-action-btn" type="button" (click)="loadOrderItems()">{{ 'orders.tryAgain' | t }}</button>
+    </div>
+
+    <div *ngIf="items.length === 0 && !loading && !errorMessage" class="kahve-state text-center py-5">
+      <i class="fa fa-mug-hot mb-3"></i>
+      <h4>{{ 'orders.emptyTitle' | t }}</h4>
+      <p>{{ 'orders.emptyText' | t }}</p>
+      <a routerLink="/home" class="kahve-action-btn">{{ 'orders.startShopping' | t }}</a>
+    </div>
+
+    <div class="orders-card" *ngIf="items.length > 0 && !loading">
+      <div class="table-responsive">
+        <table class="table table-borderless align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">{{ 'orders.colNumber' | t }}</th>
+              <th>{{ 'orders.colOrder' | t }}</th>
+              <th>{{ 'orders.colItems' | t }}</th>
+              <th>{{ 'orders.colTotal' | t }}</th>
+              <th>{{ 'orders.colAddress' | t }}</th>
+              <th>{{ 'orders.colStatus' | t }}</th>
+              <th class="text-center">{{ 'orders.colAction' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items; let i = index">
+              <td class="ps-4 order-index order-number-cell" [attr.data-label]="'orders.colNumber' | t">{{ i + 1 }}</td>
+
+              <td class="order-title-cell" [attr.data-label]="'orders.colOrder' | t">
+                <span class="order-title">{{ getOrderTitle(item) }}</span>
+              </td>
+
+              <td class="order-items-cell" [attr.data-label]="'orders.colItems' | t">
+                <div class="order-products-list">
+                  <span *ngFor="let product of getOrderProducts(item)">
+                    {{ getProductName(product) }} × {{ getOrderQuantity(product) }}
+                  </span>
+                </div>
+              </td>
+
+              <td class="order-total-cell" [attr.data-label]="'orders.colTotal' | t">
+                <span class="order-total">{{ getOrderTotal(item) | number }} <small>{{ moneyLabel() }}</small></span>
+              </td>
+
+              <td class="order-address-cell" [attr.data-label]="'orders.colAddress' | t">
+                <div class="address-box">
+                  <i class="fa fa-location-dot me-2"></i>
+                  <span>{{ getOrderAddress(item) }}</span>
+                </div>
+              </td>
+
+              <td class="order-status-cell" [attr.data-label]="'orders.colStatus' | t">
+                <span class="status-badge" [ngClass]="{
+                  'pending': getOrderStatus(item) === 'pending',
+                  'accepted': getOrderStatus(item) === 'accepted',
+                  'rejected': getOrderStatus(item) === 'rejected' || getOrderStatus(item) === 'cancelled'
+                }">
+                  {{ getStatusLabel(item) }}
+                </span>
+              </td>
+
+              <td class="text-center order-action-cell" [attr.data-label]="'orders.colAction' | t">
+                <button class="btn-cancel-kahve" type="button" (click)="cancelOrder(item)">
+                  <i class="fa fa-trash-can me-1"></i> {{ 'orders.cancel' | t }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

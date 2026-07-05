@@ -1,0 +1,114 @@
+<div class="celebration-overlay" *ngIf="showCelebration">
+  <div class="confetti-burst">
+    <div class="confetti" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
+  </div>
+  
+  <div class="congrats-card">
+    <div class="congrats-icon">✨</div>
+    <h2 class="congrats-title"> PERFECT MATCH! </h2>
+    <h3 class="congrats-title">  CONGRATS 🎉</h3>
+    <p class="congrats-subtitle">We've identified your <span>{{receivedData?.classId}}</span> face shape</p>
+  </div>
+</div>
+
+<section class="result-page">
+  <div class="container py-5">
+    
+    <div class="result-header text-center mb-5 animate-slide-down">
+      <div class="ai-badge mb-3">AI ANALYSIS COMPLETE</div>
+      <h1 class="text-white fw-bold">Your Best Style is: <span class="text-info">{{receivedData?.classId}}</span></h1>
+      <p class="text-white-50">Based on your face shape, we've curated these perfect matches for you.</p>
+    </div>
+
+    <div class="recommendation-block mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-4 px-3 flex-wrap gap-3">
+        <h3 class="section-title"><i class="fa fa-mars me-2"></i>Men's Collection</h3>
+        <div class="d-flex gap-2">
+          <a routerLink="/liveSession" target="_blank" class="btn-session">
+            <i class="fa fa-video me-2"></i> TRY OUR SESSION
+          </a>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <ng-container *ngFor="let product of receivedData?.products">
+          <div class="col-xl-3 col-lg-4 col-md-6" *ngIf="isMenProduct(product)">
+            <div class="glass-product-card">
+              <div class="img-box">
+                <img [src]="product.image" [alt]="product.title">
+              </div>
+              <div class="card-info">
+                <h5 class="product-title">{{ product.title }}</h5>
+                
+                <div class="sku-row" *ngIf="product.SKU">
+                  <span class="sku-text">SKU: {{ product.SKU }}</span>
+                  <button class="btn-copy-mini" (click)="copySKU(product.SKU)" [class.copied]="copiedSku === product.SKU">
+                    <i class="fa" [class.fa-copy]="copiedSku !== product.SKU" [class.fa-check]="copiedSku === product.SKU"></i>
+                    <span class="copy-label" *ngIf="copiedSku === product.SKU">Copied!</span>
+                  </button>
+                </div>
+
+                <p class="price">{{ product.price | number }} EGP</p>
+                <div class="actions-grid">
+                  <button class="btn-cart" [class.added]="product.isInCart" (click)="addToCart(product)">
+                    <i class="fa" [class.fa-cart-plus]="!product.isInCart" [class.fa-check]="product.isInCart"></i>
+                    {{ product.isInCart ? 'Added' : 'Add' }}
+                  </button>
+                  <button class="btn-fav" [class.active]="product.isFavorite" (click)="toggleFavorite(product)">
+                    <i class="fa-heart" [class.fa-solid]="product.isFavorite" [class.fa-regular]="!product.isFavorite"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="recommendation-block">
+      <div class="d-flex justify-content-between align-items-center mb-4 px-3 flex-wrap gap-3">
+        <h3 class="section-title"><i class="fa fa-venus me-2"></i>Women's Collection</h3>
+        <div class="d-flex gap-2">
+          <a routerLink="/liveSession" target="_blank" class="btn-session">
+            <i class="fa fa-video me-2"></i> TRY OUR SESSION
+          </a>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <ng-container *ngFor="let product of receivedData?.products">
+          <div class="col-xl-3 col-lg-4 col-md-6" *ngIf="isWomenProduct(product)">
+            <div class="glass-product-card">
+              <div class="img-box">
+                <img [src]="product.image" [alt]="product.title">
+              </div>
+              <div class="card-info">
+                <h5 class="product-title">{{ product.title }}</h5>
+                
+                <div class="sku-row" *ngIf="product.SKU">
+                  <span class="sku-text">SKU: {{ product.SKU }}</span>
+                  <button class="btn-copy-mini" (click)="copySKU(product.SKU)" [class.copied]="copiedSku === product.SKU">
+                    <i class="fa" [class.fa-copy]="copiedSku !== product.SKU" [class.fa-check]="copiedSku === product.SKU"></i>
+                    <span class="copy-label" *ngIf="copiedSku === product.SKU">Copied!</span>
+                  </button>
+                </div>
+
+                <p class="price">{{ product.price | number }} EGP</p>
+                <div class="actions-grid">
+                  <button class="btn-cart" [class.added]="product.isInCart" (click)="addToCart(product)">
+                    <i class="fa" [class.fa-cart-plus]="!product.isInCart" [class.fa-check]="product.isInCart"></i>
+                    {{ product.isInCart ? 'Added' : 'Add' }}
+                  </button>
+                  <button class="btn-fav" [class.active]="product.isFavorite" (click)="toggleFavorite(product)">
+                    <i class="fa-heart" [class.fa-solid]="product.isFavorite" [class.fa-regular]="!product.isFavorite"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</section>

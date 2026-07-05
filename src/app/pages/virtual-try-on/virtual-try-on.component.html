@@ -1,0 +1,70 @@
+<section class="vto-page">
+  <div class="vto-content-wrapper">
+    
+    <div class="vto-nav">
+    <div class="container-fluid px-lg-5 d-flex justify-content-between align-items-center h-100">
+      <div class="vto-logo">
+        <img src="assets/images/glass 1.png" alt="logo">
+        <span>VIRTUAL STUDIO</span>
+      </div>
+      <div class="nav-links">
+        <a routerLink="/home">Explore Eyewear</a>
+        <a routerLink="/virtualTryOn" class="active">Virtual Try-On</a>
+      </div>
+    </div>
+  </div>
+
+    <!-- Hero Section -->
+    <div class="vto-hero">
+      <div class="row align-items-center">
+        <div class="col-lg-7 text-section">
+          <h1 class="animate-text">Virtual <br><span>Experience</span></h1>
+          <p class="lead">Seamlessly try on designer sunglasses and eyeglasses from the comfort of your home. Experiment with styles in real-time using our AI-powered tool.</p>
+          
+          <div class="steps-box">
+            <div class="step"><span class="step-num">01</span> Upload</div>
+            <div class="step"><span class="step-num">02</span> AI Detection</div>
+            <div class="step"><span class="step-num">03</span> Find Your Style</div>
+          </div>
+        </div>
+        <div class="col-lg-5 img-section"> 
+          <div class="hero-img-wrapper">
+            <img src="/assets/images/virtual1.png" alt="Model" class="main-hero-img">
+            <div class="glass-float-card">
+              <span>Perfect Fit AI</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-interaction-card">
+      <div class="row g-0">
+        <div class="col-md-7 d-flex align-items-center justify-content-center border-end-glass">
+          <div class="visual-preview">
+            <img src="/assets/images/gender1.png" alt="Sample" class="gender-img">
+            <div class="scan-line"></div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="p-5 text-center h-100 d-flex flex-column justify-content-center">
+            <h2 class="text-white fw-bold mb-4">Start Your Session</h2>
+            <p class="text-white-50 mb-5">Choose a high-quality photo where your face is clearly visible for the best accuracy.</p>
+            
+            <div class="upload-actions">
+              <button class="btn-vto-primary w-100 mb-4" (click)="postRunDetection()">
+                <i class="fa fa-camera-retro me-2"></i> OPEN PHOTO
+              </button>
+              
+              <!-- <div class="custom-file-upload">
+                <input id="file-upload" type="file" />
+                <label for="file-upload"><i class="fa fa-cloud-upload me-2 text-info"></i> No file chosen</label>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

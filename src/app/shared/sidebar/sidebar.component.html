@@ -1,0 +1,21 @@
+<div class="col-md-2 col-sm-3 sidebar">
+  <h2 class="text-center">KAHVE</h2>
+  <span class="sidebar-subtitle">{{ 'dashboard.sidebar' | t }}</span>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{'active': currentPage === 'addproduct'}" routerLink="addproduct">
+        <i class="fa fa-plus"></i> {{ 'dashboard.addProduct' | t }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{'active': currentPage === 'viewproducts'}" routerLink="view">
+        <i class="fa fa-mug-hot"></i> {{ 'dashboard.viewProducts' | t }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{'active': currentPage === 'orders'}" routerLink="manageorder">
+        <i class="fa fa-shopping-bag"></i> {{ 'dashboard.orders' | t }}
+      </a>
+    </li>
+  </ul>
+</div>

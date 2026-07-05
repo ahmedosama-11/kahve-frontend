@@ -1,0 +1,10 @@
+<div class="app-shell">
+  <app-navbar *ngIf="showNavbar === 'welcome'"></app-navbar>
+  <app-home-nav *ngIf="showNavbar === 'home'"></app-home-nav>
+  <app-contact-nav *ngIf="showNavbar === 'contactUs'"></app-contact-nav>
+  <app-home-nav *ngIf="showNavbar === 'default'"></app-home-nav>
+
+  <router-outlet></router-outlet>
+
+  <app-footer *ngIf="showFooter"></app-footer>
+</div>

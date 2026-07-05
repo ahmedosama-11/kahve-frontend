@@ -1,0 +1,82 @@
+<section class="delivery-page">
+  <div class="delivery-shell">
+    <div class="delivery-summary-card">
+      <span class="delivery-kicker">{{ 'checkout.kicker' | t }}</span>
+      <h2>{{ 'checkout.reviewTitle' | t }}</h2>
+      <p>{{ getItemsSummary() }}</p>
+
+      <div class="checkout-items" *ngIf="checkoutItems.length > 0">
+        <div class="checkout-item" *ngFor="let item of checkoutItems">
+          <img [src]="item.image" [alt]="getItemName(item)">
+          <div>
+            <strong>{{ getItemName(item) }}</strong>
+            <span>{{ item.amount }} × {{ item.price | number }} {{ moneyLabel() }}</span>
+          </div>
+          <b>{{ (item.amount * item.price) | number }} {{ moneyLabel() }}</b>
+        </div>
+      </div>
+
+      <div class="checkout-total">
+        <span>{{ 'checkout.total' | t }}</span>
+        <strong>{{ getGrandTotal() | number }} {{ moneyLabel() }}</strong>
+      </div>
+
+      <a routerLink="/cart" class="back-cart-link">{{ 'checkout.backToCart' | t }}</a>
+    </div>
+
+    <form class="delivery-form" (ngSubmit)="submitDeliveryDetails()">
+      <span class="delivery-kicker">{{ 'checkout.infoKicker' | t }}</span>
+      <h2>{{ 'checkout.deliveryTitle' | t }}</h2>
+
+      <div class="form-grid">
+        <label>
+          {{ 'checkout.fullName' | t }}
+          <input type="text" name="name" [(ngModel)]="deliveryData.name" required [placeholder]="'checkout.namePlaceholder' | t">
+        </label>
+
+        <label>
+          {{ 'checkout.phone' | t }}
+          <input type="tel" name="phone" [(ngModel)]="deliveryData.phone" required [placeholder]="'checkout.phonePlaceholder' | t">
+        </label>
+
+        <label>
+          {{ 'checkout.email' | t }}
+          <input type="email" name="email" [(ngModel)]="deliveryData.email" required [placeholder]="'checkout.emailPlaceholder' | t">
+        </label>
+
+        <label>
+          {{ 'checkout.address' | t }}
+          <input type="text" name="address" [(ngModel)]="deliveryData.address" required [placeholder]="'checkout.addressPlaceholder' | t">
+        </label>
+
+        <label>
+          {{ 'checkout.city' | t }}
+          <input type="text" name="city" [(ngModel)]="deliveryData.city" required [placeholder]="'checkout.cityPlaceholder' | t">
+        </label>
+
+        <label>
+          {{ 'checkout.state' | t }}
+          <input type="text" name="state" [(ngModel)]="deliveryData.state" required [placeholder]="'checkout.statePlaceholder' | t">
+        </label>
+
+        <label>
+          {{ 'checkout.zip' | t }}
+          <input type="text" name="zip" [(ngModel)]="deliveryData.zip" required [placeholder]="'checkout.zipPlaceholder' | t">
+        </label>
+
+        <label>
+          {{ 'checkout.country' | t }}
+          <input type="text" name="country" [(ngModel)]="deliveryData.country" required [placeholder]="'checkout.countryPlaceholder' | t">
+        </label>
+      </div>
+
+      <p class="delivery-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="delivery-success" *ngIf="successMessage">{{ successMessage }}</p>
+
+      <button type="submit" class="submit-delivery" [disabled]="submitting || checkoutItems.length === 0">
+        {{ submitting ? ('checkout.creating' | t) : ('checkout.placeOrder' | t) }}
+        <i class="fa-solid" [ngClass]="languageService.isArabic ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
+      </button>
+    </form>
+  </div>
+</section>

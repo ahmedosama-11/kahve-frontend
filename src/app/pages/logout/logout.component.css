@@ -1,0 +1,82 @@
+:host { display: block; }
+
+.logout-section {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(185, 133, 69, 0.22), transparent 30%),
+    linear-gradient(135deg, #fff8ee 0%, #f3dfc1 52%, #d8ad73 100%);
+  display: flex;
+  align-items: center;
+}
+
+.kahve-logout-card {
+  max-width: 470px;
+  width: 92%;
+  background: rgba(255, 250, 242, 0.84);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(91, 54, 31, 0.14);
+  border-radius: 34px;
+  padding: 48px 30px;
+  box-shadow: 0 28px 80px rgba(45, 23, 13, 0.16);
+  position: relative;
+}
+
+.brand-mark {
+  width: 82px;
+  height: 82px;
+  margin: -88px auto 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #17100c;
+  color: #fff8ee;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.3rem;
+  font-weight: 900;
+  box-shadow: 0 18px 42px rgba(45, 23, 13, 0.2);
+}
+
+h3, h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #2d170d;
+}
+
+p { color: #74543d; line-height: 1.8; }
+
+.btn-logout {
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  min-width: 140px;
+}
+
+.btn-logout.confirm {
+  background: #b5451b;
+  color: #fff8ee;
+  box-shadow: 0 12px 28px rgba(181, 69, 27, 0.22);
+}
+
+.btn-logout.confirm:hover {
+  background: #8f3513;
+  transform: translateY(-3px);
+}
+
+.btn-logout.cancel {
+  background: #5b361f;
+  color: #fff8ee;
+}
+
+.btn-logout.cancel:hover {
+  background: #9b6a36;
+  transform: translateY(-3px);
+}
+
+.animate-fade-in { animation: fadeInUp 0.6s ease-out forwards; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,252 @@
+<div class="content-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <div>
+    <h2 class="fw-bold">Coffee Inventory</h2>
+    <p>Showing {{pagedProducts.length}} of {{products.length}} KAHVE products</p>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn-stock-template" type="button" (click)="downloadStockTemplate()">
+      <i class="fa fa-download me-2"></i> Stock CSV
+    </button>
+    <button class="btn-add-new" routerLink="/dashboard/addproduct">
+      <i class="fa fa-plus me-2"></i> Add Coffee Product
+    </button>
+  </div>
+</div>
+
+
+<div class="product-import-card">
+  <div class="import-main-copy">
+    <span class="stock-import-kicker">Bulk Products</span>
+    <h4>Import products from Excel or CSV</h4>
+    <p>
+      Use this to remove the current products and upload a fresh product sheet with
+      <strong>Barcode, Name EN, Name AR, Category EN, Category AR, Sales Price and Quantity On Hand</strong>.
+      Images are optional in the sheet. Imported products will use a coffee placeholder, then you can edit each product image manually and upload it to Cloudinary.
+    </p>
+    <button class="btn-stock-template" type="button" (click)="downloadProductsImportTemplate()">
+      <i class="fa fa-download me-2"></i> Products Template CSV
+    </button>
+  </div>
+
+  <div class="stock-import-actions product-import-actions">
+    <label class="replace-toggle">
+      <input type="checkbox" [(ngModel)]="productImportReplace">
+      <span>Replace all current products</span>
+    </label>
+
+    <label class="stock-file-control">
+      <i class="fa fa-file-excel"></i>
+      <span>{{ productImportFile?.name || 'Choose Excel / CSV file' }}</span>
+      <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" (change)="onProductImportFileChange($event)">
+    </label>
+
+    <button class="btn-upload-stock" type="button" (click)="uploadProductsSheet()" [disabled]="productImporting || !productImportFile">
+      <i class="fa" [ngClass]="productImporting ? 'fa-spinner fa-spin' : 'fa-upload'"></i>
+      {{ productImporting ? 'Importing...' : 'Import Products' }}
+    </button>
+  </div>
+
+  <div class="stock-message success" *ngIf="productImportMessage">
+    <i class="fa fa-check-circle"></i> {{ productImportMessage }}
+    <small *ngIf="productImportReport">
+      Inserted: {{productImportReport.inserted}} / Updated: {{productImportReport.updated}} / Skipped: {{productImportReport.skipped}}
+    </small>
+  </div>
+
+  <div class="stock-message error" *ngIf="productImportError">
+    <i class="fa fa-exclamation-circle"></i> {{ productImportError }}
+  </div>
+
+  <div class="stock-report" *ngIf="productImportReport?.errors?.length">
+    <strong>Rows needing review:</strong>
+    <ul>
+      <li *ngFor="let error of productImportReport.errors.slice(0, 8)">Row {{error.row}}: {{error.message}}</li>
+    </ul>
+  </div>
+</div>
+
+<div class="stock-import-card">
+  <div>
+    <span class="stock-import-kicker">Inventory Update</span>
+    <h4>Update quantities by CSV sheet</h4>
+    <p>Download the template, edit the <strong>Quantity</strong> column, then upload it here. Products with quantity 0 will stay visible as <strong>Out of Stock</strong>.</p>
+  </div>
+
+  <div class="stock-import-actions">
+    <label class="stock-file-control">
+      <i class="fa fa-file-csv"></i>
+      <span>{{ stockFile?.name || 'Choose CSV file' }}</span>
+      <input type="file" accept=".csv,text/csv" (change)="onStockFileChange($event)">
+    </label>
+
+    <button class="btn-upload-stock" type="button" (click)="uploadStockSheet()" [disabled]="stockImporting || !stockFile">
+      <i class="fa" [ngClass]="stockImporting ? 'fa-spinner fa-spin' : 'fa-upload'"></i>
+      {{ stockImporting ? 'Updating...' : 'Upload Stock' }}
+    </button>
+  </div>
+
+  <div class="stock-message success" *ngIf="stockMessage">
+    <i class="fa fa-check-circle"></i> {{ stockMessage }}
+    <small *ngIf="stockReport">Updated: {{stockReport.updated}} / Skipped: {{stockReport.skipped}}</small>
+  </div>
+
+  <div class="stock-message error" *ngIf="stockError">
+    <i class="fa fa-exclamation-circle"></i> {{ stockError }}
+  </div>
+
+  <div class="stock-report" *ngIf="stockReport?.errors?.length">
+    <strong>Rows needing review:</strong>
+    <ul>
+      <li *ngFor="let error of stockReport.errors.slice(0, 5)">Row {{error.row}}: {{error.message}}</li>
+    </ul>
+  </div>
+</div>
+
+<div class="products-grid" *ngIf="pagedProducts.length > 0">
+  <div class="p-card-glass" *ngFor="let p of pagedProducts" [class.out-card]="isOutOfStock(p)">
+    <div class="p-img-container">
+      <img [src]="p.image" alt="product">
+      <span class="stock-badge" [ngClass]="{'low-stock': getStock(p) > 0 && getStock(p) < 5, 'out-stock': isOutOfStock(p)}">
+        {{ isOutOfStock(p) ? 'Out of stock' : ('Qty: ' + getStock(p)) }}
+      </span>
+    </div>
+    <div class="p-body">
+      <h5 class="text-truncate" [title]="getProductTitle(p)">{{ getProductTitle(p) }}</h5>
+      <p class="category-text">{{ getDisplayCategory(getProductCategory(p)) }}</p>
+      <div class="p-footer">
+        <span class="price-tag">{{ p.price }} <small>EGP</small></span>
+      </div>
+      <div class="p-actions">
+        <button class="btn-glass edit" type="button" (click)="openEdit(p)" title="Edit product">
+          <i class="fa fa-edit"></i>
+        </button>
+        <button class="btn-glass delete" type="button" (click)="deleteProduct(p._id)" title="Delete product">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="empty-products" *ngIf="pagedProducts.length === 0">
+  <h4>No products found</h4>
+  <p>Add your first KAHVE coffee product from the dashboard.</p>
+</div>
+
+<div class="pagination-container" *ngIf="totalPages > 1">
+  <button class="btn-page" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+    <i class="fa fa-chevron-left"></i>
+  </button>
+  
+  <span class="page-info">Page {{currentPage}} of {{totalPages}}</span>
+
+  <button class="btn-page" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+    <i class="fa fa-chevron-right"></i>
+  </button>
+</div>
+
+<div class="edit-overlay" *ngIf="isEditOpen" (click)="closeEdit()">
+  <div class="edit-modal" (click)="$event.stopPropagation()">
+    <button class="modal-close" type="button" (click)="closeEdit()" [disabled]="isUpdating">
+      <i class="fa fa-times"></i>
+    </button>
+
+    <div class="modal-heading">
+      <span>KAHVE Dashboard</span>
+      <h3>Edit Coffee Product</h3>
+      <p>Update product data, image, price, stock and description. New images are uploaded to Cloudinary.</p>
+    </div>
+
+    <form class="edit-form" (ngSubmit)="updateProduct()">
+      <div class="edit-grid">
+        <label>
+          Product Code
+          <input type="text" name="code" [(ngModel)]="editForm.code" placeholder="KAHVE-001">
+        </label>
+
+        <label>
+          Product Name EN
+          <input type="text" name="title_en" [(ngModel)]="editForm.title_en" placeholder="English product name" required>
+        </label>
+
+        <label>
+          Product Name AR
+          <input type="text" name="title_ar" [(ngModel)]="editForm.title_ar" placeholder="اسم المنتج بالعربي" dir="rtl" required>
+        </label>
+
+        <label>
+          Price
+          <input type="number" name="price" [(ngModel)]="editForm.price" min="0" placeholder="Price" required>
+        </label>
+
+        <label>
+          Quantity
+          <input type="number" name="Quantity" [(ngModel)]="editForm.Quantity" min="0" placeholder="Quantity">
+        </label>
+      </div>
+
+      <div class="edit-grid">
+        <label>
+          Description EN <span class="optional-label">Optional</span>
+          <textarea name="description_en" [(ngModel)]="editForm.description_en" rows="4" placeholder="Optional English product description"></textarea>
+        </label>
+
+        <label>
+          Description AR <span class="optional-label">اختياري</span>
+          <textarea name="description_ar" [(ngModel)]="editForm.description_ar" rows="4" placeholder="وصف المنتج بالعربي اختياري" dir="rtl"></textarea>
+        </label>
+      </div>
+
+      <div class="edit-grid">
+        <label>
+          Category EN
+          <input type="text" name="category_en" [(ngModel)]="editForm.category_en" placeholder="Hot Drinks / Turkish Coffee" required>
+        </label>
+
+        <label>
+          Category AR
+          <input type="text" name="category_ar" [(ngModel)]="editForm.category_ar" placeholder="مشروبات ساخنة / قهوة تركية" dir="rtl" required>
+        </label>
+
+        <label>
+          SKU
+          <input type="text" name="SKU" [(ngModel)]="editForm.SKU" placeholder="SKU">
+        </label>
+      </div>
+
+      <label>
+        Flavor Notes
+        <input type="text" name="face_shape" [(ngModel)]="editForm.face_shape" placeholder="Dark Roast, Cardamom, Classic">
+      </label>
+
+      <div class="image-edit-row">
+        <div class="image-preview-card" *ngIf="editImagePreview">
+          <img [src]="editImagePreview" alt="Product preview">
+        </div>
+
+        <label class="upload-control">
+          Product Image
+          <input type="file" accept="image/*" (change)="onEditImageChange($event)">
+          <small>Leave empty to keep the current image. Choose a new image to upload it to Cloudinary.</small>
+        </label>
+      </div>
+
+      <div class="form-message error" *ngIf="editError">
+        <i class="fa fa-exclamation-circle"></i> {{ editError }}
+      </div>
+
+      <div class="form-message success" *ngIf="editSuccess">
+        <i class="fa fa-check-circle"></i> {{ editSuccess }}
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" type="button" (click)="closeEdit()" [disabled]="isUpdating">Cancel</button>
+        <button class="btn-save" type="submit" [disabled]="isUpdating">
+          <i class="fa" [ngClass]="isUpdating ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+          {{ isUpdating ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

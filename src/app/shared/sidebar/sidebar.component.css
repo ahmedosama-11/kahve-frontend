@@ -1,0 +1,119 @@
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 78px;
+  bottom: 0;
+  width: 260px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(185, 133, 69, 0.18), transparent 35%),
+    linear-gradient(180deg, #2d170d 0%, #1a0f09 100%);
+  border-right: 1px solid rgba(255, 248, 238, 0.12);
+  padding: 24px 16px;
+  z-index: 999;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  box-shadow: 18px 0 60px rgba(45, 23, 13, 0.18);
+}
+
+.sidebar h2 {
+  color: #fff8ee;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  margin: 0;
+}
+
+.sidebar-subtitle {
+  display: block;
+  color: #d8a866;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 4px 0 36px;
+}
+
+.nav-link {
+  color: rgba(255, 248, 238, 0.72) !important;
+  padding: 13px 16px !important;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: 0.3s all ease;
+}
+
+.nav-link i { font-size: 1.08rem; color: #d8a866; }
+
+.nav-link:hover {
+  background: rgba(255, 248, 238, 0.08);
+  color: #fff8ee !important;
+  transform: translateX(6px);
+}
+
+.nav-link.active {
+  background: #fff8ee;
+  color: #2d170d !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.nav-link.active i { color: #9b6a36; }
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    display: block;
+    min-height: auto;
+  }
+}
+
+html[dir='rtl'] .sidebar {
+  left: auto;
+  right: 0;
+  border-right: 0;
+  border-left: 1px solid rgba(255, 248, 238, 0.12);
+}
+
+html[dir='rtl'] .nav-link:hover {
+  transform: translateX(-6px);
+}
+
+html[dir='rtl'] .nav-link {
+  letter-spacing: 0;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    top: auto;
+    border-inline: 0;
+    box-shadow: none;
+    border-radius: 0 0 24px 24px;
+  }
+
+  .sidebar .nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .sidebar .nav-link {
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 0;
+    min-height: 58px;
+  }
+}
+
+@media (max-width: 575px) {
+  .sidebar .nav {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar h2 { font-size: 1.55rem; }
+  .sidebar-subtitle { margin-bottom: 18px; }
+}

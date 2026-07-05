@@ -1,0 +1,22 @@
+<section class="logout-section">
+  <div class="container h-100 d-flex justify-content-center align-items-center">
+    <div class="kahve-logout-card animate-fade-in">
+      <div class="brand-mark">K</div>
+
+      <div class="content-wrapper text-center mt-4">
+        <h3>KAHVE</h3>
+        <h4 class="mb-2">Wait! Are you leaving?</h4>
+        <p class="px-4">Are you sure you want to log out of your KAHVE session? Your coffee cart will be waiting.</p>
+
+        <div class="d-flex justify-content-center gap-3 mt-5 flex-wrap">
+          <button (click)="onLogout('Yes')" class="btn-logout confirm shadow">
+            Yes, Log out
+          </button>
+          <button (click)="onLogout('Cancel')" class="btn-logout cancel">
+            No, Stay
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

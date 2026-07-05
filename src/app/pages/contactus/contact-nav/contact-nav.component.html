@@ -1,0 +1,18 @@
+<nav class="kahve-contact-nav navbar navbar-expand-lg">
+  <div class="container-fluid contact-nav-inner">
+    <a class="kahve-brand" [routerLink]="['/home']"><span class="brand-mark">K</span><span>KAHVE</span></a>
+    <button class="navbar-toggler kahve-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/home']">Home</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/aboutUs']">About</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/contactUs']">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/cart']">Cart</a></li>
+        <li class="nav-item"><a class="nav-link" [routerLink]="['/orders']">Orders</a></li>
+        <li class="nav-item"><a class="nav-link login-pill" [routerLink]="['/logout']">Log out</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,22 @@
+<nav class="kahve-simple-nav navbar navbar-expand-lg">
+  <div class="container-fluid simple-nav-inner">
+    <a class="kahve-brand" [routerLink]="['/welcome']">
+      <span class="kahve-brand-mark">K</span>
+      <span>KAHVE</span>
+    </a>
+
+    <button class="navbar-toggler kahve-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" [attr.aria-label]="'nav.account' | t">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item"><a routerLink="/home" class="nav-link">{{ 'nav.home' | t }}</a></li>
+        <li class="nav-item"><a routerLink="/aboutUs" class="nav-link">{{ 'nav.about' | t }}</a></li>
+        <li class="nav-item"><a routerLink="/contactUs" class="nav-link">{{ 'nav.contact' | t }}</a></li>
+        <li class="nav-item"><button class="lang-btn" type="button" (click)="toggleLanguage()">{{ 'nav.language' | t }}</button></li>
+        <li class="nav-item"><a routerLink="/login" class="nav-link login-pill">{{ 'nav.login' | t }}</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>

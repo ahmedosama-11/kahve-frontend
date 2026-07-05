@@ -1,0 +1,37 @@
+<body>
+    <div class="error-container">
+  <div class="error-face shadow-sm">
+    <div class="eyes left"></div>
+    <div class="eyes right"></div>
+    <div class="mouth"></div>
+  </div>
+  
+  <div class="error-message">
+    <h1>Oops! Something went wrong.</h1>
+    <p>We're sorry, but it seems there was an error processing your request.</p>
+    
+    <div class="instructions-card">
+      <p class="instr-title"><strong>Please follow these instructions for a better result:</strong></p>
+      <ul class="instr-list">
+        <li>
+          <i class="fa-solid fa-camera"></i>
+          <span><strong>Step 1 :</strong> Look Directly at The Camera</span>
+        </li>
+        <li>
+          <i class="fa-solid fa-lightbulb"></i>
+          <span><strong>Step 2 :</strong> Make sure the lighting is adequate and bright.</span>
+        </li>
+        <li>
+          <i class="fa-solid fa-user-slash"></i>
+          <span><strong>Step 3 :</strong> Take off your sunglasses or hat for better visibility.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="buttons-group">
+      <button class="btn btn-primary" [routerLink]="['/virtualTryOn']">Try Again</button>
+      <button class="btn btn-secondary" [routerLink]="['/contactUs']">Contact Support</button>
+    </div>
+  </div>
+</div>
+</body>

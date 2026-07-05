@@ -1,0 +1,38 @@
+<section class="kahve-about-page">
+  <div class="about-hero">
+    <div class="about-card">
+      <span class="about-eyebrow">{{ 'about.kicker' | t }}</span>
+      <h1>{{ 'about.title' | t }}</h1>
+      <p>{{ 'about.p1' | t }}</p>
+      <p>{{ 'about.p2' | t }}</p>
+      <p>{{ 'about.p3' | t }}</p>
+      <div class="about-actions">
+        <a routerLink="/home" fragment="newArrivals" class="kahve-btn primary">{{ 'about.shop' | t }}</a>
+        <a routerLink="/contactUs" class="kahve-btn secondary">{{ 'about.contact' | t }}</a>
+      </div>
+    </div>
+
+    <div class="about-image-wrap">
+      <img src="/assets/images/kahve-products.jpg" [alt]="'about.imageAlt' | t" />
+      <div class="about-floating-note">{{ 'about.note' | t }}</div>
+    </div>
+  </div>
+
+  <div class="about-values">
+    <div class="value-card">
+      <i class="fa-solid fa-mug-hot"></i>
+      <h3>{{ 'about.value1Title' | t }}</h3>
+      <p>{{ 'about.value1Text' | t }}</p>
+    </div>
+    <div class="value-card">
+      <i class="fa-solid fa-seedling"></i>
+      <h3>{{ 'about.value2Title' | t }}</h3>
+      <p>{{ 'about.value2Text' | t }}</p>
+    </div>
+    <div class="value-card">
+      <i class="fa-solid fa-gift"></i>
+      <h3>{{ 'about.value3Title' | t }}</h3>
+      <p>{{ 'about.value3Text' | t }}</p>
+    </div>
+  </div>
+</section>

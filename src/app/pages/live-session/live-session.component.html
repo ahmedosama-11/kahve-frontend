@@ -1,0 +1,55 @@
+<div class="vto-page-wrapper">
+  
+  <div class="vto-glass-card animate-fade-in">
+    <div class="card-header-vto">
+      <div class="live-indicator">
+        <span class="dot"></span> LIVE MIRROR
+      </div>
+      <h3 class="vto-title">Virtual Studio</h3>
+      <p class="vto-subtitle">Try our premium eyewear in real-time</p>
+    </div>
+
+    <div id="JeelizVTOWidget" class="camera-container">
+      <canvas id="jeezWidgetCanvas"></canvas>
+
+      <div id="jeezWidgetLoading" class="vto-loader">
+        <div class="loader-content">
+          <div class="spinner-border text-info" style="width: 3rem; height: 3rem;"></div>
+          <p class="mt-3 fw-bold tracking-widest">CALIBRATING AR...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="vto-control-panel">
+      
+      <div class="search-section mb-4">
+        <div class="glass-input-wrapper">
+          <i class="fa fa-barcode search-icon"></i>
+          <input type="text" class="glass-input" 
+                 placeholder="Enter SKU Code..." 
+                 #skuInput> 
+          <button class="btn-load-sku" (click)="changeModel(skuInput.value)">
+            LOAD
+          </button>
+        </div>
+      </div>
+
+      <div class="featured-section">
+        <p class="selection-label">FEATURED STYLES</p>
+        <div class="btn-group-vto">
+          <button class="vto-premium-btn" (click)="changeModel('rayban_aviator_or_vertFlash')">
+             <i class="fa fa-glasses me-2"></i> Aviator Gold
+          </button>
+          <button class="vto-premium-btn" (click)="changeModel('rayban_cockpit_or_vert_classique')">
+             <i class="fa fa-glasses me-2"></i> Cockpit Black
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vto-footer-tips animate-slide-up">
+    <i class="fa fa-circle-info text-info me-2"></i>
+    Position your face clearly for the best experience.
+  </div>
+</div>
