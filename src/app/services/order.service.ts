@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrderService {
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = API_BASE_URL;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -52,6 +53,11 @@ export class OrderService {
     return this.handleRequest(request, 'Get user orders');
   }
 
+  confirmCardCheckout(sessionId: string): Observable<any> {
+    const request = this.http.post<any>(`${this.baseUrl}/checkout/card/confirm`, { sessionId }, { withCredentials: true });
+    return this.handleRequest(request, 'Confirm card checkout');
+  }
+
   cancelOrder(orderId: string): Observable<any> {
     console.log('Cancelling order:', { orderId });
     const body = { orderId };
@@ -63,6 +69,13 @@ export class OrderService {
     console.log('Processing checkout:', orderData);
     const request = this.http.post<any>(`${this.baseUrl}/checkout`, orderData, { withCredentials: true });
     return this.handleRequest(request, 'Checkout');
+  }
+
+
+  checkoutBatch(payload: any): Observable<any> {
+    console.log('Processing batch checkout:', payload);
+    const request = this.http.post<any>(`${this.baseUrl}/checkout/batch`, payload, { withCredentials: true });
+    return this.handleRequest(request, 'Batch checkout');
   }
 
   getSuccess(orderData: any): Observable<any> {

@@ -604,3 +604,31 @@
     overflow-y: auto;
   }
 }
+
+.edit-form select {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(91, 54, 31, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+  color: #2d170d;
+  padding: 0 14px;
+}
+.best-seller-edit .edit-check-line {
+  min-height: 48px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(91, 54, 31, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.92rem;
+}
+.best-seller-edit input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}

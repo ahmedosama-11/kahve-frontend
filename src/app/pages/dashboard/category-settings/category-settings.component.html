@@ -1,0 +1,81 @@
+<div class="category-settings-page">
+  <div class="settings-heading">
+    <span>KAHVE Catalog</span>
+    <h2>Categories Management</h2>
+    <p>Add, edit, hide, show or delete home categories. Products will use these categories automatically.</p>
+  </div>
+
+  <section class="settings-card">
+    <h4>{{ editingId ? 'Edit Category' : 'Add New Category' }}</h4>
+
+    <div class="form-grid">
+      <label>
+        Category EN
+        <input type="text" [(ngModel)]="form.name_en" placeholder="Hot Drinks">
+      </label>
+
+      <label>
+        Category AR
+        <input type="text" [(ngModel)]="form.name_ar" placeholder="مشروبات ساخنة" dir="rtl">
+      </label>
+
+      <label>
+        Sort Order
+        <input type="number" [(ngModel)]="form.sortOrder" placeholder="100">
+      </label>
+    </div>
+
+    <div class="toggles-row">
+      <label class="toggle-control">
+        <input type="checkbox" [(ngModel)]="form.isActive">
+        <span>Active</span>
+      </label>
+      <label class="toggle-control">
+        <input type="checkbox" [(ngModel)]="form.showInHome">
+        <span>Show in home category bar</span>
+      </label>
+    </div>
+
+    <div class="form-message success" *ngIf="message"><i class="fa fa-check-circle"></i> {{ message }}</div>
+    <div class="form-message error" *ngIf="error"><i class="fa fa-exclamation-circle"></i> {{ error }}</div>
+
+    <div class="actions-row">
+      <button class="btn-save" type="button" (click)="saveCategory()" [disabled]="isSaving">
+        <i class="fa" [ngClass]="isSaving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+        {{ isSaving ? 'Saving...' : (editingId ? 'Save Changes' : 'Add Category') }}
+      </button>
+      <button class="btn-cancel" type="button" (click)="resetForm()" *ngIf="editingId">Cancel Edit</button>
+    </div>
+  </section>
+
+  <section class="settings-card list-card">
+    <div class="list-heading">
+      <h4>Current Categories</h4>
+      <div class="list-actions">
+        <small>{{ categories.length }} categories</small>
+        <button type="button" class="btn-sync" (click)="syncFromProducts()">Sync from products</button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && categories.length === 0">No categories yet.</div>
+    <div class="loading-state" *ngIf="isLoading">Loading categories...</div>
+
+    <div class="category-list" *ngIf="categories.length > 0">
+      <article class="category-row" *ngFor="let category of categories">
+        <div class="category-main">
+          <strong>{{ category.name_en }}</strong>
+          <span dir="rtl">{{ category.name_ar }}</span>
+        </div>
+        <div class="category-meta">
+          <span>Order: {{ category.sortOrder }}</span>
+          <b [class.off]="category.isActive === false">{{ category.isActive === false ? 'Inactive' : 'Active' }}</b>
+          <b [class.off]="category.showInHome === false">{{ category.showInHome === false ? 'Hidden' : 'Home' }}</b>
+        </div>
+        <div class="row-actions">
+          <button type="button" class="btn-icon edit" (click)="editCategory(category)"><i class="fa fa-pen"></i></button>
+          <button type="button" class="btn-icon delete" (click)="deleteCategory(category)"><i class="fa fa-trash"></i></button>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

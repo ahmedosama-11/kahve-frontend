@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = API_BASE_URL;
 
   private cartCountSubject = new BehaviorSubject<number>(this.readStoredCartCount());
   cartCount$ = this.cartCountSubject.asObservable();

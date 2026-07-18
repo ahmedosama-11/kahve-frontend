@@ -1,0 +1,99 @@
+<section class="settings-page">
+  <div class="settings-header">
+    <span>{{ isArabic() ? 'أكواد الخصم' : 'Discount Codes' }}</span>
+    <h2>{{ isArabic() ? 'إدارة كوبونات الخصم' : 'Manage discount coupons' }}</h2>
+    <p>{{ isArabic() ? 'أضف أكواد الخصم وحدد نوع الخصم وقيمته والحد الأدنى للطلب.' : 'Create coupon codes, set discount type, value and minimum order.' }}</p>
+  </div>
+
+  <form class="settings-card settings-form" (ngSubmit)="saveCoupon()">
+    <div class="form-grid">
+      <label>
+        {{ isArabic() ? 'كود الخصم' : 'Coupon Code' }}
+        <input name="code" [(ngModel)]="form.code" placeholder="WELCOME10">
+      </label>
+      <label>
+        {{ isArabic() ? 'نوع الخصم' : 'Discount Type' }}
+        <select name="type" [(ngModel)]="form.type">
+          <option value="fixed">{{ isArabic() ? 'مبلغ ثابت' : 'Fixed amount' }}</option>
+          <option value="percent">{{ isArabic() ? 'نسبة مئوية' : 'Percentage' }}</option>
+        </select>
+      </label>
+      <label>
+        {{ isArabic() ? 'القيمة' : 'Value' }}
+        <input type="number" min="0" name="value" [(ngModel)]="form.value">
+      </label>
+      <label>
+        {{ isArabic() ? 'أقل طلب' : 'Min Order' }}
+        <input type="number" min="0" name="minOrder" [(ngModel)]="form.minOrder">
+      </label>
+      <label>
+        {{ isArabic() ? 'أقصى خصم' : 'Max Discount' }}
+        <input type="number" min="0" name="maxDiscount" [(ngModel)]="form.maxDiscount">
+      </label>
+      <label>
+        {{ isArabic() ? 'عدد الاستخدامات' : 'Usage Limit' }}
+        <input type="number" min="0" name="usageLimit" [(ngModel)]="form.usageLimit">
+      </label>
+      <label>
+        {{ isArabic() ? 'ينتهي في' : 'Expires At' }}
+        <input type="date" name="expiresAt" [(ngModel)]="form.expiresAt">
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" name="active" [(ngModel)]="form.active">
+        {{ isArabic() ? 'نشط' : 'Active' }}
+      </label>
+      <label class="toggle-label wide-toggle">
+        <input type="checkbox" name="oneUsePerUser" [(ngModel)]="form.oneUsePerUser">
+        {{ isArabic() ? 'كل حساب يستخدم الكود مرة واحدة فقط' : 'One use per account only' }}
+      </label>
+    </div>
+
+    <p class="settings-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="settings-success" *ngIf="successMessage">{{ successMessage }}</p>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="saving">
+        <i class="fa fa-ticket"></i>
+        {{ saving ? (isArabic() ? 'جاري الحفظ...' : 'Saving...') : (editingId ? (isArabic() ? 'تحديث الكود' : 'Update Coupon') : (isArabic() ? 'إضافة كود' : 'Add Coupon')) }}
+      </button>
+      <button type="button" class="ghost" (click)="resetForm()" *ngIf="editingId">
+        {{ isArabic() ? 'إلغاء التعديل' : 'Cancel edit' }}
+      </button>
+    </div>
+  </form>
+
+  <div class="settings-card table-card">
+    <div *ngIf="loading" class="empty-state">{{ isArabic() ? 'جاري التحميل...' : 'Loading...' }}</div>
+    <div *ngIf="!loading && coupons.length === 0" class="empty-state">{{ isArabic() ? 'لا توجد أكواد خصم بعد.' : 'No coupons yet.' }}</div>
+
+    <table *ngIf="!loading && coupons.length > 0">
+      <thead>
+        <tr>
+          <th>{{ isArabic() ? 'الكود' : 'Code' }}</th>
+          <th>{{ isArabic() ? 'النوع' : 'Type' }}</th>
+          <th>{{ isArabic() ? 'القيمة' : 'Value' }}</th>
+          <th>{{ isArabic() ? 'أقل طلب' : 'Min Order' }}</th>
+          <th>{{ isArabic() ? 'الاستخدام' : 'Usage' }}</th>
+          <th>{{ isArabic() ? 'لكل حساب' : 'Per Account' }}</th>
+          <th>{{ isArabic() ? 'الحالة' : 'Status' }}</th>
+          <th>{{ isArabic() ? 'الإجراء' : 'Action' }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let coupon of coupons">
+          <td><strong>{{ coupon.code }}</strong></td>
+          <td>{{ coupon.type === 'percent' ? (isArabic() ? 'نسبة' : 'Percent') : (isArabic() ? 'ثابت' : 'Fixed') }}</td>
+          <td>{{ coupon.value | number }} {{ coupon.type === 'percent' ? '%' : (isArabic() ? 'جنيه' : 'EGP') }}</td>
+          <td>{{ coupon.minOrder | number }}</td>
+          <td>{{ coupon.usedCount || 0 }} / {{ coupon.usageLimit || (isArabic() ? 'مفتوح' : 'Unlimited') }}</td>
+          <td>{{ coupon.oneUsePerUser ? (isArabic() ? 'مرة واحدة' : 'Once') : (isArabic() ? 'مفتوح' : 'Open') }}</td>
+          <td><span class="status-pill" [class.off]="!coupon.active">{{ coupon.active ? (isArabic() ? 'نشط' : 'Active') : (isArabic() ? 'متوقف' : 'Inactive') }}</span></td>
+          <td class="row-actions">
+            <button type="button" (click)="editCoupon(coupon)"><i class="fa fa-pen"></i></button>
+            <button type="button" class="danger" (click)="deleteCoupon(coupon)"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

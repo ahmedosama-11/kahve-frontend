@@ -3,6 +3,13 @@
     <div class="footer-brand">
       <span class="footer-logo">KAHVE</span>
       <p>{{ 'footer.description' | t }}</p>
+      <div class="footer-hotline phone-hotline">
+        <span>{{ 'footer.phoneTitle' | t }}</span>
+        <a [href]="'tel:' + contact.phoneTel">
+          <i class="fa-solid fa-phone"></i>
+          {{ contact.phoneDisplay }}
+        </a>
+      </div>
     </div>
 
     <div class="footer-links">
@@ -17,17 +24,21 @@
         <a [routerLink]="['/aboutUs']">{{ 'footer.aboutUs' | t }}</a>
         <a [routerLink]="['/contactUs']">{{ 'nav.contact' | t }}</a>
         <a [routerLink]="['/home']">{{ 'nav.home' | t }}</a>
+        <a [href]="'tel:' + contact.phoneTel">{{ 'footer.callNow' | t }}: {{ contact.phoneDisplay }}</a>
       </div>
     </div>
   </div>
   <div class="footer-bottom">
     <span>{{ 'footer.copyright' | t }}</span>
     <span class="footer-socials">
-      <a href="https://www.instagram.com/kahve.eg?igsh=MWlraWpyanI0c3pibw==" target="_blank" rel="noopener noreferrer" aria-label="KAHVE Instagram">
+      <a [href]="contact.instagram" target="_blank" rel="noopener noreferrer" aria-label="KAHVE Instagram">
         <i class="fa-brands fa-instagram"></i>
       </a>
-      <a href="https://www.facebook.com/share/18mgNjbhP8/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="KAHVE Facebook">
+      <a [href]="contact.facebook" target="_blank" rel="noopener noreferrer" aria-label="KAHVE Facebook">
         <i class="fa-brands fa-facebook"></i>
+      </a>
+      <a [href]="'https://wa.me/' + contact.whatsappNumber" target="_blank" rel="noopener noreferrer" aria-label="KAHVE WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
       </a>
       <i class="fa-solid fa-mug-hot"></i>
     </span>

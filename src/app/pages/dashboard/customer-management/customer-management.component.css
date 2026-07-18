@@ -1,0 +1,221 @@
+:host {
+  display: block;
+  padding: 28px;
+  color: #2d170d;
+}
+
+.customers-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  color: #a8713e;
+  letter-spacing: .22em;
+  font-weight: 900;
+  font-size: .78rem;
+}
+
+h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.3rem, 5vw, 4.8rem);
+  margin: 8px 0;
+  letter-spacing: -0.06em;
+}
+
+.header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.light-btn,
+.customer-actions button,
+.customer-actions select {
+  border: 1px solid rgba(91, 54, 31, .12);
+  background: #fff8ee;
+  color: #5b361f;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stats-grid div,
+.filters-card,
+.customer-card,
+.modal-card {
+  background: rgba(255, 250, 242, .92);
+  border: 1px solid rgba(91, 54, 31, .10);
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 16px 36px rgba(45, 23, 13, .075);
+}
+
+.stats-grid span,
+.customer-data span {
+  display: block;
+  color: #9b6a36;
+  font-size: .76rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.stats-grid strong {
+  font-size: 1.6rem;
+}
+
+.filters-card {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+input, select {
+  border: 1px solid rgba(91, 54, 31, .13);
+  border-radius: 16px;
+  padding: 13px 15px;
+  background: #fff;
+}
+
+.alert { padding: 14px 16px; border-radius: 16px; margin-bottom: 14px; font-weight: 800; }
+.alert.error { background: rgba(181, 69, 27, .12); color: #b5451b; }
+.alert.success { background: rgba(47, 107, 68, .12); color: #2f6b44; }
+
+.customer-list { display: grid; gap: 14px; }
+
+.customer-card {
+  display: grid;
+  grid-template-columns: 1.4fr .7fr .8fr 1fr 1.7fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.customer-main {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.avatar {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #5b361f;
+  color: #fff8ee;
+  font-weight: 900;
+  flex: 0 0 auto;
+}
+
+.customer-main h3 { margin: 0 0 5px; }
+.customer-main p { margin: 2px 0; color: #7b6556; overflow-wrap: anywhere; }
+
+.customer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(168, 113, 62, .12);
+  color: #8a5b2d;
+  font-weight: 900;
+  font-size: .76rem;
+}
+
+.tag.blocked { background: rgba(181, 69, 27, .12); color: #b5451b; }
+.tag.verified { background: rgba(47, 107, 68, .12); color: #2f6b44; }
+
+.customer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.customer-actions .danger {
+  background: rgba(181, 69, 27, .12);
+  color: #b5451b;
+}
+
+.empty {
+  text-align: center;
+  padding: 34px;
+  color: #7b6556;
+}
+
+.customer-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 15, 9, .42);
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.modal-card {
+  width: min(880px, 100%);
+  max-height: 88vh;
+  overflow: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: #5b361f;
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.modal-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.modal-stats div,
+.orders-mini article {
+  background: rgba(91, 54, 31, .04);
+  border: 1px solid rgba(91, 54, 31, .08);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.orders-mini { display: grid; gap: 10px; }
+.orders-mini article span { display: block; color: #9b6a36; margin: 5px 0; }
+
+@media (max-width: 1100px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .customer-card { grid-template-columns: 1fr; align-items: stretch; }
+  .customer-actions { justify-content: flex-start; }
+}
+
+@media (max-width: 650px) {
+  :host { padding: 16px; }
+  .customers-header { flex-direction: column; }
+  .stats-grid,
+  .filters-card,
+  .modal-stats { grid-template-columns: 1fr; }
+}

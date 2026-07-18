@@ -200,18 +200,26 @@
 
       <div class="edit-grid">
         <label>
-          Category EN
-          <input type="text" name="category_en" [(ngModel)]="editForm.category_en" placeholder="Hot Drinks / Turkish Coffee" required>
-        </label>
-
-        <label>
-          Category AR
-          <input type="text" name="category_ar" [(ngModel)]="editForm.category_ar" placeholder="مشروبات ساخنة / قهوة تركية" dir="rtl" required>
+          Category
+          <select name="categoryId" [(ngModel)]="editForm.categoryId" required>
+            <option value="" disabled>Choose category</option>
+            <option *ngFor="let category of categories" [value]="category._id">
+              {{ category.name_en }} / {{ category.name_ar }}
+            </option>
+          </select>
         </label>
 
         <label>
           SKU
           <input type="text" name="SKU" [(ngModel)]="editForm.SKU" placeholder="SKU">
+        </label>
+
+        <label class="best-seller-edit">
+          Best Sellers
+          <span class="edit-check-line">
+            <input type="checkbox" name="isBestSeller" [(ngModel)]="editForm.isBestSeller">
+            Show in Best Sellers
+          </span>
         </label>
       </div>
 

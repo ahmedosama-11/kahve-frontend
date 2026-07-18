@@ -24,39 +24,49 @@ import { ModelErrorComponent } from './pages/model-error/model-error.component';
 import { LiveSessionComponent } from './pages/live-session/live-session.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
+import { DeliverySettingsComponent } from './pages/dashboard/delivery-settings/delivery-settings.component';
+import { CouponSettingsComponent } from './pages/dashboard/coupon-settings/coupon-settings.component';
+import { CategorySettingsComponent } from './pages/dashboard/category-settings/category-settings.component';
+import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
+import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
-  { path: 'welcome', component: WelcomeComponent, data: { title: 'Welcome' } },
-  { path: 'login', component: LoginComponent, canActivate: [AuthGuard], data: { title: 'LogIn' } },
-  { path: 'signup', component: SignupComponent, canActivate: [AuthGuard], data: { title: 'SignUp' } },
-  { path: 'forgot-password', component: ForgotPasswordComponent, data: { title: 'Reset Password' } },
-  { path: 'verify-email', component: VerifyEmailComponent, data: { title: 'Verify Email' } },
-  { path: 'home', component: HomeComponent, data: { title: 'Home' } },
-  { path: 'aboutUs', component: AboutusComponent, data: { title: 'About us' } },
-  { path: 'cart', component: CartComponent, canActivate: [AuthGuard], data: { title: 'Cart' } },
-  { path: 'orders', component: OrderComponent, canActivate: [AuthGuard], data: { title: 'Orders' } },
-  { path: 'logout', component: LogoutComponent, canActivate: [AuthGuard], data: { title: 'Logout' } },
-  { path: 'deliveryDetails', component: DeliveryDetailsComponent, canActivate: [AuthGuard], data: { title: 'Delivery Details' } },
-  { path: 'bestStyle', component: BestStyleComponent, canActivate: [AuthGuard], data: { title: 'Best Style' } },
-  { path: 'virtualTryOn', component: VirtualTryOnComponent, canActivate: [AuthGuard], data: { title: 'Virtual Try On' } },
-  { path: 'contactUs', component: ContactusComponent, canActivate: [AuthGuard], data: { title: 'Contact Us' } },
-  { path: 'liveSession', component: LiveSessionComponent, data: { title: 'Live Session' } },
+  { path: 'welcome', component: WelcomeComponent, data: { title: 'KAHVE' } },
+  { path: 'login', component: LoginComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'signup', component: SignupComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'forgot-password', component: ForgotPasswordComponent, data: { title: 'KAHVE' } },
+  { path: 'verify-email', component: VerifyEmailComponent, data: { title: 'KAHVE' } },
+  { path: 'home', component: HomeComponent, data: { title: 'KAHVE' } },
+  { path: 'aboutUs', component: AboutusComponent, data: { title: 'KAHVE' } },
+  { path: 'cart', component: CartComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'orders', component: OrderComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'logout', component: LogoutComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'deliveryDetails', component: DeliveryDetailsComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'bestStyle', component: BestStyleComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'virtualTryOn', component: VirtualTryOnComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'contactUs', component: ContactusComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
+  { path: 'liveSession', component: LiveSessionComponent, data: { title: 'KAHVE' } },
   {
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard, AdminGuard],
     canActivateChild: [AdminGuard],
-    data: { title: 'Dashboard' },
+    data: { title: 'KAHVE' },
     children: [
-      { path: 'addproduct', component: AddProductComponent, data: { title: 'Add Product' } },
-      { path: 'manageorder', component: ManageOrdersComponent, data: { title: 'Manage Order' } },
-      { path: 'view', component: ViewProductsComponent, data: { title: 'View Product' } },
+      { path: 'addproduct', component: AddProductComponent, data: { title: 'KAHVE' } },
+      { path: 'manageorder', component: ManageOrdersComponent, data: { title: 'KAHVE' } },
+      { path: 'view', component: ViewProductsComponent, data: { title: 'KAHVE' } },
+      { path: 'delivery-settings', component: DeliverySettingsComponent, data: { title: 'KAHVE' } },
+      { path: 'coupons', component: CouponSettingsComponent, data: { title: 'KAHVE' } },
+      { path: 'categories', component: CategorySettingsComponent, data: { title: 'KAHVE' } },
+      { path: 'site-content', component: SiteContentManagementComponent, data: { title: 'KAHVE' } },
+      { path: 'customers', component: CustomerManagementComponent, data: { title: 'KAHVE' } },
       { path: '', redirectTo: 'addproduct', pathMatch: 'full' }
     ],
   },
-  { path: 'error', component: ErrorComponent, data: { title: 'Error' } },
-  { path: 'model-error', component: ModelErrorComponent, data: { title: 'Model-Error' } },
+  { path: 'error', component: ErrorComponent, data: { title: 'KAHVE' } },
+  { path: 'model-error', component: ModelErrorComponent, data: { title: 'KAHVE' } },
   { path: '**', redirectTo: '/error' },
 ];
 

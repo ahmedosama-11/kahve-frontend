@@ -1,0 +1,114 @@
+<section class="customers-page">
+  <header class="customers-header">
+    <div>
+      <span class="eyebrow">KAHVE CUSTOMERS</span>
+      <h1>{{ t('Customer Management', 'إدارة العملاء') }}</h1>
+      <p>{{ t('Manage accounts, customer details, order history and access status.', 'إدارة الحسابات وبيانات العملاء وسجل الطلبات وحالة الدخول.') }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="light-btn" type="button" (click)="downloadCustomerReport()">
+        <i class="fa fa-file-arrow-down"></i>
+        {{ t('Customers Report', 'تقرير العملاء') }}
+      </button>
+      <button class="light-btn" type="button" (click)="loadCustomers()">
+        <i class="fa fa-rotate"></i>
+        {{ t('Refresh', 'تحديث') }}
+      </button>
+    </div>
+  </header>
+
+  <div class="stats-grid">
+    <div><span>{{ t('Customers', 'العملاء') }}</span><strong>{{ totals.customers }}</strong></div>
+    <div><span>{{ t('Active', 'نشط') }}</span><strong>{{ totals.active }}</strong></div>
+    <div><span>{{ t('Orders', 'الطلبات') }}</span><strong>{{ totals.orders }}</strong></div>
+    <div><span>{{ t('Total Sales', 'إجمالي المبيعات') }}</span><strong>{{ totals.sales | number }} EGP</strong></div>
+  </div>
+
+  <div class="filters-card">
+    <input [(ngModel)]="searchTerm" [placeholder]="t('Search name, email or phone...', 'ابحث بالاسم أو الإيميل أو الهاتف...')">
+    <select [(ngModel)]="statusFilter">
+      <option value="all">{{ t('All statuses', 'كل الحالات') }}</option>
+      <option value="active">{{ t('Active', 'نشط') }}</option>
+      <option value="inactive">{{ t('Inactive', 'غير نشط') }}</option>
+      <option value="blocked">{{ t('Blocked', 'محظور') }}</option>
+    </select>
+  </div>
+
+  <div class="alert error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="alert success" *ngIf="successMessage">{{ successMessage }}</div>
+
+  <section class="customer-list">
+    <article class="customer-card" *ngFor="let customer of filteredCustomers">
+      <div class="customer-main">
+        <div class="avatar">{{ (customer.name || customer.email || 'K').slice(0,1).toUpperCase() }}</div>
+        <div>
+          <h3>{{ customer.name || t('No name', 'بدون اسم') }}</h3>
+          <p>{{ customer.email }}</p>
+          <p>{{ customer.phone || (customer.phones || []).join(' / ') || '-' }}</p>
+        </div>
+      </div>
+
+      <div class="customer-data">
+        <span>{{ t('Orders', 'الطلبات') }}</span>
+        <strong>{{ customer.orderCount || 0 }}</strong>
+      </div>
+
+      <div class="customer-data">
+        <span>{{ t('Total spent', 'إجمالي المشتريات') }}</span>
+        <strong>{{ customer.totalSpent || 0 | number }} EGP</strong>
+      </div>
+
+      <div class="customer-tags">
+        <span class="tag">{{ customer.role || 'user' }}</span>
+        <span class="tag" [class.blocked]="customer.status === 'blocked'">{{ customer.status || 'inactive' }}</span>
+        <span class="tag verified" *ngIf="customer.isEmailVerified">{{ t('Verified', 'مؤكد') }}</span>
+      </div>
+
+      <div class="customer-actions">
+        <button type="button" (click)="openDetails(customer)"><i class="fa fa-eye"></i> {{ t('Details', 'التفاصيل') }}</button>
+        <select [ngModel]="customer.status || 'inactive'" (ngModelChange)="updateStatus(customer, $event)">
+          <option value="active">{{ t('Active', 'نشط') }}</option>
+          <option value="inactive">{{ t('Inactive', 'غير نشط') }}</option>
+          <option value="blocked">{{ t('Blocked', 'محظور') }}</option>
+        </select>
+        <select [ngModel]="customer.role || 'user'" (ngModelChange)="updateRole(customer, $event)">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button class="danger" type="button" (click)="disableCustomer(customer)"><i class="fa fa-ban"></i></button>
+      </div>
+    </article>
+
+    <div class="empty" *ngIf="!loading && filteredCustomers.length === 0">
+      {{ t('No customers found.', 'لا يوجد عملاء.') }}
+    </div>
+  </section>
+
+  <div class="customer-modal" *ngIf="selectedCustomer">
+    <div class="modal-card">
+      <button class="modal-close" type="button" (click)="closeDetails()">×</button>
+      <h2>{{ selectedCustomer.name || selectedCustomer.email }}</h2>
+      <p>{{ selectedCustomer.email }} · {{ selectedCustomer.phone || '-' }}</p>
+
+      <div class="modal-stats">
+        <div><span>{{ t('Orders', 'الطلبات') }}</span><strong>{{ selectedCustomer.orderCount || 0 }}</strong></div>
+        <div><span>{{ t('Total spent', 'إجمالي المشتريات') }}</span><strong>{{ selectedCustomer.totalSpent || 0 | number }} EGP</strong></div>
+      </div>
+
+      <h3>{{ t('Addresses', 'العناوين') }}</h3>
+      <ul>
+        <li *ngFor="let address of selectedCustomer.addresses || []">{{ address }}</li>
+      </ul>
+
+      <h3>{{ t('Orders history', 'سجل الطلبات') }}</h3>
+      <div class="orders-mini" *ngIf="!detailsLoading">
+        <article *ngFor="let order of selectedOrders">
+          <strong>#{{ order.orderNumber || order.key }}</strong>
+          <span>{{ order.status }} · {{ order.paymentMethod }} · {{ order.grandTotal || 0 | number }} EGP</span>
+          <p>{{ order.address }}</p>
+          <small *ngFor="let item of order.items">{{ item.title }} × {{ item.amount }} </small>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>

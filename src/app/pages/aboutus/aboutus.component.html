@@ -1,10 +1,10 @@
 <section class="kahve-about-page">
   <div class="about-hero">
     <div class="about-card">
-      <span class="about-eyebrow">{{ 'about.kicker' | t }}</span>
-      <h1>{{ 'about.title' | t }}</h1>
-      <p>{{ 'about.p1' | t }}</p>
-      <p>{{ 'about.p2' | t }}</p>
+      <span class="about-eyebrow">{{ contentText('main', 'subtitle', 'about.kicker') }}</span>
+      <h1>{{ contentText('main', 'title', 'about.title') }}</h1>
+      <p>{{ contentText('main', 'body', 'about.p1') }}</p>
+      <p>{{ contentText('main', 'extra', 'about.p2') }}</p>
       <p>{{ 'about.p3' | t }}</p>
       <div class="about-actions">
         <a routerLink="/home" fragment="newArrivals" class="kahve-btn primary">{{ 'about.shop' | t }}</a>
@@ -13,8 +13,8 @@
     </div>
 
     <div class="about-image-wrap">
-      <img src="/assets/images/kahve-products.jpg" [alt]="'about.imageAlt' | t" />
-      <div class="about-floating-note">{{ 'about.note' | t }}</div>
+      <img [src]="contentImage('main', '/assets/images/kahve-products.jpg')" [alt]="'about.imageAlt' | t" />
+      <div class="about-floating-note">{{ contentText('main', 'badge', 'about.note') }}</div>
     </div>
   </div>
 

@@ -16,9 +16,33 @@
         </div>
       </div>
 
-      <div class="checkout-total">
-        <span>{{ 'checkout.total' | t }}</span>
-        <strong>{{ getGrandTotal() | number }} {{ moneyLabel() }}</strong>
+      <div class="coupon-box">
+        <label>{{ 'checkout.discountCode' | t }}</label>
+        <div class="coupon-row">
+          <input type="text" [(ngModel)]="couponCode" name="couponCode" [placeholder]="'checkout.discountPlaceholder' | t">
+          <button type="button" (click)="applyCoupon()">{{ 'checkout.applyCoupon' | t }}</button>
+        </div>
+        <p class="coupon-success" *ngIf="couponMessage">{{ couponMessage }}</p>
+        <p class="coupon-error" *ngIf="couponError">{{ couponError }}</p>
+      </div>
+
+      <div class="totals-box">
+        <div>
+          <span>{{ 'checkout.subtotal' | t }}</span>
+          <strong>{{ getSubtotal() | number }} {{ moneyLabel() }}</strong>
+        </div>
+        <div>
+          <span>{{ 'checkout.deliveryFee' | t }}</span>
+          <strong>{{ getDeliveryFee() | number }} {{ moneyLabel() }}</strong>
+        </div>
+        <div *ngIf="discountAmount > 0" class="discount-line">
+          <span>{{ 'checkout.discount' | t }} <small>({{ appliedCouponCode }})</small></span>
+          <strong>-{{ discountAmount | number }} {{ moneyLabel() }}</strong>
+        </div>
+        <div class="final-total">
+          <span>{{ 'checkout.finalTotal' | t }}</span>
+          <strong>{{ getFinalTotal() | number }} {{ moneyLabel() }}</strong>
+        </div>
       </div>
 
       <a routerLink="/cart" class="back-cart-link">{{ 'checkout.backToCart' | t }}</a>
@@ -51,17 +75,27 @@
 
         <label>
           {{ 'checkout.city' | t }}
-          <input type="text" name="city" [(ngModel)]="deliveryData.city" required [placeholder]="'checkout.cityPlaceholder' | t">
+          <select name="city" [(ngModel)]="deliveryData.city" (change)="onCityChange()" *ngIf="availableCities.length > 0" required>
+            <option value="" disabled>{{ 'checkout.selectCity' | t }}</option>
+            <option *ngFor="let city of availableCities" [value]="city">{{ city }}</option>
+          </select>
+          <input *ngIf="availableCities.length === 0" type="text" name="cityManual" [(ngModel)]="deliveryData.city" required [placeholder]="'checkout.cityPlaceholder' | t">
         </label>
 
         <label>
-          {{ 'checkout.state' | t }}
-          <input type="text" name="state" [(ngModel)]="deliveryData.state" required [placeholder]="'checkout.statePlaceholder' | t">
+          {{ 'checkout.area' | t }}
+          <select name="areaId" [(ngModel)]="deliveryData.areaId" (change)="onAreaChange()" *ngIf="deliveryAreas.length > 0" required>
+            <option value="" disabled>{{ 'checkout.selectArea' | t }}</option>
+            <option *ngFor="let area of filteredAreas" [value]="area._id">
+              {{ getAreaName(area) }} - {{ area.deliveryFee | number }} {{ moneyLabel() }}
+            </option>
+          </select>
+          <input *ngIf="deliveryAreas.length === 0" type="text" name="stateManual" [(ngModel)]="deliveryData.state" required [placeholder]="'checkout.statePlaceholder' | t">
         </label>
 
         <label>
           {{ 'checkout.zip' | t }}
-          <input type="text" name="zip" [(ngModel)]="deliveryData.zip" required [placeholder]="'checkout.zipPlaceholder' | t">
+          <input type="text" name="zip" [(ngModel)]="deliveryData.zip" [placeholder]="'checkout.zipPlaceholder' | t">
         </label>
 
         <label>
@@ -70,11 +104,56 @@
         </label>
       </div>
 
+      <div class="payment-box">
+        <h3>{{ 'checkout.paymentMethod' | t }}</h3>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="cash" [(ngModel)]="paymentMethod" (change)="onPaymentMethodChange()">
+          <span><i class="fa fa-money-bill-wave"></i> {{ 'checkout.cash' | t }}</span>
+        </label>
+        <label class="payment-option" *ngIf="paymentSettings.instapayEnabled">
+          <input type="radio" name="paymentMethod" value="instapay" [(ngModel)]="paymentMethod" (change)="onPaymentMethodChange()">
+          <span><i class="fa fa-mobile-screen"></i> {{ 'checkout.instapay' | t }}</span>
+        </label>
+
+        <div class="manual-payment-card" *ngIf="paymentMethod === 'instapay'">
+          <div class="manual-payment-header">
+            <strong>{{ 'checkout.instapay' | t }}</strong>
+            <span>{{ getManualPaymentNote() }}</span>
+          </div>
+
+          <div class="manual-payment-destination">
+            <small>{{ 'checkout.payTo' | t }}</small>
+            <b>{{ getManualDestinationLabel() }}</b>
+          </div>
+
+          <a *ngIf="paymentSettings.instapayLink"
+             [attr.href]="canOpenInstapayLink() ? paymentSettings.instapayLink : null"
+             target="_blank"
+             rel="noopener"
+             class="manual-pay-link"
+             [class.disabled]="!canOpenInstapayLink()"
+             (click)="onOpenInstapayLink($event)">
+            <i class="fa fa-arrow-up-right-from-square"></i> {{ 'checkout.openPaymentLink' | t }}
+          </a>
+
+          <p class="manual-confirm-hint warning" *ngIf="paymentMethod === 'instapay' && !canOpenInstapayLink()">
+            {{ 'checkout.completeDetailsBeforePayment' | t }}
+          </p>
+
+          <p class="manual-confirm-hint" *ngIf="!instapayLinkOpened">
+            {{ 'checkout.openLinkThenConfirm' | t }}
+          </p>
+          <p class="manual-confirm-hint success" *ngIf="instapayLinkOpened">
+            {{ 'checkout.afterPayConfirm' | t }}
+          </p>
+        </div>
+      </div>
+
       <p class="delivery-error" *ngIf="errorMessage">{{ errorMessage }}</p>
       <p class="delivery-success" *ngIf="successMessage">{{ successMessage }}</p>
 
-      <button type="submit" class="submit-delivery" [disabled]="submitting || checkoutItems.length === 0">
-        {{ submitting ? ('checkout.creating' | t) : ('checkout.placeOrder' | t) }}
+      <button type="submit" class="submit-delivery" [disabled]="!canSubmitCheckout()">
+        {{ getSubmitButtonLabel() }}
         <i class="fa-solid" [ngClass]="languageService.isArabic ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
       </button>
     </form>

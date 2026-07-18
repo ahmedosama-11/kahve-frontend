@@ -10,6 +10,7 @@ import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { LanguageService } from '../../services/language.service';
+import { SiteContentService } from '../../services/site-content.service';
 
 @Component({
   selector: 'app-home',
@@ -34,9 +35,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   addingProducts: Record<string, boolean> = {};
   productMessages: Record<string, string> = {};
   selectedProduct: any | null = null;
+  pageContent: Record<string, any> = {};
 
   heroSlides = [
     {
+      key: 'hero_1',
       image: '/assets/images/kahve-products.jpg',
       tagKey: 'home.hero1Tag',
       titleKey: 'home.hero1Title',
@@ -47,6 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       link2TextKey: 'home.ourStory',
     },
     {
+      key: 'hero_2',
       image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?q=80&w=2070&auto=format&fit=crop',
       tagKey: 'home.hero2Tag',
       titleKey: 'home.hero2Title',
@@ -57,6 +61,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       link2TextKey: 'home.instantCoffee',
     },
     {
+      key: 'hero_3',
       image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2071&auto=format&fit=crop',
       tagKey: 'home.hero3Tag',
       titleKey: 'home.hero3Title',
@@ -68,7 +73,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     },
   ];
 
-  categories: { name: string }[] = [];
+  categories: any[] = [];
 
   private preferredCategories: string[] = [
     'Turkish Coffee',
@@ -101,12 +106,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private location: Location,
     public languageService: LanguageService,
+    private siteContentService: SiteContentService,
   ) {
     this.titleService.setTitle('KAHVE | Home');
   }
 
   ngOnInit(): void {
     this.loadHomeData();
+    this.loadPageContent();
     this.startAutoSlide();
 
     this.searchSubscription = this.searchSubject
@@ -151,7 +158,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     const sections = [
       'newArrivals',
-      ...this.categories.map((category) => this.getCategoryId(category.name)),
+      ...this.categories.map((category) => this.getCategoryId(this.getCategoryName(category))),
     ];
     const scrollPosition = window.pageYOffset + 150;
 
@@ -190,6 +197,26 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (element) element.scrollIntoView({ behavior: 'smooth' });
   }
 
+
+  loadPageContent(): void {
+    this.siteContentService.getPageContent('home').subscribe((content) => {
+      this.pageContent = content || {};
+    });
+  }
+
+  getBlock(key: string): any {
+    return this.pageContent?.[key];
+  }
+
+  contentText(key: string, field: string, fallbackKey?: string): string {
+    const fallback = fallbackKey ? this.languageService.translate(fallbackKey) : '';
+    return this.siteContentService.localized(this.getBlock(key), field, fallback);
+  }
+
+  contentImage(key: string, fallback: string): string {
+    return this.siteContentService.image(this.getBlock(key), fallback);
+  }
+
   loadHomeData(): void {
     this.homeService.getHomeData().subscribe({
       next: (data: any) => {
@@ -205,7 +232,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.products = Array.isArray(products) ? products : [];
         this.filteredProducts = [...this.products];
-        this.buildCategoriesFromProducts();
+
+        const responseCategories = data?.categories || data?.data?.categories || [];
+        if (Array.isArray(responseCategories) && responseCategories.length) {
+          this.categories = responseCategories;
+        } else {
+          this.buildCategoriesFromProducts();
+        }
 
         console.log('PRODUCTS LOADED:', this.products);
         console.log('CATEGORIES LOADED:', this.categories);
@@ -227,7 +260,23 @@ export class HomeComponent implements OnInit, OnDestroy {
       ...Array.from(categorySet).filter((category) => !this.preferredCategories.includes(category)).sort(),
     ];
 
-    this.categories = orderedCategories.map((name) => ({ name }));
+    this.categories = orderedCategories.map((name) => ({ name_en: name, name_ar: name, name }));
+  }
+
+  getCategoryName(category: any): string {
+    if (!category) return '';
+    if (typeof category === 'string') return category;
+    const suffix = this.languageService.currentLanguage === 'ar' ? '_ar' : '_en';
+    return String(category[`name${suffix}`] || category.name || category.name_en || category.name_ar || '').trim();
+  }
+
+  getCategoryAnchor(category: any): string {
+    return this.getCategoryId(this.getCategoryName(category));
+  }
+
+  getBestSellerProducts(): any[] {
+    const bestSellers = this.filteredProducts.filter((product: any) => product?.isBestSeller === true);
+    return bestSellers.length ? bestSellers : this.filteredProducts.slice(0, 8);
   }
 
   getProductTitle(product: any): string {
@@ -391,10 +440,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  getProductsByCategory(categoryName: string): any[] {
-    const wanted = String(categoryName || '').toLowerCase().trim();
+  getProductsByCategory(category: any): any[] {
+    const categoryId = typeof category === 'object' ? String(category?._id || '') : '';
+    const wanted = this.getCategoryName(category).toLowerCase().trim();
 
     return this.filteredProducts.filter((product: any) => {
+      const productCategoryId = String(product?.categoryId?._id || product?.categoryId || '');
+      if (categoryId && productCategoryId && productCategoryId === categoryId) return true;
+
       const displayCategory = this.getDisplayCategory(this.getProductCategory(product)).toLowerCase().trim();
       return displayCategory === wanted;
     });

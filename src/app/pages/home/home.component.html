@@ -5,8 +5,8 @@
       <a
         *ngFor="let category of categories"
         [routerLink]="['/home']"
-        [fragment]="getCategoryId(category.name)">
-        {{ category.name }}
+        [fragment]="getCategoryAnchor(category)">
+        {{ getCategoryName(category) }}
       </a>
       <a [routerLink]="['/aboutUs']">{{ 'home.ourStory' | t }}</a>
     </div>
@@ -15,14 +15,14 @@
   <section class="hero-container">
     <div class="hero-slider">
       <div class="hero-slide" *ngFor="let slide of heroSlides; let i = index" [class.active]="i === currentSlide">
-        <img [src]="slide.image" [alt]="slide.titleKey | t" />
+        <img [src]="contentImage(slide.key, slide.image)" [alt]="contentText(slide.key, 'title', slide.titleKey)" />
         <div class="hero-overlay">
           <div class="hero-content" *ngIf="i === currentSlide">
-            <span class="hero-tag">{{ slide.tagKey | t }}</span>
-            <h1>{{ slide.titleKey | t }}</h1>
-            <p>{{ slide.descKey | t }}</p>
+            <span class="hero-tag">{{ contentText(slide.key, 'subtitle', slide.tagKey) }}</span>
+            <h1>{{ contentText(slide.key, 'title', slide.titleKey) }}</h1>
+            <p>{{ contentText(slide.key, 'body', slide.descKey) }}</p>
             <div class="hero-btns">
-              <a [href]="slide.link1" class="btn-main">{{ slide.link1TextKey | t }}</a>
+              <a [href]="getBlock(slide.key)?.button_link || slide.link1" class="btn-main">{{ contentText(slide.key, 'button_text', slide.link1TextKey) }}</a>
               <a [href]="slide.link2" class="btn-outline">{{ slide.link2TextKey | t }}</a>
             </div>
           </div>
@@ -76,20 +76,20 @@
   <main class="kahve-main">
     <section class="kahve-story-section">
       <div class="story-copy">
-        <span class="section-eyebrow">{{ 'home.productEyebrow' | t }}</span>
-        <h2>{{ 'home.storyTitle' | t }}</h2>
+        <span class="section-eyebrow">{{ contentText('story', 'subtitle', 'home.productEyebrow') }}</span>
+        <h2>{{ contentText('story', 'title', 'home.storyTitle') }}</h2>
         <p>
-          {{ 'home.storyText' | t }}
+          {{ contentText('story', 'body', 'home.storyText') }}
         </p>
         <div class="story-note">
-          {{ 'home.storyNote' | t }}
+          {{ contentText('story', 'extra', 'home.storyNote') }}
         </div>
-        <a [routerLink]="['/aboutUs']" class="story-link">{{ 'home.aboutKahve' | t }}</a>
+        <a [routerLink]="[getBlock('story')?.button_link || '/aboutUs']" class="story-link">{{ contentText('story', 'button_text', 'home.aboutKahve') }}</a>
       </div>
       <div class="story-collage">
-        <img class="collage-main" src="/assets/images/kahve-products.jpg" alt="KAHVE coffee products" />
-        <div class="floating-card floating-card-top">{{ 'home.premiumRoast' | t }}</div>
-        <div class="floating-card floating-card-bottom">{{ 'home.freshDaily' | t }}</div>
+        <img class="collage-main" [src]="contentImage('story', '/assets/images/kahve-products.jpg')" alt="KAHVE coffee products" />
+        <div class="floating-card floating-card-top">{{ contentText('story', 'badge', 'home.premiumRoast') }}</div>
+        <div class="floating-card floating-card-bottom">{{ contentText('story', 'alt', 'home.freshDaily') }}</div>
       </div>
     </section>
 
@@ -136,19 +136,19 @@
           <p>{{ 'home.bestSellingText' | t }}</p>
         </div>
         <div class="items-container">
-          <ng-container *ngFor="let product of products | slice:0:8; trackBy: trackByProductId">
+          <ng-container *ngFor="let product of getBestSellerProducts(); trackBy: trackByProductId">
             <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
           </ng-container>
         </div>
       </section>
 
-      <section *ngFor="let category of categories" [id]="getCategoryId(category.name)" class="product-section category-section" [class.is-empty]="getProductsByCategory(category.name).length === 0">
-        <div class="section-heading" *ngIf="getProductsByCategory(category.name).length > 0">
+      <section *ngFor="let category of categories" [id]="getCategoryAnchor(category)" class="product-section category-section" [class.is-empty]="getProductsByCategory(category).length === 0">
+        <div class="section-heading" *ngIf="getProductsByCategory(category).length > 0">
           <span class="section-eyebrow">{{ 'home.collection' | t }}</span>
-          <h2>{{ category.name }}</h2>
+          <h2>{{ getCategoryName(category) }}</h2>
         </div>
-        <div class="items-container" *ngIf="getProductsByCategory(category.name).length > 0">
-          <ng-container *ngFor="let product of getProductsByCategory(category.name); trackBy: trackByProductId">
+        <div class="items-container" *ngIf="getProductsByCategory(category).length > 0">
+          <ng-container *ngFor="let product of getProductsByCategory(category); trackBy: trackByProductId">
             <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
           </ng-container>
         </div>
@@ -201,14 +201,14 @@
         <button class="view-button" type="button" (click)="openProductModal(product)">{{ 'home.view' | t }} <i class="fa-solid fa-eye"></i></button>
         <button *ngIf="product.Quantity <= 0" class="add-to-cart disabled" disabled>{{ 'home.outOfStock' | t }}</button>
         <a *ngIf="product.isInCart" [routerLink]="['/cart']" class="add-to-cart added">
-          {{ 'home.added' | t }} ✓ <span *ngIf="product.cartAmount">({{ product.cartAmount }})</span>
+          {{ 'home.added' | t }} ✓
         </a>
         <button
           *ngIf="product.Quantity > 0 && !product.isInCart"
           class="add-to-cart"
           [disabled]="isAddingProduct(product)"
           (click)="addToCart(product)">
-          <ng-container *ngIf="!isAddingProduct(product)">{{ 'home.addToCart' | t }} ({{ getSelectedQuantity(product) }}) <i class="fa-solid fa-cart-plus"></i></ng-container>
+          <ng-container *ngIf="!isAddingProduct(product)">{{ 'home.addToCart' | t }} <i class="fa-solid fa-cart-plus"></i></ng-container>
           <ng-container *ngIf="isAddingProduct(product)">{{ 'home.adding' | t }}</ng-container>
         </button>
       </div>
@@ -284,7 +284,7 @@
             class="add-to-cart"
             [disabled]="isAddingProduct(modalProduct)"
             (click)="addToCart(modalProduct)">
-            <ng-container *ngIf="!isAddingProduct(modalProduct)">{{ 'home.addToCart' | t }} ({{ getSelectedQuantity(modalProduct) }}) <i class="fa-solid fa-cart-plus"></i></ng-container>
+            <ng-container *ngIf="!isAddingProduct(modalProduct)">{{ 'home.addToCart' | t }} <i class="fa-solid fa-cart-plus"></i></ng-container>
             <ng-container *ngIf="isAddingProduct(modalProduct)">{{ 'home.adding' | t }}</ng-container>
           </button>
           <button class="view-button modal-secondary" type="button" (click)="toggleFavorite(modalProduct)">

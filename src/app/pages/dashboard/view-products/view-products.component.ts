@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { LanguageService } from '../../../services/language.service';
+import { CategoryService } from '../../../services/category.service';
+import { API_BASE_URL } from '../../../config/api.config';
 
 @Component({
   selector: 'app-view-products',
@@ -10,6 +12,7 @@ import { LanguageService } from '../../../services/language.service';
 export class ViewProductsComponent implements OnInit {
   products: any[] = [];
   pagedProducts: any[] = [];
+  categories: any[] = [];
 
   currentPage: number = 1;
   pageSize: number = 12;
@@ -51,6 +54,8 @@ export class ViewProductsComponent implements OnInit {
     category_ar: '',
     SKU: '',
     face_shape: '',
+    categoryId: '',
+    isBestSeller: false,
   };
 
   coffeeCategories: string[] = [
@@ -84,14 +89,32 @@ export class ViewProductsComponent implements OnInit {
     'kids glasses': 'Premium Coffee',
   };
 
-  constructor(private http: HttpClient, public languageService: LanguageService) {}
+  constructor(
+    private http: HttpClient,
+    public languageService: LanguageService,
+    private categoryService: CategoryService
+  ) {}
 
   ngOnInit(): void {
+    this.loadCategories();
     this.loadProducts();
   }
 
+  loadCategories(): void {
+    this.categoryService.getCategories(true).subscribe({
+      next: (res) => {
+        this.categories = (res?.categories || res?.data || []).filter((category: any) => category.isActive !== false);
+      },
+      error: (err) => console.error('Load categories error:', err),
+    });
+  }
+
+  getCategoryById(id: string): any {
+    return this.categories.find((category) => category._id === id);
+  }
+
   loadProducts() {
-    this.http.get<any>('http://localhost:3000/product').subscribe(data => {
+    this.http.get<any>(`${API_BASE_URL}/product`).subscribe(data => {
       const products = data?.products || data?.data?.products || data?.data || [];
       this.products = Array.isArray(products) ? products : [];
       this.calculatePagination();
@@ -168,6 +191,8 @@ export class ViewProductsComponent implements OnInit {
       face_shape: Array.isArray(product?.face_shape)
         ? product.face_shape.join(', ')
         : (product?.face_shape || ''),
+      categoryId: String(product?.categoryId?._id || product?.categoryId || ''),
+      isBestSeller: product?.isBestSeller === true,
     };
 
     this.isEditOpen = true;
@@ -210,6 +235,12 @@ export class ViewProductsComponent implements OnInit {
       return;
     }
 
+    const selectedCategory = this.getCategoryById(this.editForm.categoryId);
+    if (!selectedCategory) {
+      this.editError = 'Please choose a category.';
+      return;
+    }
+
     const formData = new FormData();
     formData.append('code', String(this.editForm.code || '').trim());
     formData.append('title', String(this.editForm.title_en || this.editForm.title_ar || this.editForm.title || '').trim());
@@ -220,11 +251,13 @@ export class ViewProductsComponent implements OnInit {
     formData.append('description', String(this.editForm.description_en || this.editForm.description_ar || this.editForm.description || '').trim());
     formData.append('description_en', String(this.editForm.description_en || '').trim());
     formData.append('description_ar', String(this.editForm.description_ar || '').trim());
-    formData.append('category', String(this.editForm.category_en || this.editForm.category_ar || this.editForm.category || '').trim());
-    formData.append('category_en', String(this.editForm.category_en || '').trim());
-    formData.append('category_ar', String(this.editForm.category_ar || '').trim());
+    formData.append('categoryId', String(selectedCategory._id));
+    formData.append('category', String(selectedCategory.name_en || selectedCategory.name_ar || '').trim());
+    formData.append('category_en', String(selectedCategory.name_en || '').trim());
+    formData.append('category_ar', String(selectedCategory.name_ar || '').trim());
     formData.append('SKU', String(this.editForm.SKU || '').trim());
     formData.append('face_shape', String(this.editForm.face_shape || '').trim());
+    formData.append('isBestSeller', String(!!this.editForm.isBestSeller));
 
     if (this.selectedImageFile) {
       formData.append('image', this.selectedImageFile);
@@ -232,7 +265,7 @@ export class ViewProductsComponent implements OnInit {
 
     this.isUpdating = true;
 
-    this.http.patch<any>(`http://localhost:3000/product/${this.selectedProduct._id}`, formData, {
+    this.http.patch<any>(`${API_BASE_URL}/product/${this.selectedProduct._id}`, formData, {
       withCredentials: true,
     }).subscribe({
       next: (res) => {
@@ -260,7 +293,7 @@ export class ViewProductsComponent implements OnInit {
 
   deleteProduct(id: string) {
     if (confirm('Are you sure you want to delete this product?')) {
-      this.http.delete(`http://localhost:3000/product/${id}`, { withCredentials: true }).subscribe(() => {
+      this.http.delete(`${API_BASE_URL}/product/${id}`, { withCredentials: true }).subscribe(() => {
         this.products = this.products.filter(p => p._id !== id);
         this.calculatePagination();
       });
@@ -296,7 +329,7 @@ export class ViewProductsComponent implements OnInit {
     this.stockMessage = '';
     this.stockReport = null;
 
-    this.http.post<any>('http://localhost:3000/product/stock/import', formData, {
+    this.http.post<any>(`${API_BASE_URL}/product/stock/import`, formData, {
       withCredentials: true,
     }).subscribe({
       next: (response) => {
@@ -353,7 +386,7 @@ export class ViewProductsComponent implements OnInit {
     this.productImportMessage = '';
     this.productImportReport = null;
 
-    this.http.post<any>('http://localhost:3000/product/import', formData, {
+    this.http.post<any>(`${API_BASE_URL}/product/import`, formData, {
       withCredentials: true,
     }).subscribe({
       next: (response) => {
@@ -374,9 +407,9 @@ export class ViewProductsComponent implements OnInit {
 
   downloadProductsImportTemplate(): void {
     const rows = [
-      ['Barcode', 'Name EN', 'Name AR', 'Category EN', 'Category AR', 'Description EN', 'Description AR', 'Sales Price', 'Quantity On Hand'],
-      ['0726529606461', 'Kahve Dark Plain Coffee 250 g', 'قهوة كافيه دارك سادة 250 جم', 'Hot Drinks', 'مشروبات ساخنة', 'Premium dark plain coffee with rich aroma.', 'قهوة دارك فاخرة برائحة غنية.', '205', '58'],
-      ['726529606492', 'Kahve Dark Spiced Coffee 250 g', 'قهوة كافيه دارك بالتحويجة 250 جم', 'Hot Drinks', 'مشروبات ساخنة', 'Dark spiced Turkish coffee blend.', 'قهوة تركية دارك بالتحويجة.', '215', '42'],
+      ['Barcode', 'Name EN', 'Name AR', 'Category EN', 'Category AR', 'Description EN', 'Description AR', 'Sales Price', 'Quantity On Hand', 'Best Seller'],
+      ['0726529606461', 'Kahve Dark Plain Coffee 250 g', 'قهوة كافيه دارك سادة 250 جم', 'Hot Drinks', 'مشروبات ساخنة', 'Premium dark plain coffee with rich aroma.', 'قهوة دارك فاخرة برائحة غنية.', '205', '58', 'yes'],
+      ['726529606492', 'Kahve Dark Spiced Coffee 250 g', 'قهوة كافيه دارك بالتحويجة 250 جم', 'Hot Drinks', 'مشروبات ساخنة', 'Dark spiced Turkish coffee blend.', 'قهوة تركية دارك بالتحويجة.', '215', '42', 'no'],
     ];
 
     const csv = rows

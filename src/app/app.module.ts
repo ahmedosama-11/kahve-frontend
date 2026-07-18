@@ -36,6 +36,11 @@ import { LiveSessionComponent } from './pages/live-session/live-session.componen
 import { TranslatePipe } from './pipes/translate.pipe';
 import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { DeliverySettingsComponent } from './pages/dashboard/delivery-settings/delivery-settings.component';
+import { CouponSettingsComponent } from './pages/dashboard/coupon-settings/coupon-settings.component';
+import { CategorySettingsComponent } from './pages/dashboard/category-settings/category-settings.component';
+import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
+import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 
 // const routes: Routes = [
 //   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -155,7 +160,12 @@ import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password
     TranslatePipe,
     VerifyEmailComponent,
     ForgotPasswordComponent,
-  ],
+    DeliverySettingsComponent,
+    CouponSettingsComponent,
+    CategorySettingsComponent,
+    CustomerManagementComponent,
+      SiteContentManagementComponent,
+],
   imports: [
     BrowserModule,
     ReactiveFormsModule,

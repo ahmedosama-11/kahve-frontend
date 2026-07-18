@@ -1,0 +1,331 @@
+<section class="staged-editor" [class.rtl]="isArabic">
+  <header class="manager-header">
+    <div>
+      <span class="eyebrow">KAHVE STAGED EDITOR</span>
+      <h1>{{ t('Edit without touching live', 'تعديل بدون لمس اللايف') }}</h1>
+      <p>
+        {{ t('This is an editable copy of the real page style. Any click, upload or text change stays here only until you press Save Page.',
+        'دي نسخة تعديل بنفس ستايل الصفحة الحقيقية. أي كليك أو رفع صورة أو تغيير كلام يفضل هنا فقط لحد ما تدوس Save Page.') }}
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="secondary-btn" type="button" (click)="syncDefaults()">
+        <i class="fa fa-wand-magic-sparkles"></i>
+        {{ t('Prepare defaults', 'تجهيز الديفولت') }}
+      </button>
+
+      <button class="save-page-btn" type="button" [disabled]="saving || !dirtyCount" (click)="savePage()">
+        <i class="fa fa-save"></i>
+        {{ saving ? t('Saving...', 'جاري الحفظ...') : t('Save Page', 'حفظ الصفحة') }}
+        <b *ngIf="dirtyCount">{{ dirtyCount }}</b>
+      </button>
+    </div>
+  </header>
+
+  <nav class="page-tabs">
+    <button
+      type="button"
+      *ngFor="let page of pages"
+      [class.active]="selectedPage === page.value"
+      (click)="changePage(page.value)">
+      <i class="fa" [ngClass]="page.icon"></i>
+      <span>{{ pageLabel(page) }}</span>
+    </button>
+  </nav>
+
+  <div class="alert success" *ngIf="message">{{ message }}</div>
+  <div class="alert error" *ngIf="error">{{ error }}</div>
+
+  <section class="device-bar">
+    <button type="button" class="active"><i class="fa fa-laptop"></i></button>
+    <button type="button"><i class="fa fa-mobile-screen"></i></button>
+    <span>{{ t('Preview changes only. Nothing goes live before Save Page.', 'المعاينة للتعديلات فقط. لا شيء يذهب للايف قبل Save Page.') }}</span>
+  </section>
+
+  <main class="stage-canvas" *ngIf="!loading">
+    <ng-container *ngIf="selectedPage === 'home'">
+      <section class="kahve-category-nav-preview">
+        <span>BEST SELLERS</span>
+        <span>CAPSULES</span>
+        <span>COFFEE</span>
+        <span>NESCAFÉ</span>
+        <span>OUR STORY</span>
+      </section>
+
+      <section
+        class="editable hero-container-preview"
+        [class.selected]="selectedBlock?.key === activeHero.key"
+        [class.dirty]="dirtyKeys.has(activeHero.key)"
+        (click)="selectBlock(activeHero)">
+        <img *ngIf="activeHero && image(activeHero)" [src]="image(activeHero)" alt="">
+        <div class="hero-overlay-preview"></div>
+
+        <div class="floating-toolbar" (click)="$event.stopPropagation()">
+          <i class="fa fa-grip-vertical"></i>
+          <span>{{ blockLabel(activeHero) }}</span>
+          <button type="button" (click)="selectBlock(activeHero)"><i class="fa fa-pen"></i></button>
+          <label>
+            <i class="fa fa-image"></i>
+            <input type="file" accept="image/*" (change)="onImageSelected($event, activeHero)">
+          </label>
+          <button type="button" (click)="removeImage(activeHero)"><i class="fa fa-trash"></i></button>
+        </div>
+
+        <button type="button" class="hero-arrow left" (click)="$event.stopPropagation(); selectHero(heroBlocks[(heroBlocks.indexOf(activeHero) + heroBlocks.length - 1) % heroBlocks.length])">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        <button type="button" class="hero-arrow right" (click)="$event.stopPropagation(); selectHero(heroBlocks[(heroBlocks.indexOf(activeHero) + 1) % heroBlocks.length])">
+          <i class="fa fa-arrow-right"></i>
+        </button>
+
+        <div class="hero-content-preview" *ngIf="activeHero">
+          <span>{{ text(activeHero, 'subtitle') }}</span>
+          <h2>{{ text(activeHero, 'title') }}</h2>
+          <p>{{ text(activeHero, 'body') }}</p>
+          <div class="hero-btns-preview">
+            <button type="button">{{ text(activeHero, 'button_text') || t('Button', 'زر') }}</button>
+            <button type="button" class="outline">{{ text(activeHero, 'extra') || t('Our Story', 'قصتنا') }}</button>
+          </div>
+        </div>
+
+        <div class="hero-dots-preview">
+          <button
+            type="button"
+            *ngFor="let hero of heroBlocks"
+            [class.active]="hero.key === activeHero.key"
+            (click)="$event.stopPropagation(); selectHero(hero)">
+          </button>
+        </div>
+      </section>
+
+      <section class="feature-strip-preview">
+        <article
+          class="editable feature-card-preview"
+          *ngFor="let def of selectedBlocks.slice(4, 8)"
+          [class.selected]="selectedBlock?.key === def.key"
+          [class.dirty]="dirtyKeys.has(def.key)"
+          (click)="selectBlock(def)">
+          <div class="mini-toolbar" (click)="$event.stopPropagation()">
+            <button type="button" (click)="selectBlock(def)"><i class="fa fa-pen"></i></button>
+          </div>
+          <i class="fa" [ngClass]="def.key === 'feature_1' ? 'fa-mug-hot' : def.key === 'feature_2' ? 'fa-seedling' : def.key === 'feature_3' ? 'fa-truck-fast' : 'fa-gift'"></i>
+          <div>
+            <strong>{{ text(def, 'title') }}</strong>
+            <span>{{ text(def, 'body') }}</span>
+          </div>
+        </article>
+      </section>
+
+      <section
+        class="editable kahve-story-section-preview"
+        *ngIf="selectedBlocks[3] as story"
+        [class.selected]="selectedBlock?.key === story.key"
+        [class.dirty]="dirtyKeys.has(story.key)"
+        (click)="selectBlock(story)">
+        <div class="floating-toolbar" (click)="$event.stopPropagation()">
+          <i class="fa fa-grip-vertical"></i>
+          <span>{{ blockLabel(story) }}</span>
+          <button type="button" (click)="selectBlock(story)"><i class="fa fa-pen"></i></button>
+          <label>
+            <i class="fa fa-image"></i>
+            <input type="file" accept="image/*" (change)="onImageSelected($event, story)">
+          </label>
+          <button type="button" (click)="removeImage(story)"><i class="fa fa-trash"></i></button>
+        </div>
+
+        <div class="story-copy-preview">
+          <span class="section-eyebrow-preview">{{ text(story, 'subtitle') }}</span>
+          <h2>{{ text(story, 'title') }}</h2>
+          <p>{{ text(story, 'body') }}</p>
+          <div class="story-note-preview">{{ text(story, 'extra') }}</div>
+          <button type="button" class="story-link-preview">{{ text(story, 'button_text') || t('Button', 'زر') }}</button>
+        </div>
+
+        <div class="story-collage-preview">
+          <img *ngIf="image(story)" [src]="image(story)" alt="">
+          <div class="floating-card-preview top">{{ text(story, 'badge') }}</div>
+          <div class="floating-card-preview bottom">{{ text(story, 'extra') }}</div>
+        </div>
+      </section>
+    </ng-container>
+
+    <ng-container *ngIf="selectedPage === 'about'">
+      <section
+        class="editable about-page-preview"
+        *ngIf="selectedBlocks[0] as about"
+        [class.selected]="selectedBlock?.key === about.key"
+        [class.dirty]="dirtyKeys.has(about.key)"
+        (click)="selectBlock(about)">
+        <div class="floating-toolbar" (click)="$event.stopPropagation()">
+          <i class="fa fa-grip-vertical"></i>
+          <span>{{ blockLabel(about) }}</span>
+          <button type="button" (click)="selectBlock(about)"><i class="fa fa-pen"></i></button>
+          <label>
+            <i class="fa fa-image"></i>
+            <input type="file" accept="image/*" (change)="onImageSelected($event, about)">
+          </label>
+          <button type="button" (click)="removeImage(about)"><i class="fa fa-trash"></i></button>
+        </div>
+
+        <div class="about-hero-preview">
+          <div class="about-card-preview">
+            <span>{{ text(about, 'subtitle') }}</span>
+            <h2>{{ text(about, 'title') }}</h2>
+            <p>{{ text(about, 'body') }}</p>
+            <p>{{ text(about, 'extra') }}</p>
+            <div class="about-actions-preview">
+              <button type="button">{{ text(about, 'button_text') || t('Shop Coffee', 'تسوق القهوة') }}</button>
+              <button type="button" class="secondary">{{ t('Contact Us', 'تواصل معنا') }}</button>
+            </div>
+          </div>
+
+          <div class="about-image-wrap-preview">
+            <img *ngIf="image(about)" [src]="image(about)" alt="">
+            <div>{{ text(about, 'badge') }}</div>
+          </div>
+        </div>
+
+        <div class="about-values-preview">
+          <article><i class="fa fa-mug-hot"></i><h3>Premium Coffee</h3><p>Warm taste and everyday comfort.</p></article>
+          <article><i class="fa fa-seedling"></i><h3>Selected Beans</h3><p>Rich aroma and smooth roast.</p></article>
+          <article><i class="fa fa-gift"></i><h3>Gift Packs</h3><p>Perfect coffee moments.</p></article>
+        </div>
+      </section>
+    </ng-container>
+
+    <ng-container *ngIf="selectedPage === 'contact' || selectedPage === 'welcome'">
+      <section
+        class="editable simple-page-preview"
+        *ngFor="let def of selectedBlocks"
+        [class.selected]="selectedBlock?.key === def.key"
+        [class.dirty]="dirtyKeys.has(def.key)"
+        (click)="selectBlock(def)">
+        <img *ngIf="image(def)" [src]="image(def)" alt="">
+        <div class="simple-shade"></div>
+        <div class="floating-toolbar" (click)="$event.stopPropagation()">
+          <i class="fa fa-grip-vertical"></i>
+          <span>{{ blockLabel(def) }}</span>
+          <button type="button" (click)="selectBlock(def)"><i class="fa fa-pen"></i></button>
+          <label>
+            <i class="fa fa-image"></i>
+            <input type="file" accept="image/*" (change)="onImageSelected($event, def)">
+          </label>
+          <button type="button" (click)="removeImage(def)"><i class="fa fa-trash"></i></button>
+        </div>
+        <div class="simple-copy-preview">
+          <span>{{ text(def, 'subtitle') }}</span>
+          <h2>{{ text(def, 'title') }}</h2>
+          <p>{{ text(def, 'body') }}</p>
+          <em>{{ text(def, 'extra') }}</em>
+          <button type="button" *ngIf="text(def, 'button_text')">{{ text(def, 'button_text') }}</button>
+        </div>
+      </section>
+    </ng-container>
+  </main>
+
+  <section class="stage-editor-panel" *ngIf="selectedBlock">
+    <header>
+      <div>
+        <span class="eyebrow">{{ t('Editing', 'تعديل') }}</span>
+        <h2>{{ blockLabel(selectedBlock) }}</h2>
+        <p>{{ blockHint(selectedBlock) }}</p>
+      </div>
+      <button type="button" class="close-btn" (click)="selectedBlock = null">×</button>
+    </header>
+
+    <div class="panel-body">
+      <div class="image-box">
+        <img *ngIf="image(selectedBlock)" [src]="image(selectedBlock)" alt="">
+        <i *ngIf="!image(selectedBlock)" class="fa fa-image"></i>
+        <div class="image-box-actions">
+          <label>
+            <i class="fa fa-upload"></i>
+            {{ t('Upload Image', 'رفع صورة') }}
+            <input type="file" accept="image/*" (change)="onImageSelected($event, selectedBlock)">
+          </label>
+          <button type="button" (click)="removeImage(selectedBlock)">
+            <i class="fa fa-trash"></i>
+            {{ t('Remove', 'حذف') }}
+          </button>
+        </div>
+      </div>
+
+      <div class="fields-grid">
+        <label>
+          {{ t('Small title EN', 'العنوان الصغير إنجليزي') }}
+          <input [ngModel]="block(selectedBlock).subtitle_en" (ngModelChange)="setValue('subtitle_en', $event)">
+        </label>
+        <label>
+          {{ t('Small title AR', 'العنوان الصغير عربي') }}
+          <input dir="rtl" [ngModel]="block(selectedBlock).subtitle_ar" (ngModelChange)="setValue('subtitle_ar', $event)">
+        </label>
+
+        <label>
+          {{ t('Main title EN', 'العنوان الرئيسي إنجليزي') }}
+          <input [ngModel]="block(selectedBlock).title_en" (ngModelChange)="setValue('title_en', $event)">
+        </label>
+        <label>
+          {{ t('Main title AR', 'العنوان الرئيسي عربي') }}
+          <input dir="rtl" [ngModel]="block(selectedBlock).title_ar" (ngModelChange)="setValue('title_ar', $event)">
+        </label>
+
+        <label>
+          {{ t('Description EN', 'الوصف إنجليزي') }}
+          <textarea rows="4" [ngModel]="block(selectedBlock).body_en" (ngModelChange)="setValue('body_en', $event)"></textarea>
+        </label>
+        <label>
+          {{ t('Description AR', 'الوصف عربي') }}
+          <textarea rows="4" dir="rtl" [ngModel]="block(selectedBlock).body_ar" (ngModelChange)="setValue('body_ar', $event)"></textarea>
+        </label>
+
+        <label>
+          {{ t('Extra EN', 'نص إضافي إنجليزي') }}
+          <input [ngModel]="block(selectedBlock).extra_en" (ngModelChange)="setValue('extra_en', $event)">
+        </label>
+        <label>
+          {{ t('Extra AR', 'نص إضافي عربي') }}
+          <input dir="rtl" [ngModel]="block(selectedBlock).extra_ar" (ngModelChange)="setValue('extra_ar', $event)">
+        </label>
+
+        <label>
+          {{ t('Badge EN', 'البادج إنجليزي') }}
+          <input [ngModel]="block(selectedBlock).badge_en" (ngModelChange)="setValue('badge_en', $event)">
+        </label>
+        <label>
+          {{ t('Badge AR', 'البادج عربي') }}
+          <input dir="rtl" [ngModel]="block(selectedBlock).badge_ar" (ngModelChange)="setValue('badge_ar', $event)">
+        </label>
+
+        <label>
+          {{ t('Button EN', 'نص الزر إنجليزي') }}
+          <input [ngModel]="block(selectedBlock).button_text_en" (ngModelChange)="setValue('button_text_en', $event)">
+        </label>
+        <label>
+          {{ t('Button AR', 'نص الزر عربي') }}
+          <input dir="rtl" [ngModel]="block(selectedBlock).button_text_ar" (ngModelChange)="setValue('button_text_ar', $event)">
+        </label>
+
+        <label class="wide">
+          {{ t('Button link', 'رابط الزر') }}
+          <input [ngModel]="block(selectedBlock).button_link" (ngModelChange)="setValue('button_link', $event)" placeholder="/home or home#newArrivals">
+        </label>
+
+        <label class="wide">
+          {{ t('Image URL', 'رابط الصورة') }}
+          <input [ngModel]="block(selectedBlock).image" (ngModelChange)="setValue('image', $event)" placeholder="Cloudinary URL">
+        </label>
+      </div>
+    </div>
+
+    <div class="panel-actions">
+      <button class="save-page-btn" type="button" [disabled]="saving || !dirtyCount" (click)="savePage()">
+        <i class="fa fa-save"></i>
+        {{ t('Save Page', 'حفظ الصفحة') }}
+      </button>
+      <button class="secondary-btn" type="button" (click)="selectedBlock = null">
+        {{ t('Close', 'إغلاق') }}
+      </button>
+    </div>
+  </section>
+</section>

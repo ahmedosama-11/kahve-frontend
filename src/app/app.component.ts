@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
+import { LanguageService } from './services/language.service';
+import { KAHVE_CONTACT } from './config/store-contact';
 
 @Component({
   selector: 'app-root',
@@ -11,25 +13,31 @@ import { filter, map } from 'rxjs/operators';
 export class AppComponent implements OnInit {
   showNavbar: string = 'default';
   showFooter: boolean = true;
+  contact = KAHVE_CONTACT;
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private titleService: Title
+private titleService: Title,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit() {
+    this.languageService.translate('nav.home');
+    this.titleService.setTitle('Kahve');
+
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map(() => {
-        let child = this.activatedRoute.firstChild;
-        while (child?.firstChild) { child = child.firstChild; }
-        return child?.snapshot.data['title'] || 'KAHVE';
-      })
-    ).subscribe((title: string) => {
-      this.titleService.setTitle(title);
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      // Keep browser tab title fixed on all pages.
+      this.titleService.setTitle('Kahve');
       this.updateLayout(this.router.url);
     });
+  }
+
+  getWhatsAppLink(): string {
+    const number = this.contact.whatsappNumber || this.contact.phoneTel || '';
+    const message = encodeURIComponent('Hello KAHVE, I need help with my order.');
+    return `https://wa.me/${number}?text=${message}`;
   }
 
   private updateLayout(url: string) {

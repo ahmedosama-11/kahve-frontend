@@ -6,6 +6,11 @@
       <p>{{ 'orders.subtitle' | t }}</p>
     </div>
 
+    <div *ngIf="successMessage && !loading" class="kahve-state text-center py-4">
+      <i class="fa fa-circle-check mb-3"></i>
+      <h4>{{ successMessage }}</h4>
+    </div>
+
     <div *ngIf="loading" class="kahve-state text-center py-5">
       <div class="spinner-border" role="status"></div>
       <h4>{{ 'orders.loading' | t }}</h4>
@@ -24,66 +29,68 @@
       <a routerLink="/home" class="kahve-action-btn">{{ 'orders.startShopping' | t }}</a>
     </div>
 
-    <div class="orders-card" *ngIf="items.length > 0 && !loading">
-      <div class="table-responsive">
-        <table class="table table-borderless align-middle mb-0">
-          <thead>
-            <tr>
-              <th class="ps-4">{{ 'orders.colNumber' | t }}</th>
-              <th>{{ 'orders.colOrder' | t }}</th>
-              <th>{{ 'orders.colItems' | t }}</th>
-              <th>{{ 'orders.colTotal' | t }}</th>
-              <th>{{ 'orders.colAddress' | t }}</th>
-              <th>{{ 'orders.colStatus' | t }}</th>
-              <th class="text-center">{{ 'orders.colAction' | t }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of items; let i = index">
-              <td class="ps-4 order-index order-number-cell" [attr.data-label]="'orders.colNumber' | t">{{ i + 1 }}</td>
+    <div class="orders-list" *ngIf="items.length > 0 && !loading">
+      <article class="order-card-row" *ngFor="let item of items; let i = index">
+        <div class="order-card-top">
+          <div class="order-no-box">
+            <span>{{ isArabic() ? 'رقم الطلب' : 'Order No.' }}</span>
+            <strong>#{{ getOrderNumber(item) }}</strong>
+          </div>
 
-              <td class="order-title-cell" [attr.data-label]="'orders.colOrder' | t">
-                <span class="order-title">{{ getOrderTitle(item) }}</span>
-              </td>
+          <div class="order-products-box">
+            <h3>{{ getOrderTitle(item) }}</h3>
+            <div class="order-products-list">
+              <span *ngFor="let product of getOrderProducts(item)">
+                {{ getProductName(product) }} <b>× {{ getOrderQuantity(product) }}</b>
+              </span>
+            </div>
+          </div>
+        </div>
 
-              <td class="order-items-cell" [attr.data-label]="'orders.colItems' | t">
-                <div class="order-products-list">
-                  <span *ngFor="let product of getOrderProducts(item)">
-                    {{ getProductName(product) }} × {{ getOrderQuantity(product) }}
-                  </span>
-                </div>
-              </td>
+        <div class="order-info-grid">
+          <div class="order-info-item total-box">
+            <small>{{ 'orders.colTotal' | t }}</small>
+            <strong>{{ getOrderTotal(item) | number }} <em>{{ moneyLabel() }}</em></strong>
+          </div>
 
-              <td class="order-total-cell" [attr.data-label]="'orders.colTotal' | t">
-                <span class="order-total">{{ getOrderTotal(item) | number }} <small>{{ moneyLabel() }}</small></span>
-              </td>
+          <div class="order-info-item payment-box-wrap">
+            <small>{{ isArabic() ? 'طريقة الدفع' : 'Payment' }}</small>
+            <div class="address-box payment-user-box">
+              <i class="fa fa-wallet"></i>
+              <span>{{ getPaymentLabel(item.paymentMethod) }} - {{ getPaymentStatusLabel(item) }}</span>
+            </div>
+          </div>
 
-              <td class="order-address-cell" [attr.data-label]="'orders.colAddress' | t">
-                <div class="address-box">
-                  <i class="fa fa-location-dot me-2"></i>
-                  <span>{{ getOrderAddress(item) }}</span>
-                </div>
-              </td>
+          <div class="order-info-item address-box-wrap">
+            <small>{{ 'orders.colAddress' | t }}</small>
+            <div class="address-box">
+              <i class="fa fa-location-dot"></i>
+              <span>{{ getOrderAddress(item) }}</span>
+            </div>
+          </div>
 
-              <td class="order-status-cell" [attr.data-label]="'orders.colStatus' | t">
-                <span class="status-badge" [ngClass]="{
-                  'pending': getOrderStatus(item) === 'pending',
-                  'accepted': getOrderStatus(item) === 'accepted',
-                  'rejected': getOrderStatus(item) === 'rejected' || getOrderStatus(item) === 'cancelled'
-                }">
-                  {{ getStatusLabel(item) }}
-                </span>
-              </td>
+          <div class="order-info-item status-box-wrap">
+            <small>{{ 'orders.colStatus' | t }}</small>
+            <span class="status-badge" [ngClass]="{
+              'pending': getOrderStatus(item) === 'pending',
+              'accepted': getOrderStatus(item) === 'accepted' || getOrderStatus(item) === 'preparing',
+              'delivery': getOrderStatus(item) === 'out_for_delivery',
+              'delivered': getOrderStatus(item) === 'delivered',
+              'rejected': getOrderStatus(item) === 'rejected' || getOrderStatus(item) === 'cancelled'
+            }">
+              {{ getStatusLabel(item) }}
+            </span>
+          </div>
 
-              <td class="text-center order-action-cell" [attr.data-label]="'orders.colAction' | t">
-                <button class="btn-cancel-kahve" type="button" (click)="cancelOrder(item)">
-                  <i class="fa fa-trash-can me-1"></i> {{ 'orders.cancel' | t }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <div class="order-info-item action-box-wrap">
+            <small>{{ 'orders.colAction' | t }}</small>
+            <button *ngIf="canCancelOrder(item)" class="btn-cancel-kahve" type="button" (click)="cancelOrder(item)">
+              <i class="fa fa-trash-can"></i> {{ 'orders.cancel' | t }}
+            </button>
+            <span *ngIf="!canCancelOrder(item)" class="no-action-dash">—</span>
+          </div>
+        </div>
+      </article>
     </div>
   </div>
 </section>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
+import { API_BASE_URL } from '../config/api.config';
 
 export interface SignupPayload {
   name: string;
@@ -14,7 +15,7 @@ export interface SignupPayload {
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = API_BASE_URL;
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasUser());
   private isAdminSubject = new BehaviorSubject<boolean>(this.checkAdminStatus());
@@ -27,14 +28,54 @@ export class AuthService {
 
   private checkAdminStatus(): boolean {
     const userJson = localStorage.getItem('user');
+    const storedRole = this.normalizeRole(localStorage.getItem('role'));
+
+    if (storedRole === 'admin') return true;
     if (!userJson) return false;
 
     try {
-      const user = JSON.parse(userJson) as { role?: string };
-      return user?.role === 'admin';
+      const user = JSON.parse(userJson);
+      return this.userIsAdmin(user);
     } catch {
       return false;
     }
+  }
+
+  private normalizeRole(value: any): string {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  private extractRole(data: any): string {
+    const possibleRoles = [
+      data?.role,
+      data?.user?.role,
+      data?.data?.role,
+      data?.data?.user?.role,
+      data?.account?.role,
+      data?.profile?.role,
+    ];
+
+    const role = possibleRoles.map((value) => this.normalizeRole(value)).find(Boolean);
+    if (role) return role;
+
+    const possibleAdminFlags = [
+      data?.isAdmin,
+      data?.admin,
+      data?.user?.isAdmin,
+      data?.user?.admin,
+      data?.data?.isAdmin,
+      data?.data?.user?.isAdmin,
+      data?.account?.isAdmin,
+      data?.profile?.isAdmin,
+    ];
+
+    return possibleAdminFlags.some((value) => value === true || this.normalizeRole(value) === 'true')
+      ? 'admin'
+      : '';
+  }
+
+  private userIsAdmin(data: any): boolean {
+    return this.extractRole(data) === 'admin';
   }
 
   get isLoggedIn$() { return this.isLoggedInSubject.asObservable(); }
@@ -139,19 +180,42 @@ export class AuthService {
   }
 
   private extractUser(response: any): any {
-    return response?.data?.user || response?.data || response?.user || response;
+    const direct =
+      response?.data?.user ||
+      response?.user ||
+      response?.data?.data?.user ||
+      response?.data ||
+      response;
+
+    const nestedUser =
+      direct?.user ||
+      direct?.data?.user ||
+      direct?.account ||
+      direct?.profile ||
+      null;
+
+    const merged = nestedUser && typeof nestedUser === 'object'
+      ? { ...direct, ...nestedUser }
+      : direct;
+
+    const role = this.extractRole(merged) || this.extractRole(response);
+    return role ? { ...merged, role } : merged;
   }
 
   private setUserData(data: any, accessToken?: string): void {
     if (!data) return;
 
-    localStorage.setItem('user', JSON.stringify(data));
+    const role = this.extractRole(data);
+    const userToStore = role ? { ...data, role } : data;
 
-    const userId = data._id || data.id || data.userId;
+    localStorage.setItem('user', JSON.stringify(userToStore));
+    if (role) localStorage.setItem('role', role);
+
+    const userId = userToStore._id || userToStore.id || userToStore.userId || userToStore.user_id;
     if (userId) localStorage.setItem('userId', userId);
-    if (data.email) localStorage.setItem('email', data.email);
-    if (data.preferredLanguage === 'ar' || data.preferredLanguage === 'en') {
-      localStorage.setItem('kahve_language', data.preferredLanguage);
+    if (userToStore.email) localStorage.setItem('email', userToStore.email);
+    if (userToStore.preferredLanguage === 'ar' || userToStore.preferredLanguage === 'en') {
+      localStorage.setItem('kahve_language', userToStore.preferredLanguage);
     }
     if (accessToken) localStorage.setItem('accessToken', accessToken);
   }
@@ -161,6 +225,7 @@ export class AuthService {
     localStorage.removeItem('userId');
     localStorage.removeItem('email');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('role');
     localStorage.removeItem('cart');
     localStorage.removeItem('favorites');
     localStorage.removeItem('kahveCartCount');

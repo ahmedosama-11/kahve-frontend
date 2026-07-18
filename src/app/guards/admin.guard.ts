@@ -23,7 +23,7 @@ export class AdminGuard implements CanActivate, CanActivateChild {
   }
 
   private checkAdminAccess(): boolean {
-    const isLoggedIn = this.authService.isLoggedInValue;
+    const isLoggedIn = this.authService.isLoggedInValue || !!localStorage.getItem('user') || !!localStorage.getItem('userId');
 
     if (!isLoggedIn) {
       this.router.navigate(['/login']);
@@ -31,7 +31,7 @@ export class AdminGuard implements CanActivate, CanActivateChild {
     }
 
     const user = this.getStoredUser();
-    const isAdmin = user?.role === 'admin' || this.authService.isAdminValue;
+    const isAdmin = this.isAdminUser(user) || this.authService.isAdminValue;
 
     if (!isAdmin) {
       this.router.navigate(['/home']);
@@ -39,6 +39,36 @@ export class AdminGuard implements CanActivate, CanActivateChild {
     }
 
     return true;
+  }
+
+  private normalizeRole(value: any): string {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  private isAdminUser(user: any): boolean {
+    const role =
+      this.normalizeRole(localStorage.getItem('role')) ||
+      this.normalizeRole(user?.role) ||
+      this.normalizeRole(user?.user?.role) ||
+      this.normalizeRole(user?.data?.role) ||
+      this.normalizeRole(user?.data?.user?.role) ||
+      this.normalizeRole(user?.account?.role) ||
+      this.normalizeRole(user?.profile?.role);
+
+    if (role === 'admin') return true;
+
+    const adminFlags = [
+      user?.isAdmin,
+      user?.admin,
+      user?.user?.isAdmin,
+      user?.user?.admin,
+      user?.data?.isAdmin,
+      user?.data?.user?.isAdmin,
+      user?.account?.isAdmin,
+      user?.profile?.isAdmin,
+    ];
+
+    return adminFlags.some((value) => value === true || this.normalizeRole(value) === 'true');
   }
 
   private getStoredUser(): any {

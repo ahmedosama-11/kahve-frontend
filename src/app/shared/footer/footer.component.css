@@ -159,3 +159,57 @@ html[dir='rtl'] .footer-links a:hover {
     font-size: 1.35rem;
   }
 }
+
+.footer-hotline {
+  margin-top: 18px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  background: rgba(255, 248, 238, .08);
+  border: 1px solid rgba(255, 248, 238, .16);
+  border-radius: 18px;
+  padding: 12px 16px;
+}
+
+.footer-hotline span {
+  color: #d8a866;
+  font-size: .75rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.footer-hotline a {
+  color: #fff8ee;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+html[dir='rtl'] .footer-hotline span {
+  letter-spacing: 0;
+}
+
+
+.whatsapp-hotline a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.whatsapp-hotline a i {
+  color: #25d366;
+  font-size: 1.15rem;
+}
+
+
+.phone-hotline a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phone-hotline a i {
+  color: #d8a866;
+  font-size: 1.05rem;
+}

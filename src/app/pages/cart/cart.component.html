@@ -7,7 +7,7 @@
     </div>
 
     <div class="cart-card shadow-lg" *ngIf="items.length > 0">
-      <div class="table-responsive">
+      <div class="table-responsive cart-desktop-table">
         <table class="table table-borderless align-middle mb-0">
           <thead>
             <tr>
@@ -82,6 +82,68 @@
           </tbody>
         </table>
       </div>
+
+      <div class="cart-mobile-list">
+        <article class="cart-mobile-card" *ngFor="let item of items; let i = index" [class.out-stock-row]="isOutOfStock(item)">
+          <div class="cart-mobile-top">
+            <span class="cart-mobile-number">#{{ i + 1 }}</span>
+            <span class="cart-mobile-status" [class.out]="isOutOfStock(item)">
+              {{ isOutOfStock(item) ? ('cart.outOfStock' | t) : (('cart.available' | t) + ': ' + getAvailableQuantity(item)) }}
+            </span>
+          </div>
+
+          <div class="cart-mobile-product">
+            <div class="product-img-box-premium">
+              <img [src]="item.image" [alt]="getItemName(item)">
+            </div>
+
+            <div class="cart-mobile-info">
+              <h3>{{ getItemName(item) }}</h3>
+              <p>{{ 'cart.sku' | t }}: {{ getSku(item) }}</p>
+              <p>{{ 'cart.unit' | t }}: {{ item.price | number }} {{ moneyLabel() }}</p>
+              <p class="stock-warning" *ngIf="item.stockMessage">{{ item.stockMessage }}</p>
+            </div>
+          </div>
+
+          <div class="cart-mobile-row">
+            <span>{{ 'cart.colQuantity' | t }}</span>
+            <div class="cart-qty-control" [class.disabled]="isOutOfStock(item)">
+              <button type="button" (click)="decreaseItem(item)" [disabled]="isOutOfStock(item)">−</button>
+              <input
+                type="number"
+                class="cart-input"
+                [(ngModel)]="item.amount"
+                min="1"
+                [max]="getAvailableQuantity(item)"
+                [disabled]="isOutOfStock(item)"
+                (ngModelChange)="onAmountChange(item)" />
+              <button type="button" (click)="increaseItem(item)" [disabled]="isOutOfStock(item)">+</button>
+            </div>
+          </div>
+
+          <div class="cart-mobile-row total">
+            <span>{{ 'cart.colTotal' | t }}</span>
+            <strong>{{ getItemTotal(item) | number }} <small>{{ moneyLabel() }}</small></strong>
+          </div>
+
+          <div class="cart-mobile-actions">
+            <button
+              (click)="saveItem(item._id, item.amount)"
+              [disabled]="isOutOfStock(item)"
+              [ngClass]="item.isSaved ? 'btn-success-premium' : 'save'"
+              class="btn-action-premium">
+              <i class="fa" [ngClass]="item.isSaved ? 'fa-check' : 'fa-save'"></i>
+              <span>{{ item.isSaved ? ('cart.saved' | t) : ('cart.saveQty' | t) }}</span>
+            </button>
+
+            <button (click)="deleteItem(item._id)" class="btn-action-premium delete">
+              <i class="fa fa-trash"></i>
+              <span>{{ 'cart.remove' | t }}</span>
+            </button>
+          </div>
+        </article>
+      </div>
+
 
       <div class="cart-summary-bar">
         <div>

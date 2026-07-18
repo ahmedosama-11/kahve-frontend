@@ -1,0 +1,137 @@
+<section class="settings-page">
+  <div class="settings-header">
+    <span>{{ isArabic() ? 'إعدادات التوصيل' : 'Delivery Settings' }}</span>
+    <h2>{{ isArabic() ? 'مناطق وأسعار التوصيل' : 'Delivery areas and fees' }}</h2>
+    <p>{{ isArabic() ? 'أضف المناطق يدويًا أو ارفع شيت واحد فيه المدينة والمنطقة والسعر عربي وإنجليزي.' : 'Add areas manually or import one sheet with city, area and fee in Arabic and English.' }}</p>
+  </div>
+
+
+  <form class="settings-card settings-form payment-settings-card" (ngSubmit)="savePaymentSettings()">
+    <h3>{{ isArabic() ? 'إعدادات الدفع اليدوي' : 'Manual payment settings' }}</h3>
+    <p class="settings-note">
+      {{ isArabic() ? 'اضبط لينك إنستا باي واسم صاحب اللينك الذي يظهر للعميل في صفحة الدفع.' : 'Set the InstaPay link and link owner name shown to the customer at checkout.' }}
+    </p>
+
+    <div class="form-grid">
+      <label class="wide-field">
+        {{ isArabic() ? 'لينك إنستا باي' : 'InstaPay payment link' }}
+        <input name="instapayLink" [(ngModel)]="paymentSettings.instapayLink" placeholder="https://...">
+      </label>
+
+      <label class="wide-field">
+        {{ isArabic() ? 'اسم صاحب لينك إنستا باي' : 'InstaPay link owner name' }}
+        <input name="instapayShortName" [(ngModel)]="paymentSettings.instapayShortName" placeholder="KAHVE">
+      </label>
+
+      <label class="wide-field">
+        {{ isArabic() ? 'تعليمات الدفع بالعربي' : 'Arabic payment instructions' }}
+        <input name="manualPaymentInstructionsAr" [(ngModel)]="paymentSettings.manualPaymentInstructionsAr">
+      </label>
+      <label class="wide-field">
+        {{ isArabic() ? 'تعليمات الدفع بالإنجليزي' : 'English payment instructions' }}
+        <input name="manualPaymentInstructionsEn" [(ngModel)]="paymentSettings.manualPaymentInstructionsEn">
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="paymentSaving">
+        <i class="fa fa-floppy-disk"></i>
+        {{ paymentSaving ? (isArabic() ? 'جاري الحفظ...' : 'Saving...') : (isArabic() ? 'حفظ إعدادات الدفع' : 'Save Payment Settings') }}
+      </button>
+    </div>
+  </form>
+
+  <form class="settings-card settings-form" (ngSubmit)="saveArea()">
+    <div class="form-grid">
+      <label>
+        {{ isArabic() ? 'المدينة بالإنجليزي' : 'City EN' }}
+        <input name="city_en" [(ngModel)]="form.city_en" placeholder="Cairo">
+      </label>
+      <label>
+        {{ isArabic() ? 'المدينة بالعربي' : 'City AR' }}
+        <input name="city_ar" [(ngModel)]="form.city_ar" placeholder="القاهرة">
+      </label>
+      <label>
+        {{ isArabic() ? 'المنطقة بالإنجليزي' : 'Area EN' }}
+        <input name="area_en" [(ngModel)]="form.area_en" placeholder="New Cairo">
+      </label>
+      <label>
+        {{ isArabic() ? 'المنطقة بالعربي' : 'Area AR' }}
+        <input name="area_ar" [(ngModel)]="form.area_ar" placeholder="القاهرة الجديدة">
+      </label>
+      <label>
+        {{ isArabic() ? 'سعر التوصيل' : 'Delivery Fee' }}
+        <input type="number" min="0" name="deliveryFee" [(ngModel)]="form.deliveryFee" placeholder="50">
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" name="active" [(ngModel)]="form.active">
+        {{ isArabic() ? 'نشط' : 'Active' }}
+      </label>
+    </div>
+
+    <p class="settings-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="settings-success" *ngIf="successMessage">{{ successMessage }}</p>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="saving">
+        <i class="fa fa-floppy-disk"></i>
+        {{ saving ? (isArabic() ? 'جاري الحفظ...' : 'Saving...') : (editingId ? (isArabic() ? 'تحديث المنطقة' : 'Update Area') : (isArabic() ? 'إضافة منطقة' : 'Add Area')) }}
+      </button>
+      <button type="button" class="ghost" (click)="resetForm()" *ngIf="editingId">
+        {{ isArabic() ? 'إلغاء التعديل' : 'Cancel edit' }}
+      </button>
+    </div>
+  </form>
+
+  <div class="settings-card settings-form import-card">
+    <h3>{{ isArabic() ? 'رفع مناطق التوصيل بشيت' : 'Import delivery areas sheet' }}</h3>
+    <p>{{ isArabic() ? 'الأعمدة المطلوبة: City EN, City AR, Area EN, Area AR, Delivery Fee' : 'Required columns: City EN, City AR, Area EN, Area AR, Delivery Fee' }}</p>
+    <div class="form-actions">
+      <label class="file-pill">
+        <input type="file" accept=".xlsx,.xls,.csv" (change)="onFileSelected($event)">
+        <i class="fa fa-file-excel"></i>
+        {{ selectedFile?.name || (isArabic() ? 'اختيار الشيت' : 'Choose sheet') }}
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" [(ngModel)]="replaceAreas" name="replaceAreas">
+        {{ isArabic() ? 'استبدال كل المناطق الحالية' : 'Replace all current areas' }}
+      </label>
+      <button type="button" (click)="importAreas()" [disabled]="importing">
+        <i class="fa fa-upload"></i>
+        {{ importing ? (isArabic() ? 'جاري الرفع...' : 'Importing...') : (isArabic() ? 'رفع الشيت' : 'Import Sheet') }}
+      </button>
+    </div>
+    <ul class="settings-error" *ngIf="importErrors.length">
+      <li *ngFor="let err of importErrors">{{ err }}</li>
+    </ul>
+  </div>
+
+  <div class="settings-card table-card">
+    <div *ngIf="loading" class="empty-state">{{ isArabic() ? 'جاري التحميل...' : 'Loading...' }}</div>
+    <div *ngIf="!loading && areas.length === 0" class="empty-state">{{ isArabic() ? 'لا توجد مناطق توصيل بعد.' : 'No delivery areas yet.' }}</div>
+
+    <table *ngIf="!loading && areas.length > 0">
+      <thead>
+        <tr>
+          <th>{{ isArabic() ? 'المدينة' : 'City' }}</th>
+          <th>{{ isArabic() ? 'المنطقة' : 'Area' }}</th>
+          <th>{{ isArabic() ? 'التوصيل' : 'Fee' }}</th>
+          <th>{{ isArabic() ? 'الحالة' : 'Status' }}</th>
+          <th>{{ isArabic() ? 'الإجراء' : 'Action' }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let area of areas">
+          <td>{{ isArabic() ? area.city_ar : area.city_en }}</td>
+          <td>{{ isArabic() ? area.area_ar : area.area_en }}</td>
+          <td>{{ area.deliveryFee | number }} {{ isArabic() ? 'جنيه' : 'EGP' }}</td>
+          <td><span class="status-pill" [class.off]="!area.active">{{ area.active ? (isArabic() ? 'نشط' : 'Active') : (isArabic() ? 'متوقف' : 'Inactive') }}</span></td>
+          <td class="row-actions">
+            <button type="button" (click)="editArea(area)"><i class="fa fa-pen"></i></button>
+            <button type="button" class="danger" (click)="deleteArea(area)"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

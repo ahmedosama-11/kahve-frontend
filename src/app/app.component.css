@@ -18,3 +18,90 @@ router-outlet + * {
   position: relative;
   z-index: 1;
 }
+
+.kahve-floating-contact {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2500;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: #5b361f;
+  color: #fff8ee;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 12px 16px;
+  font-weight: 900;
+  box-shadow: 0 16px 40px rgba(45, 23, 13, .22);
+}
+
+.kahve-floating-contact i {
+  color: #e8c48f;
+}
+
+html[dir='rtl'] .kahve-floating-contact {
+  right: auto;
+  left: 20px;
+}
+
+@media (max-width: 640px) {
+  .kahve-floating-contact {
+    bottom: 14px;
+    right: 14px;
+    padding: 11px 13px;
+    font-size: .9rem;
+  }
+
+  html[dir='rtl'] .kahve-floating-contact {
+    left: 14px;
+    right: auto;
+  }
+}
+
+
+/* WhatsApp floating button — icon only */
+.whatsapp-floating {
+  width: 56px !important;
+  height: 56px !important;
+  padding: 0 !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: #25d366 !important;
+  color: #ffffff !important;
+  font-size: 1.65rem !important;
+  box-shadow: 0 16px 40px rgba(37, 211, 102, .28) !important;
+}
+
+.whatsapp-floating i {
+  color: #ffffff !important;
+}
+
+.whatsapp-floating:hover {
+  transform: translateY(-3px) scale(1.04);
+  color: #ffffff !important;
+}
+
+@media (max-width: 640px) {
+  .whatsapp-floating {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 1.5rem !important;
+  }
+}
+
+
+/* WhatsApp button fixed on the LEFT in Arabic and English */
+.whatsapp-floating,
+html[dir='rtl'] .whatsapp-floating {
+  left: 20px !important;
+  right: auto !important;
+}
+
+@media (max-width: 640px) {
+  .whatsapp-floating,
+  html[dir='rtl'] .whatsapp-floating {
+    left: 14px !important;
+    right: auto !important;
+  }
+}

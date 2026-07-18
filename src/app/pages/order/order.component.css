@@ -6,6 +6,7 @@
     radial-gradient(circle at 15% 0%, rgba(185, 133, 69, 0.2), transparent 30%),
     linear-gradient(135deg, #fff8ee 0%, #f3dfc1 55%, #e1bd88 100%);
   padding: 70px 0 90px;
+  overflow-x: hidden;
 }
 
 .orders-container {
@@ -13,9 +14,7 @@
   margin: 0 auto;
 }
 
-.content-header {
-  margin-bottom: 28px;
-}
+.content-header { margin-bottom: 28px; }
 
 .orders-eyebrow {
   display: inline-block;
@@ -27,12 +26,15 @@
   margin-bottom: 10px;
 }
 
+html[dir='rtl'] .orders-eyebrow { letter-spacing: 0; }
+
 .content-header h2 {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  font-size: clamp(2.25rem, 5vw, 4.4rem);
   color: #2d170d;
   letter-spacing: -0.06em;
   margin-bottom: 8px;
+  line-height: .95;
 }
 
 .content-header p {
@@ -40,31 +42,18 @@
   font-size: 1.05rem;
 }
 
-.orders-card,
 .kahve-state {
   background: rgba(255, 250, 242, 0.78);
   border: 1px solid rgba(91, 54, 31, 0.12);
   border-radius: 28px;
   box-shadow: 0 24px 70px rgba(45, 23, 13, 0.13);
   backdrop-filter: blur(16px);
-  overflow: hidden;
-}
-
-.kahve-state {
   color: #2d170d;
   padding-inline: 24px;
 }
 
-.kahve-state i {
-  font-size: 2.8rem;
-  color: #9b6a36;
-}
-
-.kahve-state h4 {
-  color: #2d170d;
-  font-family: 'Playfair Display', Georgia, serif;
-}
-
+.kahve-state i { font-size: 2.8rem; color: #9b6a36; }
+.kahve-state h4 { color: #2d170d; font-family: 'Playfair Display', Georgia, serif; }
 .kahve-state p { color: #74543d; }
 .kahve-state.error i { color: #b5451b; }
 
@@ -83,422 +72,213 @@
   transition: 0.25s ease;
 }
 
-.kahve-action-btn:hover {
-  background: #9b6a36;
-  color: #fff8ee;
-  transform: translateY(-2px);
+.kahve-action-btn:hover { background: #9b6a36; color: #fff8ee; transform: translateY(-2px); }
+
+.orders-list {
+  display: grid;
+  gap: 16px;
 }
 
-.table, .table td, .table th, .table tr {
-  background: transparent !important;
-  border: none !important;
+.order-card-row {
+  background: rgba(255, 250, 242, 0.84);
+  border: 1px solid rgba(91, 54, 31, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 20px 56px rgba(45, 23, 13, 0.10);
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(420px, .95fr);
+  gap: 18px;
+  align-items: stretch;
 }
 
-.table thead th {
-  background: rgba(91, 54, 31, 0.08) !important;
-  color: #5b361f !important;
-  text-transform: uppercase;
-  font-size: 0.76rem;
-  letter-spacing: 0.12em;
+.order-card-top {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.order-no-box,
+.order-products-box,
+.order-info-item {
+  background: rgba(91, 54, 31, 0.045);
+  border: 1px solid rgba(91, 54, 31, 0.08);
+  border-radius: 20px;
+}
+
+.order-no-box {
+  padding: 15px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 7px;
+}
+
+.order-no-box span,
+.order-info-item small {
+  color: #9b6a36;
+  font-size: .72rem;
   font-weight: 900;
-  padding: 18px 14px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
 }
 
-.table tbody td {
-  color: #2d170d !important;
-  padding: 18px 14px;
-  border-bottom: 1px solid rgba(91, 54, 31, 0.08) !important;
+html[dir='rtl'] .order-no-box span,
+html[dir='rtl'] .order-info-item small { letter-spacing: 0; }
+
+.order-no-box strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 82px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #3b1d0e;
+  color: #fff8ee;
+  font-size: .95rem;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .03em;
+  direction: ltr;
 }
 
-.table tbody tr:hover {
-  background: rgba(244, 232, 216, 0.54) !important;
+.order-products-box {
+  padding: 16px;
 }
 
-.order-index { color: #9b6a36 !important; font-weight: 900; }
-.order-title { font-weight: 900; color: #2d170d; }
-.order-total { color: #5b361f; font-weight: 900; }
-.order-total small { color: #9b6a36; }
+.order-products-box h3 {
+  color: #2d170d;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  margin: 0 0 12px;
+  font-weight: 900;
+}
+
+.order-products-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.order-products-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .56);
+  color: #6d4a32;
+  font-weight: 800;
+  font-size: .86rem;
+  line-height: 1.35;
+  max-width: 100%;
+}
+
+.order-products-list b { color: #2d170d; }
+
+.order-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 12px;
+}
+
+.order-info-item {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.total-box strong {
+  color: #5b361f;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+.total-box em { font-style: normal; color: #9b6a36; font-size: .78rem; }
 
 .address-box {
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   color: #74543d;
+  line-height: 1.55;
+  min-width: 0;
 }
 
-.address-box i { color: #9b6a36; }
+.address-box i { color: #9b6a36; margin-top: 4px; }
+.address-box span { overflow-wrap: anywhere; }
 
 .status-badge {
-  display: inline-block;
-  padding: 6px 13px;
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 13px;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 900;
   text-transform: uppercase;
   border: 1px solid transparent;
+  line-height: 1.25;
 }
 
 .status-badge.pending { background: rgba(200, 151, 63, 0.16); color: #8b562d; border-color: rgba(200, 151, 63, 0.45); }
 .status-badge.accepted { background: rgba(74, 124, 89, 0.15); color: #2f6c42; border-color: rgba(74, 124, 89, 0.35); }
+.status-badge.delivery { background: rgba(41, 112, 160, 0.14); color: #24618c; border-color: rgba(41, 112, 160, 0.28); }
+.status-badge.delivered { background: rgba(47, 108, 66, 0.16); color: #2f6c42; border-color: rgba(47, 108, 66, 0.32); }
 .status-badge.rejected { background: rgba(181, 69, 27, 0.14); color: #b5451b; border-color: rgba(181, 69, 27, 0.34); }
 
 .btn-cancel-kahve {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: fit-content;
   background: rgba(181, 69, 27, 0.1);
   color: #b5451b;
   border: 1px solid rgba(181, 69, 27, 0.2);
-  padding: 7px 15px;
+  padding: 8px 15px;
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 900;
   transition: all 0.25s ease;
 }
 
-.btn-cancel-kahve:hover {
-  background: #b5451b;
-  color: #fff8ee;
-  transform: translateY(-2px);
-}
+.btn-cancel-kahve:hover { background: #b5451b; color: #fff8ee; transform: translateY(-2px); }
+.no-action-dash { color: #9b6a36; font-size: 1.3rem; font-weight: 900; }
 
-.order-products-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: #6d4a32;
-  font-weight: 700;
-  font-size: 0.88rem;
-}
-
-.order-products-list span {
-  display: inline-flex;
-  width: fit-content;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: rgba(111, 65, 36, 0.08);
+@media (max-width: 1024px) {
+  .order-card-row { grid-template-columns: 1fr; }
+  .order-info-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 @media (max-width: 768px) {
-  .orders-shell,
-  .orders-container,
-  .orders-card {
-    padding: 16px !important;
-    border-radius: 18px !important;
-  }
-
-  .table-responsive,
-  .orders-table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .table {
-    min-width: 820px;
-  }
+  .orders-section { padding: 42px 0 60px; }
+  .orders-container { width: 100%; padding: 0 12px; }
+  .content-header { text-align: center; margin-bottom: 20px; }
+  .content-header h2 { font-size: clamp(2.35rem, 13vw, 3.35rem); letter-spacing: -0.035em; }
+  .content-header p { font-size: .96rem; line-height: 1.7; max-width: 320px; margin-inline: auto; }
+  .order-card-row { border-radius: 24px; padding: 14px; gap: 14px; }
+  .order-card-top { grid-template-columns: 1fr; }
+  .order-no-box { align-items: flex-start; text-align: start; flex-direction: row; justify-content: space-between; }
+  .order-info-grid { grid-template-columns: 1fr; }
+  .order-info-item { min-height: auto; }
+  .status-box-wrap,
+  .action-box-wrap,
+  .total-box { flex-direction: row; justify-content: space-between; align-items: center; }
+  .address-box-wrap { gap: 10px; }
+  .order-products-list { flex-direction: column; }
+  .order-products-list span { width: 100%; border-radius: 14px; white-space: normal; }
 }
 
-/* KAHVE mobile order cards hotfix */
-@media (max-width: 600px) {
-  .orders-section {
-    padding: 42px 0 60px !important;
-    min-height: calc(100vh - 70px);
-  }
-
-  .orders-container {
-    width: 100% !important;
-    padding: 0 12px !important;
-  }
-
-  .content-header {
-    text-align: center;
-    margin-bottom: 20px !important;
-  }
-
-  .orders-eyebrow {
-    letter-spacing: .06em !important;
-    font-size: .78rem !important;
-  }
-
-  html[dir='rtl'] .orders-eyebrow {
-    letter-spacing: 0 !important;
-  }
-
-  .content-header h2 {
-    font-size: clamp(2.25rem, 13vw, 3.25rem) !important;
-    letter-spacing: -0.035em !important;
-    line-height: .95 !important;
-  }
-
-  .content-header p {
-    font-size: .96rem !important;
-    line-height: 1.7 !important;
-    margin: 0 auto;
-    max-width: 310px;
-  }
-
-  .orders-card,
-  .kahve-state {
-    border-radius: 22px !important;
-    padding: 14px !important;
-    overflow: visible !important;
-  }
-
-  .table-responsive {
-    overflow: visible !important;
-  }
-
-  .table,
-  .table tbody,
-  .table tr,
-  .table td {
-    display: block !important;
-    width: 100% !important;
-  }
-
-  .table thead {
-    display: none !important;
-  }
-
-  .table tbody tr {
-    background: rgba(255, 250, 242, .92) !important;
-    border: 1px solid rgba(91, 54, 31, .10) !important;
-    border-radius: 20px !important;
-    margin: 0 0 14px !important;
-    padding: 12px !important;
-    box-shadow: 0 14px 34px rgba(45, 23, 13, .08);
-  }
-
-  .table tbody td {
-    padding: 11px 0 !important;
-    border-bottom: 1px solid rgba(91, 54, 31, .08) !important;
-    text-align: inherit !important;
-  }
-
-  .table tbody td:last-child {
-    border-bottom: none !important;
-  }
-
-  .table tbody td::before {
-    content: attr(data-label);
-    display: block;
-    margin-bottom: 8px;
-    color: #9b6a36;
-    font-size: .78rem;
-    font-weight: 900;
-    letter-spacing: .04em;
-  }
-
-  html[dir='rtl'] .table tbody td::before {
-    letter-spacing: 0 !important;
-  }
-
-  .order-number-cell,
-  .order-total-cell,
-  .order-status-cell,
-  .order-action-cell {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .order-number-cell::before,
-  .order-total-cell::before,
-  .order-status-cell::before,
-  .order-action-cell::before {
-    margin-bottom: 0 !important;
-  }
-
-  .order-title {
-    display: block;
-    font-size: 1rem !important;
-    line-height: 1.45 !important;
-    white-space: normal !important;
-  }
-
-  .order-products-list {
-    align-items: flex-start;
-    font-size: .9rem !important;
-  }
-
-  html[dir='rtl'] .order-products-list {
-    align-items: flex-end;
-  }
-
-  .order-products-list span {
-    max-width: 100%;
-    white-space: normal;
-    line-height: 1.55;
-    border-radius: 14px !important;
-  }
-
-  .address-box {
-    max-width: 100% !important;
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: initial !important;
-    line-height: 1.55;
-  }
-
-  .status-badge {
-    font-size: .78rem !important;
-    padding: 7px 14px !important;
-  }
-
-  .btn-cancel-kahve {
-    min-height: 40px;
-    padding: 8px 16px !important;
-  }
-
-  .kahve-state {
-    margin: 0 auto;
-  }
-}
-
-/* ============================================================
-   KAHVE — FINAL MOBILE OVERFLOW FIX
-   Fixes mobile blank space / clipped order cards on RTL and LTR.
-   ============================================================ */
-@media (max-width: 640px) {
-  :host,
-  .orders-section {
-    width: 100% !important;
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-  }
-
-  .orders-container,
-  .orders-card,
-  .orders-card .table-responsive {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-  }
-
-  .orders-container {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-
-  .orders-card {
-    padding: 12px !important;
-  }
-
-  .orders-card *,
-  .orders-card *::before,
-  .orders-card *::after {
-    box-sizing: border-box !important;
-    max-width: 100%;
-  }
-
-  .orders-card .table {
-    min-width: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    table-layout: auto !important;
-    margin: 0 !important;
-  }
-
-  .orders-card .table,
-  .orders-card .table tbody,
-  .orders-card .table tr,
-  .orders-card .table td {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .orders-card .table thead {
-    display: none !important;
-  }
-
-  .orders-card .table tbody tr {
-    padding: 12px !important;
-    margin: 0 0 14px !important;
-    border-radius: 20px !important;
-    overflow: hidden !important;
-  }
-
-  .orders-card .table tbody td,
-  .orders-card .table tbody td.ps-4,
-  .orders-card .table tbody td.text-center {
-    padding: 10px 0 !important;
-    text-align: inherit !important;
-  }
-
-  .orders-card .table tbody td::before {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    white-space: normal !important;
-  }
-
-  .order-number-cell,
-  .order-total-cell,
-  .order-status-cell,
-  .order-action-cell {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto !important;
-    align-items: center !important;
-    gap: 10px !important;
-  }
-
-  html[dir='rtl'] .order-number-cell,
-  html[dir='rtl'] .order-total-cell,
-  html[dir='rtl'] .order-status-cell,
-  html[dir='rtl'] .order-action-cell {
-    grid-template-columns: auto minmax(0, 1fr) !important;
-  }
-
-  .order-number-cell::before,
-  .order-total-cell::before,
-  .order-status-cell::before,
-  .order-action-cell::before {
-    margin: 0 !important;
-    min-width: 0 !important;
-  }
-
-  .order-title-cell,
-  .order-items-cell,
-  .order-address-cell {
-    display: block !important;
-  }
-
-  .order-title,
-  .order-products-list,
-  .order-products-list span,
-  .address-box,
-  .address-box span {
-    min-width: 0 !important;
-    max-width: 100% !important;
-    white-space: normal !important;
-    overflow-wrap: anywhere !important;
-    word-break: break-word !important;
-  }
-
-  .order-products-list {
-    width: 100% !important;
-    align-items: stretch !important;
-  }
-
-  .order-products-list span {
-    display: block !important;
-    width: 100% !important;
-    text-align: inherit !important;
-  }
-
-  .status-badge,
-  .btn-cancel-kahve {
-    justify-self: end !important;
-    white-space: nowrap !important;
-  }
-
-  html[dir='rtl'] .status-badge,
-  html[dir='rtl'] .btn-cancel-kahve {
-    justify-self: start !important;
-  }
+@media (max-width: 420px) {
+  .orders-container { padding: 0 10px; }
+  .order-card-row { padding: 12px; }
+  .order-no-box strong { min-width: 74px; font-size: .88rem; }
+  .order-products-box h3 { font-size: .98rem; }
+  .total-box strong { font-size: 1.1rem; }
 }

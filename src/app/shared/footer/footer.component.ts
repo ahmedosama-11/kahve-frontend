@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { KAHVE_CONTACT } from '../../config/store-contact';
 
 @Component({
   selector: 'app-footer',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './footer.component.css'
 })
 export class FooterComponent {
-
+  contact = KAHVE_CONTACT;
 }

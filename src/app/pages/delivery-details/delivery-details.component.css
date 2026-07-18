@@ -172,3 +172,195 @@
     gap: 8px;
   }
 }
+
+.form-grid select,
+.coupon-row input {
+  width: 100%;
+  border: 1px solid rgba(91, 54, 31, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.74);
+  color: #2d170d;
+  padding: 14px 16px;
+  outline: none;
+  font-size: 1rem;
+}
+
+.coupon-box,
+.payment-box,
+.totals-box {
+  margin-top: 22px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(91, 54, 31, 0.055);
+  border: 1px solid rgba(91, 54, 31, 0.1);
+}
+
+.coupon-box label,
+.payment-box h3 {
+  color: #5b361f;
+  font-weight: 900;
+  font-size: .86rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 10px;
+}
+
+.coupon-row { display: flex; gap: 10px; }
+.coupon-row button {
+  border: none;
+  border-radius: 16px;
+  background: #5b361f;
+  color: #fff8ee;
+  font-weight: 900;
+  padding: 0 18px;
+  white-space: nowrap;
+}
+
+.coupon-success,
+.coupon-error,
+.instapay-note {
+  margin: 10px 0 0;
+  font-weight: 800;
+  font-size: .9rem;
+}
+.coupon-success { color: #2f6c42 !important; }
+.coupon-error { color: #b5451b !important; }
+.instapay-note { color: #8b6a54; }
+
+.totals-box { display: grid; gap: 12px; }
+.totals-box > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  color: #5b361f;
+  font-weight: 900;
+}
+.totals-box span { color: #9b6a36; }
+.totals-box strong { color: #2d170d; }
+.discount-line strong { color: #2f6c42; }
+.final-total {
+  padding-top: 14px;
+  border-top: 1px solid rgba(91,54,31,.12);
+  font-size: 1.2rem;
+}
+.final-total strong { font-size: 1.55rem; }
+
+.payment-box { display: grid; gap: 12px; }
+.payment-option {
+  display: flex !important;
+  align-items: center;
+  gap: 10px !important;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(91,54,31,.1);
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-size: 1rem !important;
+  cursor: pointer;
+}
+.payment-option input { width: 18px; height: 18px; }
+.payment-option span { display: inline-flex; align-items: center; gap: 8px; color: #3b1d0e; }
+.payment-option i { color: #9b6a36; }
+
+html[dir='rtl'] .delivery-kicker,
+html[dir='rtl'] .form-grid label,
+html[dir='rtl'] .coupon-box label,
+html[dir='rtl'] .payment-box h3 {
+  letter-spacing: 0;
+}
+
+@media (max-width: 575px) {
+  .delivery-page { padding: 28px 12px; }
+  .delivery-summary-card,
+  .delivery-form { padding: 18px !important; border-radius: 22px; }
+  .checkout-item { grid-template-columns: 58px 1fr; }
+  .checkout-item b { grid-column: 2; }
+  .coupon-row { flex-direction: column; }
+  .coupon-row button { min-height: 46px; }
+  .totals-box > div { align-items: flex-start; }
+}
+
+
+.manual-payment-card {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(91, 54, 31, 0.14);
+  background: rgba(255, 250, 242, 0.78);
+  display: grid;
+  gap: 12px;
+}
+
+.manual-payment-header strong {
+  display: block;
+  color: #3b1d0e;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.manual-payment-header span,
+.manual-confirm-hint {
+  color: #74543d;
+  line-height: 1.65;
+  font-weight: 800;
+}
+
+.manual-payment-destination {
+  display: grid;
+  gap: 5px;
+  background: #fff8ee;
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.manual-payment-destination small {
+  color: #9b6a36;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.manual-payment-destination b {
+  color: #2d170d;
+  font-size: 1.05rem;
+}
+
+.manual-pay-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: #5b361f;
+  color: #fff8ee;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.manual-confirm-hint {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(91, 54, 31, .06);
+}
+
+.manual-confirm-hint.success {
+  background: rgba(47, 108, 66, .12);
+  color: #2f6c42;
+}
+
+
+.manual-pay-link.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: auto;
+  filter: grayscale(0.15);
+}
+
+.manual-confirm-hint.warning {
+  background: rgba(185, 133, 69, 0.14);
+  color: #6d4228;
+}

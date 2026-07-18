@@ -2,9 +2,9 @@
   <div class="container py-3">
     <div class="row justify-content-center mb-5">
       <div class="col-lg-8 text-center animate-fade-in">
-        <h6 class="kahve-kicker text-uppercase fw-bold letter-spacing-2">Get in Touch</h6>
-        <h1 class="display-4 fw-bold mt-2">Let’s start a coffee conversation.</h1>
-        <p class="lead mt-3">Questions about KAHVE products, orders, wholesale or gifts? We’re here to help.</p>
+        <h6 class="kahve-kicker text-uppercase fw-bold letter-spacing-2">{{ contentText('main', 'subtitle', 'Get in Touch') }}</h6>
+        <h1 class="display-4 fw-bold mt-2">{{ contentText('main', 'title', 'Let’s start a coffee conversation.') }}</h1>
+        <p class="lead mt-3">{{ contentText('main', 'body', 'Questions about KAHVE products, orders, wholesale or gifts? We’re here to help.') }}</p>
         <div class="header-line mx-auto"></div>
       </div>
     </div>
@@ -12,10 +12,10 @@
     <div class="row g-5 align-items-center">
       <div class="col-lg-5 d-none d-lg-block">
         <div class="image-wrapper">
-          <img src="/assets/images/kahve-products.jpg" class="img-fluid rounded-custom shadow-lg" alt="KAHVE coffee products">
+          <img [src]="contentImage('main', '/assets/images/kahve-products.jpg')" class="img-fluid rounded-custom shadow-lg" alt="KAHVE coffee products">
           <div class="glass-info-overlay p-4">
-            <h5 class="fw-bold mb-0">Visit KAHVE</h5>
-            <small>Cairo, Egypt · Premium Coffee Products</small>
+            <h5 class="fw-bold mb-0">{{ contentText('main', 'badge', 'Visit KAHVE') }}</h5>
+            <small>{{ contentText('main', 'extra', 'Cairo, Egypt · Premium Coffee Products') }}</small>
           </div>
         </div>
       </div>

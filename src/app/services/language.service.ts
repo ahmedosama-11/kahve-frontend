@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { KahveLanguage, TRANSLATIONS } from '../i18n/translations';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   private readonly storageKey = 'kahve_language';
-  private readonly baseUrl = 'http://localhost:3000';
+  private readonly baseUrl = API_BASE_URL;
   private readonly languageSubject = new BehaviorSubject<KahveLanguage>(this.getInitialLanguage());
 
   readonly language$ = this.languageSubject.asObservable();

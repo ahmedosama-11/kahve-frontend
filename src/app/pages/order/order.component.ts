@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { forkJoin } from 'rxjs';
 import { OrderService } from '../../services/order.service';
@@ -15,9 +16,13 @@ export class OrderComponent implements OnInit {
   items: any[] = [];
   loading: boolean = false;
   errorMessage: string = '';
+  successMessage: string = '';
+  confirmingPayment: boolean = false;
 
   constructor(
     private titleService: Title,
+    private route: ActivatedRoute,
+    private router: Router,
     private orderService: OrderService,
     public languageService: LanguageService,
   ) {
@@ -26,6 +31,12 @@ export class OrderComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadOrderItems();
+  }
+
+  confirmCardCheckout(sessionId: string): void {
+    this.errorMessage = this.languageService.currentLanguage === 'ar'
+      ? 'الدفع بالكارت متوقف حاليًا.'
+      : 'Card payment is currently disabled.';
   }
 
   loadOrderItems(): void {
@@ -63,6 +74,8 @@ export class OrderComponent implements OnInit {
       if (!groups.has(key)) {
         groups.set(key, {
           _id: order._id,
+          orderNumber: order.orderNumber || order.orderNo || order.code || '',
+          checkoutBatchId: order.checkoutBatchId || order.batchId || order.groupId || '',
           orderIds: [],
           products: [],
           address: order.address,
@@ -74,6 +87,13 @@ export class OrderComponent implements OnInit {
           status: order.status || 'pending',
           createdAt: order.createdAt,
           total: 0,
+          subtotal: Number(order.subtotal || 0),
+          deliveryFee: Number(order.deliveryFee || 0),
+          discountAmount: Number(order.discountAmount || 0),
+          grandTotal: Number(order.grandTotal || 0),
+          couponCode: order.couponCode || '',
+          paymentMethod: order.paymentMethod || 'cash',
+          paymentStatus: order.paymentStatus || 'pending',
           amount: 0,
         });
       }
@@ -81,7 +101,17 @@ export class OrderComponent implements OnInit {
       const group = groups.get(key);
       group.orderIds.push(order._id);
       group.products.push(order);
-      group.total += this.getSingleOrderTotal(order);
+      if (Number(order.grandTotal || 0) > 0) {
+        group.total = Number(order.grandTotal || 0);
+        group.subtotal = Number(order.subtotal || group.subtotal || 0);
+        group.deliveryFee = Number(order.deliveryFee || group.deliveryFee || 0);
+        group.discountAmount = Number(order.discountAmount || group.discountAmount || 0);
+        group.couponCode = order.couponCode || group.couponCode || '';
+        group.paymentMethod = order.paymentMethod || group.paymentMethod || 'cash';
+        group.paymentStatus = order.paymentStatus || group.paymentStatus || 'pending';
+      } else {
+        group.total += this.getSingleOrderTotal(order);
+      }
       group.amount += Number(order.amount || 1);
 
       if (order.status && order.status !== group.status) {
@@ -107,6 +137,18 @@ export class OrderComponent implements OnInit {
         console.error('Error canceling order:', error);
       },
     });
+  }
+
+
+  isArabic(): boolean {
+    return this.languageService.currentLanguage === 'ar';
+  }
+
+  getOrderNumber(item: any): string {
+    const raw = item?.orderNumber || item?.orderNo || item?.code || item?.checkoutBatchId || item?._id || '';
+    const digits = String(raw).replace(/\D/g, '');
+    if (!digits) return '—';
+    return digits.length > 8 ? digits.slice(-8) : digits;
   }
 
   getSingleOrderTotal(item: any): number {
@@ -141,7 +183,7 @@ export class OrderComponent implements OnInit {
   }
 
   getOrderTotal(item: any): number {
-    return Number(item?.total || this.getSingleOrderTotal(item));
+    return Number(item?.grandTotal || item?.total || this.getSingleOrderTotal(item));
   }
 
   getOrderAddress(item: any): string {
@@ -153,6 +195,11 @@ export class OrderComponent implements OnInit {
     return item?.status || 'pending';
   }
 
+  canCancelOrder(item: any): boolean {
+    const status = this.getOrderStatus(item);
+    return !['out_for_delivery', 'delivered', 'cancelled', 'rejected'].includes(status);
+  }
+
   getStatusLabel(item: any): string {
     const status = this.getOrderStatus(item);
     return this.languageService.translate(`orders.${status}`) || status;
@@ -160,6 +207,39 @@ export class OrderComponent implements OnInit {
 
   getOrderQuantity(item: any): number {
     return Number(item?.amount || 1);
+  }
+
+
+  getPaymentLabel(method: string): string {
+    const labels: Record<string, { ar: string; en: string }> = {
+      cash: { ar: 'كاش عند الاستلام', en: 'Cash on Delivery' },
+      instapay: { ar: 'إنستا باي', en: 'InstaPay' },
+    };
+    const item = labels[method || 'cash'] || labels['cash'];
+    return this.isArabic() ? item.ar : item.en;
+  }
+
+  getResolvedPaymentStatus(item: any): string {
+    if ((item?.paymentMethod || 'cash') === 'cash' && item?.status === 'delivered') {
+      return 'cash_done';
+    }
+    return item?.paymentStatus || 'pending';
+  }
+
+  getPaymentStatusLabel(statusOrOrder: any): string {
+    const status = typeof statusOrOrder === 'string'
+      ? statusOrOrder
+      : this.getResolvedPaymentStatus(statusOrOrder);
+
+    const labels: Record<string, { ar: string; en: string }> = {
+      pending: { ar: 'لم يتم الدفع بعد', en: 'Pending' },
+      pending_payment: { ar: 'بانتظار مراجعة الدفع', en: 'Waiting payment review' },
+      paid: { ar: 'تم تأكيد الدفع', en: 'Paid' },
+      cash_done: { ar: 'تم الدفع كاش', en: 'Done' },
+      failed: { ar: 'فشل الدفع', en: 'Failed' },
+    };
+    const item = labels[status || 'pending'] || labels['pending'];
+    return this.isArabic() ? item.ar : item.en;
   }
 
   moneyLabel(): string {

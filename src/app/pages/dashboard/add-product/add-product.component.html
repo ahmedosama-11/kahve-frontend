@@ -3,7 +3,7 @@
     <div class="form-heading">
       <span class="form-kicker">KAHVE Dashboard</span>
       <h2>Add New Coffee Product</h2>
-      <p>Create bilingual Arabic / English KAHVE products.</p>
+      <p>Create bilingual Arabic / English products and assign them to dashboard categories.</p>
     </div>
 
     <form (ngSubmit)="onSubmit(addProductForm)" #addProductForm="ngForm" class="product-form">
@@ -50,13 +50,23 @@
 
       <div class="form-grid two">
         <div class="form-group">
-          <label for="category_en">Category EN</label>
-          <input type="text" class="form-control" name="category_en" id="category_en" ngModel placeholder="Hot Drinks / Turkish Coffee" required>
+          <label for="categoryId">Category</label>
+          <select class="form-control" name="categoryId" id="categoryId" [(ngModel)]="selectedCategoryId" required>
+            <option value="" disabled>{{ categoriesLoading ? 'Loading categories...' : 'Choose category' }}</option>
+            <option *ngFor="let category of categories" [value]="category._id">
+              {{ category.name_en }} / {{ category.name_ar }}
+            </option>
+          </select>
+          <small class="helper-text" *ngIf="categoryError">{{ categoryError }}</small>
+          <small class="helper-text">Manage categories from Dashboard > Categories.</small>
         </div>
 
-        <div class="form-group">
-          <label for="category_ar">Category AR</label>
-          <input type="text" class="form-control" name="category_ar" id="category_ar" ngModel placeholder="مشروبات ساخنة / قهوة تركية" dir="rtl" required>
+        <div class="form-group best-seller-box">
+          <label>Best Sellers</label>
+          <label class="check-line">
+            <input type="checkbox" name="isBestSeller" [(ngModel)]="isBestSeller">
+            <span>Show this product in Best Sellers section</span>
+          </label>
         </div>
       </div>
 
@@ -81,7 +91,7 @@
       </div>
 
       <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary btn-block" [disabled]="!addProductForm.valid">
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="!addProductForm.valid || !selectedCategoryId">
           Add Coffee Product
         </button>
       </div>

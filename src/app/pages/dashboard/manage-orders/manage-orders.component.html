@@ -1,93 +1,112 @@
-<div class="content-header mb-4">
-  <span class="dashboard-kicker">KAHVE Sales</span>
-  <h2 class="fw-bold">Orders Management</h2>
-  <p>Track and control your coffee store sales.</p>
+<div class="orders-header-row mb-4">
+  <div class="content-header">
+    <span class="dashboard-kicker">{{ isArabic() ? 'مبيعات KAHVE' : 'KAHVE SALES' }}</span>
+    <h2>{{ isArabic() ? 'إدارة الطلبات' : 'Orders Management' }}</h2>
+    <p>{{ isArabic() ? 'تابع وتحكم في طلبات المتجر.' : 'Track and control your coffee store sales.' }}</p>
+  </div>
+
+  <div class="report-actions">
+    <button type="button" (click)="exportOrdersReport()"><i class="fa fa-file-arrow-down"></i>{{ isArabic() ? 'تقرير الطلبات' : 'Orders Report' }}</button>
+    <button type="button" (click)="exportProductsReport()"><i class="fa fa-chart-simple"></i>{{ isArabic() ? 'تقرير المبيعات' : 'Sales Report' }}</button>
+  </div>
+</div>
+
+<div *ngIf="newOrderMessage" class="admin-order-toast">
+  <i class="fa fa-bell"></i>
+  <span>{{ newOrderMessage }}</span>
 </div>
 
 <div *ngIf="loading" class="dashboard-state">
   <div class="spinner-border" role="status"></div>
-  <h4>Loading orders...</h4>
+  <h4>{{ isArabic() ? 'جاري تحميل الطلبات' : 'Loading orders' }}</h4>
 </div>
 
 <div *ngIf="errorMessage && !loading" class="dashboard-state error">
   <i class="fa fa-triangle-exclamation"></i>
   <h4>{{ errorMessage }}</h4>
-  <button type="button" (click)="fetchOrders()">Try Again</button>
+  <button type="button" (click)="fetchOrders(true)">{{ isArabic() ? 'إعادة المحاولة' : 'Try again' }}</button>
 </div>
 
 <div *ngIf="!loading && !errorMessage && orders.length === 0" class="dashboard-state">
   <i class="fa fa-mug-hot"></i>
-  <h4>No orders yet.</h4>
-  <p>Customer orders will appear here once they checkout.</p>
+  <h4>{{ isArabic() ? 'لا توجد طلبات حتى الآن' : 'No orders yet' }}</h4>
+  <p>{{ isArabic() ? 'عندما يقوم العملاء بطلب منتجات، ستظهر هنا.' : 'Customer orders will appear here.' }}</p>
 </div>
 
-<div class="card orders-admin-card border-0 rounded-4 overflow-hidden" *ngIf="!loading && orders.length > 0">
-  <div class="table-responsive">
-    <table class="table table-borderless mb-0 align-middle">
-      <thead>
-        <tr>
-          <th class="ps-4">Customer</th>
-          <th>Order Items</th>
-          <th>Total</th>
-          <th>Location</th>
-          <th>Status</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </thead>
+<div class="admin-orders-list" *ngIf="!loading && !errorMessage && orders.length > 0">
+  <article class="admin-order-card" *ngFor="let order of orders">
+    <div class="admin-order-head">
+      <div class="admin-order-no">
+        <small>{{ isArabic() ? 'رقم الطلب' : 'Order No.' }}</small>
+        <strong>#{{ getOrderNumber(order) }}</strong>
+      </div>
 
-      <tbody>
-        <tr *ngFor="let order of orders">
-          <td class="ps-4 py-3">
-            <div class="d-flex flex-column">
-              <span class="fw-bold customer-name">{{ order.username || 'Customer' }}</span>
-              <small>{{ order.email }}</small>
-              <small *ngIf="order.phone">{{ order.phone }}</small>
+      <span class="badge status-pill" [ngClass]="{
+        'status-pending': getOrderStatus(order) === 'pending',
+        'status-preparing': getOrderStatus(order) === 'preparing' || getOrderStatus(order) === 'accepted',
+        'status-delivery': getOrderStatus(order) === 'out_for_delivery',
+        'status-delivered': getOrderStatus(order) === 'delivered',
+        'status-rejected': getOrderStatus(order) === 'rejected' || getOrderStatus(order) === 'cancelled'
+      }">
+        {{ getStatusLabel(order) }}
+      </span>
+    </div>
+
+    <div class="admin-order-grid">
+      <div class="admin-info-card customer-card">
+        <span class="cell-label">{{ isArabic() ? 'العميل' : 'Customer' }}</span>
+        <strong>{{ order.username || (isArabic() ? 'عميل' : 'Customer') }}</strong>
+        <small>{{ order.email }}</small>
+        <small *ngIf="order.phone">{{ order.phone }}</small>
+      </div>
+
+      <div class="admin-info-card products-card">
+        <span class="cell-label">{{ isArabic() ? 'المنتجات' : 'Items' }}</span>
+        <div class="grouped-products">
+          <div class="grouped-product" *ngFor="let product of order.products">
+            <img [src]="product.image" alt="order product">
+            <div class="product-meta">
+              <strong>{{ getProductTitle(product) }}</strong>
+              <small>{{ isArabic() ? 'الكمية' : 'Qty' }}: {{ getProductQuantity(product) }} × {{ product.price | number }} {{ moneyLabel() }}</small>
             </div>
-          </td>
+          </div>
+        </div>
+      </div>
 
-          <td>
-            <div class="grouped-products">
-              <div class="grouped-product" *ngFor="let product of order.products">
-                <img [src]="product.image" class="rounded-3" alt="order product">
-                <div class="product-meta">
-                  <span class="small fw-bold">{{ getProductTitle(product) }}</span>
-                  <small>Qty: {{ getProductQuantity(product) }} × {{ product.price | number }} EGP</small>
-                </div>
-              </div>
-            </div>
-          </td>
+      <div class="admin-info-card total-card">
+        <span class="cell-label">{{ isArabic() ? 'الإجمالي' : 'Total' }}</span>
+        <strong>{{ getOrderTotal(order) | number }} <em>{{ moneyLabel() }}</em></strong>
+        <small *ngIf="order.deliveryFee">{{ isArabic() ? 'التوصيل' : 'Delivery' }}: {{ order.deliveryFee | number }} {{ moneyLabel() }}</small>
+        <small class="discount-note" *ngIf="order.discountAmount">{{ isArabic() ? 'الخصم' : 'Discount' }}: -{{ order.discountAmount | number }} {{ moneyLabel() }}</small>
+      </div>
 
-          <td class="fw-bold price-cell">
-            {{ getOrderTotal(order) | number }} <small>EGP</small>
-          </td>
+      <div class="admin-info-card payment-card">
+        <span class="cell-label">{{ isArabic() ? 'الدفع' : 'Payment' }}</span>
+        <span class="payment-pill">{{ getPaymentLabel(order.paymentMethod) }}</span>
+        <small class="payment-status" [class.paid]="getResolvedPaymentStatus(order) === 'paid' || getResolvedPaymentStatus(order) === 'cash_done'">{{ getPaymentStatusLabel(order) }}</small>
+        <small *ngIf="order.paymentProofPhone" class="proof-line">{{ isArabic() ? 'رقم المحفظة' : 'Wallet phone' }}: {{ order.paymentProofPhone }}</small>
+        <small *ngIf="order.paymentReference" class="proof-line">{{ isArabic() ? 'رقم العملية' : 'Reference' }}: {{ order.paymentReference }}</small>
+        <small *ngIf="order.paymentProofNote" class="proof-line">{{ order.paymentProofNote }}</small>
+        <button *ngIf="canConfirmPayment(order)" type="button" class="confirm-payment-btn" (click)="confirmManualPayment(order)">
+          <i class="fa fa-circle-check"></i>
+          {{ isArabic() ? 'تأكيد الدفع' : 'Confirm payment' }}
+        </button>
+      </div>
 
-          <td>
-            <small class="d-block location-cell">{{ getOrderLocation(order) }}</small>
-          </td>
+      <div class="admin-info-card location-card">
+        <span class="cell-label">{{ isArabic() ? 'العنوان' : 'Location' }}</span>
+        <small>{{ getOrderLocation(order) }}</small>
+      </div>
 
-          <td>
-            <span class="badge rounded-pill px-3 py-2" [ngClass]="{
-              'status-pending': getOrderStatus(order) === 'pending',
-              'status-accepted': getOrderStatus(order) === 'accepted',
-              'status-rejected': getOrderStatus(order) === 'rejected' || getOrderStatus(order) === 'cancelled'
-            }">
-              {{ getOrderStatus(order) }}
-            </span>
-          </td>
-
-          <td class="text-center">
-            <div class="d-flex justify-content-center gap-2" *ngIf="getOrderStatus(order) === 'pending'">
-              <button (click)="updateStatus(order, 'accept')" class="btn btn-sm btn-success rounded-circle shadow" title="Accept full order">
-                <i class="fa fa-check"></i>
-              </button>
-              <button (click)="updateStatus(order, 'reject')" class="btn btn-sm btn-danger rounded-circle shadow" title="Reject full order">
-                <i class="fa fa-times"></i>
-              </button>
-            </div>
-            <span *ngIf="getOrderStatus(order) !== 'pending'" class="processed-label">Processed</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <div class="admin-info-card action-card">
+        <span class="cell-label">{{ isArabic() ? 'تغيير الحالة' : 'Change status' }}</span>
+        <select class="status-select-kahve" [value]="''" (change)="onStatusSelect($event, order)" aria-label="Update order status">
+          <option value="" disabled>{{ isArabic() ? 'اختار الحالة' : 'Choose status' }}</option>
+          <option *ngFor="let status of statuses" [value]="status.value">
+            {{ isArabic() ? status.labelAr : status.labelEn }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </article>
 </div>
