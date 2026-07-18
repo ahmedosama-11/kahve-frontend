@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HomeComponent } from './pages/home/home.component';
 import { AboutusComponent } from './pages/aboutus/aboutus.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
@@ -41,6 +41,7 @@ import { CouponSettingsComponent } from './pages/dashboard/coupon-settings/coupo
 import { CategorySettingsComponent } from './pages/dashboard/category-settings/category-settings.component';
 import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
 import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
+import { authTokenInterceptor } from './interceptors/auth-token.interceptor';
 
 // const routes: Routes = [
 //   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -176,7 +177,7 @@ import { CustomerManagementComponent } from './pages/dashboard/customer-manageme
     NgSelectModule,
   ],
   exports: [RouterModule],
-  providers: [provideHttpClient(), AuthGuard],
+  providers: [provideHttpClient(withInterceptors([authTokenInterceptor])), AuthGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
