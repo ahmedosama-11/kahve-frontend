@@ -100,6 +100,6 @@ export class AnalyticsService {
   }
 
   private isConfigured(): boolean {
-    return /^G-[A-Z0-9]+$/i.test(GA_MEASUREMENT_ID) && GA_MEASUREMENT_ID !== 'G-REPLACE_ME';
+    return /^G-[A-Z0-9]+$/.test(String(GA_MEASUREMENT_ID));
   }
 }
