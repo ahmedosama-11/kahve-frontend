@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { LanguageService } from './services/language.service';
 import { KAHVE_CONTACT } from './config/store-contact';
+import { AnalyticsService } from './services/analytics.service';
+import { AppVersionService } from './services/app-version.service';
+import { AuthService } from './services/auth.service';
+import { LanguageService } from './services/language.service';
+import { SeoService } from './services/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -17,21 +20,32 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-private titleService: Title,
-    private languageService: LanguageService
+    private activatedRoute: ActivatedRoute,
+    private languageService: LanguageService,
+    private authService: AuthService,
+    private seoService: SeoService,
+    private appVersionService: AppVersionService,
+    private analyticsService: AnalyticsService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.languageService.translate('nav.home');
-    this.titleService.setTitle('Kahve');
+    this.seoService.setGlobalStructuredData();
+    this.applyRouteState(this.router.url);
 
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      // Keep browser tab title fixed on all pages.
-      this.titleService.setTitle('Kahve');
-      this.updateLayout(this.router.url);
-    });
+    // Register SEO before Analytics so every page_view receives the new page title.
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => this.applyRouteState(event.urlAfterRedirects));
+
+    this.appVersionService.initialize();
+    this.analyticsService.initialize();
+    window.addEventListener('kahve-auth-expired', () => this.authService.clearSession());
+
+    // A cached local user is only a hint. Confirm it with the backend on startup.
+    if (this.authService.hasStoredSession()) {
+      this.authService.checkAuthStatus().subscribe();
+    }
   }
 
   getWhatsAppLink(): string {
@@ -40,13 +54,21 @@ private titleService: Title,
     return `https://wa.me/${number}?text=${message}`;
   }
 
-  private updateLayout(url: string) {
-    if (url.includes('welcome')) {
+  private applyRouteState(url: string): void {
+    let route = this.activatedRoute.snapshot;
+    while (route.firstChild) route = route.firstChild;
+    this.seoService.applyRoute(route, url);
+    this.updateLayout(url);
+  }
+
+  private updateLayout(url: string): void {
+    const path = url.split('?')[0].split('#')[0];
+    if (path === '/' || path.includes('welcome')) {
       this.showNavbar = 'welcome';
       this.showFooter = true;
     } else if (url.includes('home') || url.includes('dashboard') || url.includes('contactUs')) {
       this.showNavbar = 'home';
-      this.showFooter = !url.includes('dashboard');  
+      this.showFooter = !url.includes('dashboard');
     } else if (url.includes('logout')) {
       this.showNavbar = 'false';
       this.showFooter = false;

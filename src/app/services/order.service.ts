@@ -1,86 +1,51 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { catchError } from 'rxjs/operators';
 import { API_BASE_URL } from '../config/api.config';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class OrderService {
   private baseUrl = API_BASE_URL;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
-  private refreshAccessToken(): Observable<any> {
-    console.log('Attempting to refresh access token');
-    return this.http.post(`${this.baseUrl}/refresh-token`, {}, { withCredentials: true }).pipe(
-      catchError((error) => {
-        console.error('Refresh token failed:', error);
-        this.router.navigate(['/login']);
-        return throwError(() => new Error('Unable to refresh token, please log in again'));
-      })
-    );
-  }
-
-  private handleRequest<T>(request: Observable<T>, operation: string): Observable<T> {
-    return request.pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          console.log(`Received 401 during ${operation}, attempting to refresh token`);
-          return this.refreshAccessToken().pipe(
-            switchMap(() => {
-              console.log(`Retrying ${operation} after token refresh`);
-              return request; // Retry the original request
-            }),
-            catchError(() => {
-              console.error(`${operation} failed after refresh attempt`);
-              this.router.navigate(['/login']);
-              return throwError(() => new Error('Session expired, please log in again'));
-            })
-          );
-        }
-        console.error(`${operation} error:`, error);
-        return throwError(() => error);
-      })
-    );
+  private handleError(operation: string) {
+    return (error: any) => {
+      console.error(`${operation} error:`, error);
+      return throwError(() => error);
+    };
   }
 
   getUserOrders(): Observable<any> {
-    console.log('Fetching user orders');
-    const request = this.http.get<any>(`${this.baseUrl}/orders`, { withCredentials: true });
-    return this.handleRequest(request, 'Get user orders');
+    return this.http.get<any>(`${this.baseUrl}/orders`).pipe(catchError(this.handleError('Get user orders')));
   }
 
   confirmCardCheckout(sessionId: string): Observable<any> {
-    const request = this.http.post<any>(`${this.baseUrl}/checkout/card/confirm`, { sessionId }, { withCredentials: true });
-    return this.handleRequest(request, 'Confirm card checkout');
+    return this.http.post<any>(`${this.baseUrl}/checkout/card/confirm`, { sessionId }).pipe(
+      catchError(this.handleError('Confirm card checkout')),
+    );
   }
 
   cancelOrder(orderId: string): Observable<any> {
-    console.log('Cancelling order:', { orderId });
-    const body = { orderId };
-    const request = this.http.delete<any>(`${this.baseUrl}/orders/cancel`, { body, withCredentials: true });
-    return this.handleRequest(request, 'Cancel order');
+    return this.http.delete<any>(`${this.baseUrl}/orders/cancel`, { body: { orderId } }).pipe(
+      catchError(this.handleError('Cancel order')),
+    );
   }
 
   checkout(orderData: any): Observable<any> {
-    console.log('Processing checkout:', orderData);
-    const request = this.http.post<any>(`${this.baseUrl}/checkout`, orderData, { withCredentials: true });
-    return this.handleRequest(request, 'Checkout');
+    return this.http.post<any>(`${this.baseUrl}/checkout`, orderData).pipe(catchError(this.handleError('Checkout')));
   }
 
-
   checkoutBatch(payload: any): Observable<any> {
-    console.log('Processing batch checkout:', payload);
-    const request = this.http.post<any>(`${this.baseUrl}/checkout/batch`, payload, { withCredentials: true });
-    return this.handleRequest(request, 'Batch checkout');
+    return this.http.post<any>(`${this.baseUrl}/checkout/batch`, payload).pipe(
+      catchError(this.handleError('Batch checkout')),
+    );
   }
 
   getSuccess(orderData: any): Observable<any> {
-    console.log('Fetching success details:', orderData);
-    const request = this.http.get<any>(`${this.baseUrl}/success`, { params: orderData, withCredentials: true });
-    return this.handleRequest(request, 'Get success details');
+    return this.http.get<any>(`${this.baseUrl}/success`, { params: orderData }).pipe(
+      catchError(this.handleError('Get success details')),
+    );
   }
 }

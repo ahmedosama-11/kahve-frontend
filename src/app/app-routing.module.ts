@@ -31,55 +31,86 @@ import { SiteContentManagementComponent } from './pages/dashboard/site-content-m
 import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/welcome', pathMatch: 'full' },
-  { path: 'welcome', component: WelcomeComponent, data: { title: 'KAHVE' } },
-  { path: 'login', component: LoginComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'signup', component: SignupComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'forgot-password', component: ForgotPasswordComponent, data: { title: 'KAHVE' } },
-  { path: 'verify-email', component: VerifyEmailComponent, data: { title: 'KAHVE' } },
-  { path: 'home', component: HomeComponent, data: { title: 'KAHVE' } },
-  { path: 'aboutUs', component: AboutusComponent, data: { title: 'KAHVE' } },
-  { path: 'cart', component: CartComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'orders', component: OrderComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'logout', component: LogoutComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'deliveryDetails', component: DeliveryDetailsComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'bestStyle', component: BestStyleComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'virtualTryOn', component: VirtualTryOnComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'contactUs', component: ContactusComponent, canActivate: [AuthGuard], data: { title: 'KAHVE' } },
-  { path: 'liveSession', component: LiveSessionComponent, data: { title: 'KAHVE' } },
+  {
+    path: '',
+    component: WelcomeComponent,
+    canActivate: [AuthGuard],
+    data: {
+      title: 'KAHVE Coffee Egypt | Premium Coffee Online',
+      description: 'Discover premium KAHVE coffee in Egypt. Shop fresh Turkish coffee, coffee blends and carefully selected coffee products online.',
+      canonical: '/',
+    },
+  },
+  { path: 'welcome', redirectTo: '', pathMatch: 'full' },
+  {
+    path: 'home',
+    component: HomeComponent,
+    data: {
+      title: 'Shop Premium Coffee Online | KAHVE Egypt',
+      description: 'Shop KAHVE coffee online in Egypt. Explore Turkish coffee, light and dark roasts, coffee mixes and fresh selections.',
+      canonical: '/home',
+    },
+  },
+  {
+    path: 'aboutUs',
+    component: AboutusComponent,
+    data: {
+      title: 'About KAHVE | Premium Coffee in Egypt',
+      description: 'Learn about KAHVE, our passion for quality coffee and the story behind our carefully selected coffee products in Egypt.',
+      canonical: '/aboutUs',
+    },
+  },
+  {
+    path: 'contactUs',
+    component: ContactusComponent,
+    data: {
+      title: 'Contact KAHVE Egypt | Coffee Orders & Support',
+      description: 'Contact KAHVE Egypt for coffee orders, product questions and customer support.',
+      canonical: '/contactUs',
+    },
+  },
+  { path: 'login', component: LoginComponent, canActivate: [AuthGuard], data: { title: 'Login | KAHVE', noindex: true } },
+  { path: 'signup', component: SignupComponent, canActivate: [AuthGuard], data: { title: 'Create Account | KAHVE', noindex: true } },
+  { path: 'forgot-password', component: ForgotPasswordComponent, data: { title: 'Reset Password | KAHVE', noindex: true } },
+  { path: 'verify-email', component: VerifyEmailComponent, data: { title: 'Verify Email | KAHVE', noindex: true } },
+  { path: 'cart', component: CartComponent, canActivate: [AuthGuard], data: { title: 'Shopping Cart | KAHVE', noindex: true } },
+  { path: 'orders', component: OrderComponent, canActivate: [AuthGuard], data: { title: 'My Orders | KAHVE', noindex: true } },
+  { path: 'logout', component: LogoutComponent, canActivate: [AuthGuard], data: { title: 'Logout | KAHVE', noindex: true } },
+  { path: 'deliveryDetails', component: DeliveryDetailsComponent, canActivate: [AuthGuard], data: { title: 'Checkout | KAHVE', noindex: true } },
+  { path: 'bestStyle', component: BestStyleComponent, canActivate: [AuthGuard], data: { title: 'KAHVE Collection', noindex: true } },
+  { path: 'virtualTryOn', component: VirtualTryOnComponent, canActivate: [AuthGuard], data: { title: 'Virtual Try On | KAHVE', noindex: true } },
+  { path: 'liveSession', component: LiveSessionComponent, data: { title: 'Live Session | KAHVE', noindex: true } },
   {
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard, AdminGuard],
     canActivateChild: [AdminGuard],
-    data: { title: 'KAHVE' },
+    data: { title: 'Admin Dashboard | KAHVE', noindex: true },
     children: [
-      { path: 'addproduct', component: AddProductComponent, data: { title: 'KAHVE' } },
-      { path: 'manageorder', component: ManageOrdersComponent, data: { title: 'KAHVE' } },
-      { path: 'view', component: ViewProductsComponent, data: { title: 'KAHVE' } },
-      { path: 'delivery-settings', component: DeliverySettingsComponent, data: { title: 'KAHVE' } },
-      { path: 'coupons', component: CouponSettingsComponent, data: { title: 'KAHVE' } },
-      { path: 'categories', component: CategorySettingsComponent, data: { title: 'KAHVE' } },
-      { path: 'site-content', component: SiteContentManagementComponent, data: { title: 'KAHVE' } },
-      { path: 'customers', component: CustomerManagementComponent, data: { title: 'KAHVE' } },
-      { path: '', redirectTo: 'addproduct', pathMatch: 'full' }
+      { path: 'addproduct', component: AddProductComponent, data: { title: 'Add Product | KAHVE', noindex: true } },
+      { path: 'manageorder', component: ManageOrdersComponent, data: { title: 'Manage Orders | KAHVE', noindex: true } },
+      { path: 'view', component: ViewProductsComponent, data: { title: 'Manage Products | KAHVE', noindex: true } },
+      { path: 'delivery-settings', component: DeliverySettingsComponent, data: { title: 'Delivery Settings | KAHVE', noindex: true } },
+      { path: 'coupons', component: CouponSettingsComponent, data: { title: 'Coupons | KAHVE', noindex: true } },
+      { path: 'categories', component: CategorySettingsComponent, data: { title: 'Categories | KAHVE', noindex: true } },
+      { path: 'site-content', component: SiteContentManagementComponent, data: { title: 'Site Content | KAHVE', noindex: true } },
+      { path: 'customers', component: CustomerManagementComponent, data: { title: 'Customers | KAHVE', noindex: true } },
+      { path: '', redirectTo: 'addproduct', pathMatch: 'full' },
     ],
   },
-  { path: 'error', component: ErrorComponent, data: { title: 'KAHVE' } },
-  { path: 'model-error', component: ModelErrorComponent, data: { title: 'KAHVE' } },
+  { path: 'error', component: ErrorComponent, data: { title: 'Page Not Found | KAHVE', noindex: true } },
+  { path: 'model-error', component: ModelErrorComponent, data: { title: 'Error | KAHVE', noindex: true } },
   { path: '**', redirectTo: '/error' },
 ];
 
 const routerOptions: ExtraOptions = {
   anchorScrolling: 'enabled',
   scrollPositionRestoration: 'enabled',
-  
-    scrollOffset: [0, 100],
-
+  scrollOffset: [0, 100],
 };
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, routerOptions)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

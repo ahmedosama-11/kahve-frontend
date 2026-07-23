@@ -11,6 +11,8 @@ import { AuthService } from '../../services/auth.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { LanguageService } from '../../services/language.service';
 import { SiteContentService } from '../../services/site-content.service';
+import { SeoService } from '../../services/seo.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 @Component({
   selector: 'app-home',
@@ -107,6 +109,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private location: Location,
     public languageService: LanguageService,
     private siteContentService: SiteContentService,
+    private seoService: SeoService,
+    private analyticsService: AnalyticsService,
   ) {
     this.titleService.setTitle('KAHVE | Home');
   }
@@ -121,6 +125,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe((term) => {
         this.searchTerm = term;
         this.filterProducts(term);
+        this.analyticsService.trackSearch(term);
       });
 
     this.route.fragment.subscribe((frag) => {
@@ -232,6 +237,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.products = Array.isArray(products) ? products : [];
         this.filteredProducts = [...this.products];
+        this.seoService.setProductList(this.products);
 
         const responseCategories = data?.categories || data?.data?.categories || [];
         if (Array.isArray(responseCategories) && responseCategories.length) {
@@ -356,6 +362,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           product.cartAmount = amount;
           this.productMessages[productId] = response?.message || `Added ${amount} item${amount > 1 ? 's' : ''} to cart`;
           window.dispatchEvent(new CustomEvent('kahve-cart-updated'));
+          this.analyticsService.trackAddToCart(product, amount);
 
           setTimeout(() => {
             this.productMessages[productId] = '';
@@ -455,6 +462,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   openProductModal(product: any): void {
     this.selectedProduct = product;
+    this.analyticsService.trackViewItem(product);
     document.body.classList.add('kahve-modal-open');
     document.body.style.overflow = 'hidden';
   }

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /cart
+Disallow: /orders
+Disallow: /deliveryDetails
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /verify-email
+
+Sitemap: https://www.kahve-egy.com/sitemap.xml

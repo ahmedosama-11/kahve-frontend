@@ -23,7 +23,11 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   private hasUser(): boolean {
-    return !!localStorage.getItem('userId') || !!localStorage.getItem('user');
+    return this.hasStoredSession();
+  }
+
+  hasStoredSession(): boolean {
+    return !!localStorage.getItem('userId') || !!localStorage.getItem('user') || !!localStorage.getItem('accessToken');
   }
 
   private checkAdminStatus(): boolean {

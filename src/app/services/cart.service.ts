@@ -1,20 +1,16 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { catchError, tap } from 'rxjs/operators';
 import { API_BASE_URL } from '../config/api.config';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CartService {
   private baseUrl = API_BASE_URL;
-
   private cartCountSubject = new BehaviorSubject<number>(this.readStoredCartCount());
   cartCount$ = this.cartCountSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   get cartCountValue(): number {
     return this.cartCountSubject.value;
@@ -57,96 +53,57 @@ export class CartService {
   }
 
   refreshCartCount(): void {
-    const request = this.http.get<any>(`${this.baseUrl}/cart`, { withCredentials: true });
-
-    this.handleRequest(request, 'Refresh cart count').subscribe({
-      next: (response: any) => this.updateCartCountFromResponse(response),
+    this.http.get<any>(`${this.baseUrl}/cart`).subscribe({
+      next: (response) => this.updateCartCountFromResponse(response),
       error: () => this.clearLocalCartCount(),
     });
   }
 
-  private refreshAccessToken(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/refresh-token`, {}, { withCredentials: true }).pipe(
-      catchError((error) => {
-        console.error('Refresh token failed:', error);
-        this.clearLocalCartCount();
-        this.router.navigate(['/login']);
-        return throwError(() => new Error('Unable to refresh token, please log in again'));
-      })
-    );
+  private handleError(operation: string) {
+    return (error: any) => {
+      console.error(`${operation} error:`, error);
+      return throwError(() => error);
+    };
   }
 
-  private handleRequest<T>(request: Observable<T>, operation: string): Observable<T> {
-    return request.pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          return this.refreshAccessToken().pipe(
-            switchMap(() => request),
-            catchError(() => {
-              console.error(`${operation} failed after refresh attempt`);
-              this.clearLocalCartCount();
-              this.router.navigate(['/login']);
-              return throwError(() => new Error('Session expired, please log in again'));
-            })
-          );
-        }
-
-        console.error(`${operation} error:`, error);
-        return throwError(() => error);
-      })
-    );
-  }
-
-  addToCart(product: {
-    name: string;
-    price: number;
-    image: string;
-    productId: string;
-    amount?: number;
-  }): Observable<any> {
-    const request = this.http.post(`${this.baseUrl}/cart`, product, { withCredentials: true });
-
-    return this.handleRequest(request, 'Add to cart').pipe(
-      tap(() => this.refreshCartCount())
+  addToCart(product: { name: string; price: number; image: string; productId: string; amount?: number }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/cart`, product).pipe(
+      tap(() => this.refreshCartCount()),
+      catchError(this.handleError('Add to cart')),
     );
   }
 
   getUserCart(): Observable<any> {
-    const request = this.http.get<any>(`${this.baseUrl}/cart`, { withCredentials: true });
-
-    return this.handleRequest(request, 'Get user cart').pipe(
-      tap((response: any) => this.updateCartCountFromResponse(response))
+    return this.http.get<any>(`${this.baseUrl}/cart`).pipe(
+      tap((response) => this.updateCartCountFromResponse(response)),
+      catchError(this.handleError('Get user cart')),
     );
   }
 
   saveCartItem(cartId: string, amount: number): Observable<any> {
-    const body = { cartId, amount };
-    const request = this.http.patch<any>(`${this.baseUrl}/cart/save`, body, { withCredentials: true });
-
-    return this.handleRequest(request, 'Save cart item').pipe(
-      tap(() => this.refreshCartCount())
+    return this.http.patch<any>(`${this.baseUrl}/cart/save`, { cartId, amount }).pipe(
+      tap(() => this.refreshCartCount()),
+      catchError(this.handleError('Save cart item')),
     );
   }
 
   deleteCartItem(cartId: string): Observable<any> {
-    const body = { cartId };
-    const request = this.http.delete<any>(`${this.baseUrl}/cart/delete`, { body, withCredentials: true });
-
-    return this.handleRequest(request, 'Delete cart item').pipe(
-      tap(() => this.refreshCartCount())
+    return this.http.delete<any>(`${this.baseUrl}/cart/delete`, { body: { cartId } }).pipe(
+      tap(() => this.refreshCartCount()),
+      catchError(this.handleError('Delete cart item')),
     );
   }
 
   clearCart(): Observable<any> {
-    const request = this.http.delete<any>(`${this.baseUrl}/cart/all`, { withCredentials: true });
-
-    return this.handleRequest(request, 'Clear cart').pipe(
-      tap(() => this.clearLocalCartCount())
+    return this.http.delete<any>(`${this.baseUrl}/cart/all`).pipe(
+      tap(() => this.clearLocalCartCount()),
+      catchError(this.handleError('Clear cart')),
     );
   }
 
   getDeliveryDetails(cartId: string): Observable<any> {
-    const request = this.http.get<any>(`${this.baseUrl}/deliveryDetails/${cartId}`, { withCredentials: true });
-    return this.handleRequest(request, 'Get delivery details');
+    return this.http.get<any>(`${this.baseUrl}/deliveryDetails/${cartId}`).pipe(
+      catchError(this.handleError('Get delivery details')),
+    );
   }
 }

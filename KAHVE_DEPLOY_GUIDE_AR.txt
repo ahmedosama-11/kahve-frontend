@@ -1,0 +1,47 @@
+دليل رفع النسخة المعدلة - KAHVE Frontend
+=========================================
+
+التعديلات الموجودة في النسخة:
+- معالجة تلقائية للـ Token/Session القديمة بدل طلب Clear Cache من العميل.
+- إرسال Credentials تلقائياً مع كل طلب للـ Backend.
+- محاولة Refresh Token مرة واحدة ثم إعادة الطلب تلقائياً.
+- اكتشاف أي Deploy جديد وإجبار المتصفح على تحميل النسخة الجديدة.
+- SEO: Titles وDescriptions وCanonical وOpen Graph وTwitter Cards وRobots وSitemap.
+- Structured Data للمتجر وقائمة المنتجات.
+- Google Analytics 4 مع Page Views وSearch وView Item وAdd to Cart وPurchase.
+- صفحات الحساب والسلة والطلبات والداشبورد أصبحت noindex.
+
+إعداد Google Analytics في Vercel:
+1) أنشئ GA4 Web Stream للدومين:
+   https://www.kahve-egy.com
+2) انسخ Measurement ID الذي يبدأ بـ G-
+3) افتح مشروع الـ Frontend في Vercel:
+   Settings > Environment Variables
+4) أضف:
+   Key: GA_MEASUREMENT_ID
+   Value: G-XXXXXXXXXX
+   Environment: Production and Preview
+5) اعمل Redeploy للـ Frontend.
+
+Search Console:
+1) أضف Domain Property باسم kahve-egy.com
+2) أضف TXT الذي تعطيه Google داخل DNS في GoDaddy باسم @
+3) بعد التحقق أرسل:
+   https://www.kahve-egy.com/sitemap.xml
+4) تأكد أن الرابط التالي يفتح:
+   https://www.kahve-egy.com/robots.txt
+
+طريقة الرفع:
+- ارفع محتويات هذا المجلد إلى نفس GitHub Repository الخاص بالـ Frontend.
+- لا ترفع node_modules أو dist أو .angular/cache.
+- Vercel سيشغل npm run build تلقائياً.
+- ملف scripts/generate-version.js ينشئ رقم نسخة جديد ويقرأ GA_MEASUREMENT_ID أثناء الـ Build.
+
+اختبار بعد الرفع:
+- افتح الموقع في نافذة Incognito.
+- جرّب Login ثم Add to Cart ثم Cart ثم Orders ثم إنشاء Order.
+- افتح Google Analytics > Realtime وتأكد من ظهور الزيارة.
+- افتح /robots.txt و/sitemap.xml.
+
+ملاحظة:
+الـ SEO الذي تمت إضافته مناسب للنسخة الحالية SPA. التحويل إلى SSR/Prerender يمكن تنفيذه لاحقاً كمرحلة منفصلة لأنه تغيير أكبر في بنية المشروع والنشر.

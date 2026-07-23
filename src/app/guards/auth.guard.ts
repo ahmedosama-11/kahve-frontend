@@ -12,13 +12,14 @@ export class AuthGuard implements CanActivate {
     const isLoggedIn = this.authService.isLoggedInValue;
     const url = state.url.split('?')[0];
 
-    const guestOnlyPages = ['/login', '/signup', '/welcome'];
+    const guestOnlyPages = ['/', '/login', '/signup', '/welcome'];
     if (isLoggedIn && guestOnlyPages.includes(url)) {
       this.router.navigate(['/home']);
       return false;
     }
 
     const publicPages = [
+      '/',
       '/login',
       '/signup',
       '/aboutUs',
@@ -26,6 +27,7 @@ export class AuthGuard implements CanActivate {
       '/home',
       '/forgot-password',
       '/verify-email',
+      '/contactUs',
     ];
 
     if (!isLoggedIn && !publicPages.includes(url)) {

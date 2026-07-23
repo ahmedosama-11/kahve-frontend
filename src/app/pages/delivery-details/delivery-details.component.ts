@@ -6,6 +6,7 @@ import { OrderService } from '../../services/order.service';
 import { CartService } from '../../services/cart.service';
 import { LanguageService } from '../../services/language.service';
 import { CheckoutSettingsService, DeliveryArea, PaymentSettings } from '../../services/checkout-settings.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 type PaymentMethod = 'cash' | 'instapay';
 
@@ -64,6 +65,7 @@ export class DeliveryDetailsComponent implements OnInit {
     private router: Router,
     public languageService: LanguageService,
     private checkoutSettingsService: CheckoutSettingsService,
+    private analyticsService: AnalyticsService,
   ) {}
 
   ngOnInit(): void {
@@ -449,6 +451,7 @@ export class DeliveryDetailsComponent implements OnInit {
       paymentProof,
     }).subscribe({
       next: (response) => {
+        this.analyticsService.trackPurchase(response, items, this.getFinalTotal());
         this.successMessage = this.languageService.translate('checkout.success');
         this.clearCartAfterCheckout();
       },
