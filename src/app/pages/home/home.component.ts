@@ -114,7 +114,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private analyticsService: AnalyticsService,
     private productUrlService: ProductUrlService,
   ) {
-    this.titleService.setTitle('KAHVE | Home');
+    this.titleService.setTitle('Kahve');
   }
 
   ngOnInit(): void {

@@ -36,7 +36,7 @@ export class SeoService {
 
   applyRoute(snapshot: ActivatedRouteSnapshot, currentUrl: string): void {
     const data = (snapshot.data || {}) as SeoRouteData;
-    const title = data.title || 'KAHVE Coffee Egypt | Premium Coffee Online';
+    const title = data.title || 'Kahve';
     const description = data.description || 'Shop premium KAHVE coffee in Egypt. Discover fresh Turkish coffee, coffee blends and carefully selected products online.';
     const canonicalPath = data.canonical ?? this.cleanPath(currentUrl);
     const canonicalUrl = this.absoluteUrl(canonicalPath);

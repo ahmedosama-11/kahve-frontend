@@ -1,0 +1,26 @@
+KAHVE - Google Merchant Center Product Feed
+===========================================
+
+بعد رفع المشروع على Vercel ونجاح الـDeployment افتح:
+
+https://www.kahve-egy.com/merchant-feed.xml
+
+المفروض يظهر ملف XML يحتوي على المنتجات، وابحث داخله عن:
+
+<item>
+<g:id>
+<g:title>
+<g:price>
+
+بعد التأكد، ضع الرابط التالي في Merchant Center عند Enter a link to your file:
+
+https://www.kahve-egy.com/merchant-feed.xml
+
+الإعدادات المقترحة:
+- Schedule: Every 24 hours
+- Authentication: None
+- Country: Egypt
+- Language: English
+- Marketing methods: All
+
+أي منتج جديد يظهر في API /home سيدخل في الملف تلقائيًا خلال مدة الكاش، بحد أقصى ساعة عادة، ثم يسحبه Merchant Center في الموعد اليومي.

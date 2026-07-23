@@ -37,7 +37,7 @@ const routes: Routes = [
     component: WelcomeComponent,
     canActivate: [AuthGuard],
     data: {
-      title: 'KAHVE Coffee Egypt | Premium Coffee Online',
+      title: 'Kahve',
       description: 'Discover premium KAHVE coffee in Egypt. Shop fresh Turkish coffee, coffee blends and carefully selected coffee products online.',
       canonical: '/',
     },
@@ -47,7 +47,7 @@ const routes: Routes = [
     path: 'home',
     component: HomeComponent,
     data: {
-      title: 'Shop Premium Coffee Online | KAHVE Egypt',
+      title: 'Kahve',
       description: 'Shop KAHVE coffee online in Egypt. Explore Turkish coffee, light and dark roasts, coffee mixes and fresh selections.',
       canonical: '/home',
     },
