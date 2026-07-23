@@ -162,13 +162,13 @@
         <i class="fa-solid fa-heart" [style.color]="product.isFavorite ? '#9b271a' : '#b79b7d'"></i>
       </button>
 
-      <div class="product-image-wrap">
+      <a class="product-image-wrap product-image-link" [routerLink]="getProductPath(product)" [attr.aria-label]="getProductTitle(product)">
         <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'" />
-      </div>
+      </a>
 
       <div class="product-info">
         <span class="product-category">{{ getDisplayCategory(getProductCategory(product)) }}</span>
-        <h3 class="product-title">{{ getProductTitle(product) }}</h3>
+        <h3 class="product-title"><a class="product-title-link" [routerLink]="getProductPath(product)">{{ getProductTitle(product) }}</a></h3>
         <p class="product-description" *ngIf="getProductDescription(product)">{{ getProductDescription(product) }}</p>
         <div class="product-meta">
           <span class="product-price">{{ product.price | number }} {{ moneyLabel() }}</span>
@@ -198,7 +198,7 @@
       </p>
 
       <div class="product-actions">
-        <button class="view-button" type="button" (click)="openProductModal(product)">{{ 'home.view' | t }} <i class="fa-solid fa-eye"></i></button>
+        <a class="view-button" [routerLink]="getProductPath(product)">{{ 'home.view' | t }} <i class="fa-solid fa-eye"></i></a>
         <button *ngIf="product.Quantity <= 0" class="add-to-cart disabled" disabled>{{ 'home.outOfStock' | t }}</button>
         <a *ngIf="product.isInCart" [routerLink]="['/cart']" class="add-to-cart added">
           {{ 'home.added' | t }} ✓

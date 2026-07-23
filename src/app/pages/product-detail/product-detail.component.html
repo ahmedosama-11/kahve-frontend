@@ -1,0 +1,114 @@
+<main class="product-page">
+  <div class="product-page-shell">
+    <nav class="product-breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/home">{{ 'nav.home' | t }}</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span *ngIf="product as item">{{ getProductTitle(item) }}</span>
+      <span *ngIf="!product">{{ 'product.details' | t }}</span>
+    </nav>
+
+    <section class="product-loading" *ngIf="loading">
+      <div class="product-spinner" aria-hidden="true"></div>
+      <p>{{ 'common.loading' | t }}</p>
+    </section>
+
+    <section class="product-not-found" *ngIf="!loading && notFound">
+      <i class="fa-solid fa-mug-hot"></i>
+      <h1>{{ 'product.notFoundTitle' | t }}</h1>
+      <p>{{ 'product.notFoundText' | t }}</p>
+      <a routerLink="/home" class="product-primary-button">{{ 'product.continueShopping' | t }}</a>
+    </section>
+
+    <article class="product-detail-card" *ngIf="!loading && product as item">
+      <div class="product-gallery">
+        <span class="product-stock-badge" [class.out]="getAvailableQuantity(item) <= 0">
+          {{ getAvailableQuantity(item) > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
+        </span>
+        <img [src]="item.image" [alt]="getProductTitle(item)" />
+      </div>
+
+      <div class="product-detail-content">
+        <span class="product-category">{{ getProductCategory(item) }}</span>
+        <h1>{{ getProductTitle(item) }}</h1>
+        <p class="product-description" *ngIf="getProductDescription(item); else noDescription">
+          {{ getProductDescription(item) }}
+        </p>
+        <ng-template #noDescription>
+          <p class="product-description muted">{{ 'home.noDescription' | t }}</p>
+        </ng-template>
+
+        <div class="product-price-row">
+          <strong>{{ item.price | number }} {{ moneyLabel() }}</strong>
+          <span>{{ 'product.taxNote' | t }}</span>
+        </div>
+
+        <div class="product-facts">
+          <div>
+            <span>{{ 'home.available' | t }}</span>
+            <strong>{{ getAvailableQuantity(item) }}</strong>
+          </div>
+          <div *ngIf="getProductSku(item)">
+            <span>{{ 'home.sku' | t }}</span>
+            <strong>{{ getProductSku(item) }}</strong>
+          </div>
+          <div>
+            <span>{{ 'product.brand' | t }}</span>
+            <strong>KAHVE</strong>
+          </div>
+        </div>
+
+        <div class="product-buy-panel" *ngIf="getAvailableQuantity(item) > 0 && !item.isInCart">
+          <label for="productQuantity">{{ 'home.quantity' | t }}</label>
+          <div class="product-quantity-control">
+            <button type="button" (click)="decreaseQuantity()" aria-label="Decrease quantity">−</button>
+            <input
+              id="productQuantity"
+              type="number"
+              min="1"
+              [max]="getAvailableQuantity(item)"
+              [ngModel]="quantity"
+              (ngModelChange)="setQuantity($event)" />
+            <button type="button" (click)="increaseQuantity()" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+
+        <p class="product-message" *ngIf="message">{{ message }}</p>
+
+        <div class="product-actions">
+          <button *ngIf="getAvailableQuantity(item) <= 0" class="product-primary-button disabled" disabled>
+            {{ 'home.outOfStock' | t }}
+          </button>
+
+          <a *ngIf="item.isInCart" routerLink="/cart" class="product-primary-button">
+            {{ 'home.goCart' | t }} <i class="fa-solid fa-cart-shopping"></i>
+          </a>
+
+          <button
+            *ngIf="getAvailableQuantity(item) > 0 && !item.isInCart"
+            type="button"
+            class="product-primary-button"
+            [disabled]="adding"
+            (click)="addToCart()">
+            {{ adding ? ('home.adding' | t) : ('home.addToCart' | t) }}
+            <i class="fa-solid fa-cart-plus" *ngIf="!adding"></i>
+          </button>
+
+          <button type="button" class="product-secondary-button" [disabled]="favoriteBusy" (click)="toggleFavorite()">
+            {{ item.isFavorite ? ('home.removeFavorite' | t) : ('home.addFavorite' | t) }}
+            <i class="fa-solid fa-heart"></i>
+          </button>
+        </div>
+
+        <div class="product-benefits">
+          <div><i class="fa-solid fa-seedling"></i><span>{{ 'product.selectedCoffee' | t }}</span></div>
+          <div><i class="fa-solid fa-truck-fast"></i><span>{{ 'product.fastDelivery' | t }}</span></div>
+          <div><i class="fa-solid fa-shield-heart"></i><span>{{ 'product.secureOrder' | t }}</span></div>
+        </div>
+
+        <a routerLink="/home" fragment="newArrivals" class="product-back-link">
+          <i class="fa-solid fa-arrow-left"></i> {{ 'product.continueShopping' | t }}
+        </a>
+      </div>
+    </article>
+  </div>
+</main>

@@ -13,6 +13,7 @@ import { LanguageService } from '../../services/language.service';
 import { SiteContentService } from '../../services/site-content.service';
 import { SeoService } from '../../services/seo.service';
 import { AnalyticsService } from '../../services/analytics.service';
+import { ProductUrlService } from '../../services/product-url.service';
 
 @Component({
   selector: 'app-home',
@@ -111,6 +112,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private siteContentService: SiteContentService,
     private seoService: SeoService,
     private analyticsService: AnalyticsService,
+    private productUrlService: ProductUrlService,
   ) {
     this.titleService.setTitle('KAHVE | Home');
   }
@@ -283,6 +285,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   getBestSellerProducts(): any[] {
     const bestSellers = this.filteredProducts.filter((product: any) => product?.isBestSeller === true);
     return bestSellers.length ? bestSellers : this.filteredProducts.slice(0, 8);
+  }
+
+
+  getProductPath(product: any): string {
+    return this.productUrlService.getProductPath(product);
   }
 
   getProductTitle(product: any): string {

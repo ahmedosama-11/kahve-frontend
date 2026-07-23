@@ -1,0 +1,40 @@
+تحديث صفحات المنتجات وSEO لموقع KAHVE
+=====================================
+
+التعديلات المضافة:
+1) صفحة مستقلة لكل منتج برابط بالشكل:
+   https://www.kahve-egy.com/product/PRODUCT_ID/product-name
+
+2) صورة المنتج واسمه وزر "عرض" في الصفحة الرئيسية يفتحوا صفحة المنتج المستقلة.
+
+3) كل صفحة منتج تحتوي على:
+   - اسم ووصف وصورة وسعر المنتج.
+   - حالة المخزون والكمية المتاحة والكود/الباركود.
+   - اختيار الكمية والإضافة للسلة.
+   - الإضافة والإزالة من المفضلة.
+   - دعم العربي والإنجليزي والموبايل.
+
+4) SEO منفصل لكل منتج:
+   - Title وDescription وCanonical خاصين بالمنتج.
+   - Open Graph وTwitter Card.
+   - Product structured data.
+   - Breadcrumb structured data.
+   - تحديث رابط كل منتج داخل Product List structured data في Home.
+
+5) Sitemap ديناميكي:
+   - الملف api/sitemap.js يسحب المنتجات من Backend ويضيف روابطها تلقائياً.
+   - Vercel يعرضه على نفس الرابط الحالي:
+     https://www.kahve-egy.com/sitemap.xml
+   - لو الـBackend لم يرد مؤقتاً، الـSitemap يظل يعرض صفحات الموقع الأساسية.
+
+خطوات الرفع:
+1) ارفع كل الملفات إلى نفس مستودع GitHub الخاص بالـFrontend.
+2) لا تمسح Environment Variable:
+   GA_MEASUREMENT_ID = G-26YQV8R6EJ
+3) اعمل Push وانتظر Vercel حتى يظهر Deployment ناجح.
+4) افتح منتج من الصفحة الرئيسية وتأكد أن الرابط يبدأ بـ /product/.
+5) افتح https://www.kahve-egy.com/sitemap.xml وابحث داخل الصفحة عن /product/.
+6) في Search Console أعد إرسال sitemap.xml أو افتحه واضغط اختبار مباشر عند الحاجة.
+
+ملاحظة:
+الـSitemap الديناميكي يعمل من خلال Vercel Function، لذلك يجب رفع مجلد api وملف vercel.json بالتعديلات الجديدة.

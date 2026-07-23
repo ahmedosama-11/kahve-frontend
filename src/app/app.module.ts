@@ -9,8 +9,8 @@ import { AboutusComponent } from './pages/aboutus/aboutus.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { RouterModule, Routes } from '@angular/router';
-import { CommonModule } from '@angular/common'; 
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 import { WelcomeComponent } from './pages/welcome/welcome.component';
@@ -42,6 +42,7 @@ import { CategorySettingsComponent } from './pages/dashboard/category-settings/c
 import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
 import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 import { authTokenInterceptor } from './interceptors/auth-token.interceptor';
+import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 
 // const routes: Routes = [
 //   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -165,13 +166,13 @@ import { authTokenInterceptor } from './interceptors/auth-token.interceptor';
     CouponSettingsComponent,
     CategorySettingsComponent,
     CustomerManagementComponent,
-      SiteContentManagementComponent,
-],
+    SiteContentManagementComponent,
+    ProductDetailComponent,
+  ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
-        AppRoutingModule,
-
+    AppRoutingModule,
     FormsModule,
     CommonModule,
     NgSelectModule,

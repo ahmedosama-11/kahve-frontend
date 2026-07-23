@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
@@ -16,6 +16,7 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
     this.loginForm = this.fb.group({
@@ -35,9 +36,14 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/home']);
+        const returnUrl = String(this.route.snapshot.queryParamMap.get('returnUrl') || '');
+        if (returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
+          this.router.navigateByUrl(returnUrl);
+        } else {
+          this.router.navigate(['/home']);
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         this.loading = false;
         const message = error?.error?.message || 'Email or password incorrect';
         this.errorMessage = message;

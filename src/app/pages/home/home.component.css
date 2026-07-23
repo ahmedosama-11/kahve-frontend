@@ -1177,3 +1177,27 @@ body.kahve-modal-open {
     display: grid;
   }
 }
+
+
+/* Crawlable product detail links */
+.product-image-link,
+.product-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.product-image-link {
+  display: block;
+}
+
+.product-title-link:hover {
+  color: #8f2f22;
+}
+
+.product-actions .view-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  text-decoration: none;
+}

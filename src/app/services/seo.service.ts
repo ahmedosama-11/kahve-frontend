@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { KAHVE_CONTACT } from '../config/store-contact';
+import { ProductUrlService } from './product-url.service';
 
 export interface SeoRouteData {
   title?: string;
@@ -13,6 +14,14 @@ export interface SeoRouteData {
   type?: string;
 }
 
+export interface ProductSeoOptions {
+  product: any;
+  title: string;
+  description?: string;
+  category?: string;
+  path: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private readonly siteUrl = 'https://www.kahve-egy.com';
@@ -21,6 +30,7 @@ export class SeoService {
   constructor(
     private title: Title,
     private meta: Meta,
+    private productUrlService: ProductUrlService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -33,44 +43,31 @@ export class SeoService {
     const image = this.absoluteUrl(data.image || this.defaultImage);
     const robots = data.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large';
 
-    this.title.setTitle(title);
-    this.updateName('description', description);
-    this.updateName('robots', robots);
-    this.updateName('googlebot', robots);
-
-    this.updateProperty('og:site_name', 'KAHVE');
-    this.updateProperty('og:type', data.type || 'website');
-    this.updateProperty('og:title', title);
-    this.updateProperty('og:description', description);
-    this.updateProperty('og:url', canonicalUrl);
-    this.updateProperty('og:image', image);
-    this.updateProperty('og:image:alt', title);
-    this.updateProperty('og:locale', document.documentElement.lang === 'ar' ? 'ar_EG' : 'en_US');
-
-    this.updateName('twitter:card', 'summary_large_image');
-    this.updateName('twitter:title', title);
-    this.updateName('twitter:description', description);
-    this.updateName('twitter:image', image);
-
-    this.setCanonical(canonicalUrl);
+    this.applyMeta({ title, description, canonicalUrl, image, robots, type: data.type || 'website' });
     this.removeStructuredData('kahve-products-schema');
+    this.removeStructuredData('kahve-product-schema');
+    this.removeStructuredData('kahve-product-breadcrumb-schema');
   }
 
   setProductList(products: any[]): void {
     if (!Array.isArray(products) || !products.length) return;
 
-    const itemList = products.slice(0, 30).map((product, index) => {
+    const itemList = products.slice(0, 50).map((product, index) => {
       const name = String(product?.title_en || product?.title || product?.title_ar || 'KAHVE Product').trim();
       const description = String(product?.description_en || product?.description || product?.description_ar || '').trim();
       const image = this.absoluteUrl(product?.image || this.defaultImage);
       const available = Number(product?.Quantity ?? product?.quantity ?? 0) > 0;
+      const productUrl = this.absoluteUrl(this.productUrlService.getProductPath(product));
 
       return {
         '@type': 'ListItem',
         position: index + 1,
+        url: productUrl,
         item: {
           '@type': 'Product',
+          '@id': `${productUrl}#product`,
           name,
+          url: productUrl,
           image: [image],
           description,
           sku: String(product?.SKU || product?.sku || product?._id || ''),
@@ -80,7 +77,7 @@ export class SeoService {
             priceCurrency: 'EGP',
             price: Number(product?.price || 0),
             availability: available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-            url: `${this.siteUrl}/home`,
+            url: productUrl,
           },
         },
       };
@@ -92,6 +89,95 @@ export class SeoService {
       name: 'KAHVE Coffee Products',
       itemListElement: itemList,
     });
+  }
+
+  setProduct(options: ProductSeoOptions): void {
+    const product = options.product;
+    const productName = String(options.title || 'KAHVE Product').trim();
+    const description = String(
+      options.description ||
+      `${productName} from KAHVE Egypt. View price, availability and order premium coffee online.`,
+    ).trim();
+    const canonicalUrl = this.absoluteUrl(options.path);
+    const image = this.absoluteUrl(product?.image || this.defaultImage);
+    const available = Number(product?.Quantity ?? product?.quantity ?? 0) > 0;
+    const title = `${productName} | KAHVE Egypt`;
+    const sku = String(product?.SKU || product?.sku || product?._id || '').trim();
+    const category = String(options.category || product?.category || 'Coffee').trim();
+
+    this.applyMeta({
+      title,
+      description,
+      canonicalUrl,
+      image,
+      robots: 'index, follow, max-image-preview:large',
+      type: 'product',
+    });
+
+    this.removeStructuredData('kahve-products-schema');
+    this.setStructuredData('kahve-product-schema', {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      '@id': `${canonicalUrl}#product`,
+      name: productName,
+      url: canonicalUrl,
+      image: [image],
+      description,
+      sku,
+      category,
+      brand: {
+        '@type': 'Brand',
+        name: 'KAHVE',
+      },
+      offers: {
+        '@type': 'Offer',
+        url: canonicalUrl,
+        priceCurrency: 'EGP',
+        price: Number(product?.price || 0),
+        availability: available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        itemCondition: 'https://schema.org/NewCondition',
+      },
+    });
+
+    this.setStructuredData('kahve-product-breadcrumb-schema', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'KAHVE',
+          item: `${this.siteUrl}/home`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: category,
+          item: `${this.siteUrl}/home`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: productName,
+          item: canonicalUrl,
+        },
+      ],
+    });
+  }
+
+  setNotFound(title: string, currentUrl: string): void {
+    const canonicalUrl = this.absoluteUrl(this.cleanPath(currentUrl));
+    this.applyMeta({
+      title,
+      description: 'The requested KAHVE product could not be found.',
+      canonicalUrl,
+      image: this.defaultImage,
+      robots: 'noindex, nofollow',
+      type: 'website',
+    });
+    this.removeStructuredData('kahve-products-schema');
+    this.removeStructuredData('kahve-product-schema');
+    this.removeStructuredData('kahve-product-breadcrumb-schema');
   }
 
   setGlobalStructuredData(): void {
@@ -125,6 +211,36 @@ export class SeoService {
     });
   }
 
+  private applyMeta(options: {
+    title: string;
+    description: string;
+    canonicalUrl: string;
+    image: string;
+    robots: string;
+    type: string;
+  }): void {
+    this.title.setTitle(options.title);
+    this.updateName('description', options.description);
+    this.updateName('robots', options.robots);
+    this.updateName('googlebot', options.robots);
+
+    this.updateProperty('og:site_name', 'KAHVE');
+    this.updateProperty('og:type', options.type);
+    this.updateProperty('og:title', options.title);
+    this.updateProperty('og:description', options.description);
+    this.updateProperty('og:url', options.canonicalUrl);
+    this.updateProperty('og:image', options.image);
+    this.updateProperty('og:image:alt', options.title);
+    this.updateProperty('og:locale', this.document.documentElement.lang === 'ar' ? 'ar_EG' : 'en_US');
+
+    this.updateName('twitter:card', 'summary_large_image');
+    this.updateName('twitter:title', options.title);
+    this.updateName('twitter:description', options.description);
+    this.updateName('twitter:image', options.image);
+
+    this.setCanonical(options.canonicalUrl);
+  }
+
   private cleanPath(url: string): string {
     const path = String(url || '/').split('?')[0].split('#')[0];
     return path === '/welcome' ? '/' : (path || '/');
@@ -132,6 +248,7 @@ export class SeoService {
 
   private absoluteUrl(value: string): string {
     if (/^https?:\/\//i.test(value)) return value;
+    if (value.startsWith('//')) return `https:${value}`;
     const path = value.startsWith('/') ? value : `/${value}`;
     return `${this.siteUrl}${path}`;
   }

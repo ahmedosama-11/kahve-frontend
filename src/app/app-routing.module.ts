@@ -29,6 +29,7 @@ import { CouponSettingsComponent } from './pages/dashboard/coupon-settings/coupo
 import { CategorySettingsComponent } from './pages/dashboard/category-settings/category-settings.component';
 import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
 import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
+import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 
 const routes: Routes = [
   {
@@ -49,6 +50,24 @@ const routes: Routes = [
       title: 'Shop Premium Coffee Online | KAHVE Egypt',
       description: 'Shop KAHVE coffee online in Egypt. Explore Turkish coffee, light and dark roasts, coffee mixes and fresh selections.',
       canonical: '/home',
+    },
+  },
+  {
+    path: 'product/:id/:slug',
+    component: ProductDetailComponent,
+    data: {
+      title: 'KAHVE Coffee Product',
+      description: 'Discover product details, price and availability from KAHVE Egypt.',
+      type: 'product',
+    },
+  },
+  {
+    path: 'product/:id',
+    component: ProductDetailComponent,
+    data: {
+      title: 'KAHVE Coffee Product',
+      description: 'Discover product details, price and availability from KAHVE Egypt.',
+      type: 'product',
     },
   },
   {
