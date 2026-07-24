@@ -1201,3 +1201,74 @@ body.kahve-modal-open {
   gap: 7px;
   text-decoration: none;
 }
+
+
+/* ============================================================
+   Performance + mobile rendering pass
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Expensive live blur effects are costly on mid-range mobile GPUs. */
+  .kahve-category-nav,
+  .kahve-feature-strip,
+  .btn-outline,
+  .favorite-btn,
+  .floating-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .hero-slide {
+    transition-duration: 420ms;
+  }
+
+  .kahve-product-card {
+    animation: none;
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .product-image-wrap {
+    height: 220px;
+    margin-bottom: 14px;
+  }
+
+  .hero-container,
+  .hero-slider,
+  .hero-slide {
+    min-height: 500px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(2.45rem, 12vw, 3.25rem);
+  }
+
+  .kahve-main {
+    width: min(100% - 24px, 1200px);
+  }
+
+  .kahve-story-section,
+  .product-section {
+    margin-bottom: 56px;
+  }
+
+  .view-button,
+  .add-to-cart,
+  .product-qty-control button {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide,
+  .hero-content,
+  .kahve-product-card,
+  .product-image,
+  .btn-main,
+  .btn-outline,
+  .story-link,
+  .add-to-cart,
+  .view-button {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

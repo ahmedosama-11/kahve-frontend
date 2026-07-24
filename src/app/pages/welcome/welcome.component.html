@@ -7,7 +7,7 @@
   </div>
 
   <div class="welcome-visual">
-    <img [src]="contentImage('main', '/assets/images/kahve-products.jpg')" alt="KAHVE products" />
+    <img [src]="contentImage('main', '/assets/images/kahve-products.jpg')" alt="KAHVE products" fetchpriority="high" decoding="async" />
     <div class="visual-badge">{{ contentText('main', 'badge', 'Fresh aroma') }}</div>
   </div>
 </section>

@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     },
     {
       key: 'hero_2',
-      image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?q=80&w=2070&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1600&q=72',
       tagKey: 'home.hero2Tag',
       titleKey: 'home.hero2Title',
       descKey: 'home.hero2Desc',
@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     },
     {
       key: 'hero_3',
-      image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2071&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1600&q=72',
       tagKey: 'home.hero3Tag',
       titleKey: 'home.hero3Title',
       descKey: 'home.hero3Desc',

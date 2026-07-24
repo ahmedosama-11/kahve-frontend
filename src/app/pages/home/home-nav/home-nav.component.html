@@ -43,7 +43,7 @@
 
               <ul *ngIf="!favLoading && favorites.length > 0" id="favoritesList">
                 <li class="favorite-item" *ngFor="let item of favorites">
-                  <img [src]="item.image" [alt]="getFavoriteName(item)" />
+                  <img [src]="item.image" [alt]="getFavoriteName(item)" loading="lazy" decoding="async" />
                   <div class="favorite-details">
                     <h4 class="product-title">{{ getFavoriteName(item) }}</h4>
                     <span class="product-price">{{ item.price | number }} {{ moneyLabel() }}</span>

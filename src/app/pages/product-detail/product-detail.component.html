@@ -24,7 +24,7 @@
         <span class="product-stock-badge" [class.out]="getAvailableQuantity(item) <= 0">
           {{ getAvailableQuantity(item) > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
         </span>
-        <img [src]="item.image" [alt]="getProductTitle(item)" />
+        <img [src]="item.image" [alt]="getProductTitle(item)" fetchpriority="high" decoding="async" />
       </div>
 
       <div class="product-detail-content">

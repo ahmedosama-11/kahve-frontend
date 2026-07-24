@@ -15,7 +15,9 @@
   <section class="hero-container">
     <div class="hero-slider">
       <div class="hero-slide" *ngFor="let slide of heroSlides; let i = index" [class.active]="i === currentSlide">
-        <img [src]="contentImage(slide.key, slide.image)" [alt]="contentText(slide.key, 'title', slide.titleKey)" />
+        <img [src]="contentImage(slide.key, slide.image)" [alt]="contentText(slide.key, 'title', slide.titleKey)"
+          [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+          [attr.fetchpriority]="i === 0 ? 'high' : 'low'" decoding="async" />
         <div class="hero-overlay">
           <div class="hero-content" *ngIf="i === currentSlide">
             <span class="hero-tag">{{ contentText(slide.key, 'subtitle', slide.tagKey) }}</span>
@@ -87,7 +89,7 @@
         <a [routerLink]="[getBlock('story')?.button_link || '/aboutUs']" class="story-link">{{ contentText('story', 'button_text', 'home.aboutKahve') }}</a>
       </div>
       <div class="story-collage">
-        <img class="collage-main" [src]="contentImage('story', '/assets/images/kahve-products.jpg')" alt="KAHVE coffee products" />
+        <img class="collage-main" [src]="contentImage('story', '/assets/images/kahve-products.jpg')" alt="KAHVE coffee products" loading="lazy" decoding="async" />
         <div class="floating-card floating-card-top">{{ contentText('story', 'badge', 'home.premiumRoast') }}</div>
         <div class="floating-card floating-card-bottom">{{ contentText('story', 'alt', 'home.freshDaily') }}</div>
       </div>
@@ -163,7 +165,7 @@
       </button>
 
       <a class="product-image-wrap product-image-link" [routerLink]="getProductPath(product)" [attr.aria-label]="getProductTitle(product)">
-        <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'" />
+        <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'" loading="lazy" decoding="async" fetchpriority="low" />
       </a>
 
       <div class="product-info">
@@ -226,7 +228,7 @@
         <span class="product-modal-stock" [class.out]="modalProduct.Quantity <= 0">
           {{ modalProduct.Quantity > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
         </span>
-        <img [src]="modalProduct.image" [alt]="getProductTitle(modalProduct)" />
+        <img [src]="modalProduct.image" [alt]="getProductTitle(modalProduct)" decoding="async" />
       </div>
 
       <div class="product-modal-content">
