@@ -665,3 +665,124 @@ html[dir='rtl'] .kahve-links .nav-link {
     grid-template-columns: minmax(0, 1fr) 82px !important;
   }
 }
+
+
+/* ============================================================
+   KAHVE — MOBILE ICON/BADGE CENTERING FIX V3
+   Fix heart/cart icon optical alignment + cart count badge centering.
+   ============================================================ */
+.nav-icon-btn,
+.favorite-btn {
+  padding: 0;
+}
+
+.nav-icon-btn > i,
+.favorite-btn > i,
+.favorite-btn i,
+.action-btn > i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  margin: 0;
+}
+
+.cart-badge {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 575px) {
+  .nav-icon-btn {
+    padding: 0 !important;
+  }
+
+  .nav-icon-btn > i {
+    transform: none !important;
+    font-size: 1.04rem;
+  }
+
+  .cart-badge {
+    top: -2px !important;
+    right: -1px !important;
+    min-width: 20px !important;
+    height: 20px !important;
+    font-size: 0.72rem !important;
+  }
+}
+
+/* ============================================================
+   KAHVE — FINAL MOBILE HEADER ICON / BADGE ALIGNMENT FIX V4
+   Keep language, heart and cart positions stable in LTR + RTL.
+   ============================================================ */
+@media (max-width: 575px) {
+  .kahve-actions,
+  html[dir='rtl'] .kahve-actions {
+    direction: ltr !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .lang-btn { order: 1 !important; }
+  .fav-wrapper { order: 2 !important; }
+  .cart-btn { order: 3 !important; }
+
+  .nav-icon-btn {
+    position: relative !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    line-height: 1 !important;
+  }
+
+  .nav-icon-btn > i,
+  #favoritesIcon > i,
+  .cart-btn > #cart {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    display: grid !important;
+    place-items: center !important;
+    line-height: 1 !important;
+    font-size: 18px !important;
+  }
+
+  .cart-badge {
+    position: absolute !important;
+    top: -5px !important;
+    right: -4px !important;
+    left: auto !important;
+    inset-inline: auto !important;
+    transform: none !important;
+    min-width: 19px !important;
+    height: 19px !important;
+    padding: 0 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 19px !important;
+    text-align: center !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    z-index: 3 !important;
+  }
+}

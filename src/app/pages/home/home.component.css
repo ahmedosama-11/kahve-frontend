@@ -1307,3 +1307,99 @@ body.kahve-modal-open {
     margin-top: 14px !important;
   }
 }
+
+
+/* ============================================================
+   KAHVE — PRODUCT HEART BUTTON ALIGNMENT FIX V1
+   Keep the wishlist heart perfectly centered on mobile cards.
+   ============================================================ */
+.favorite-btn {
+  inset-inline-end: 18px;
+  right: auto;
+  padding: 0;
+}
+
+.favorite-btn i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  font-size: 1.02rem;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .favorite-btn {
+    top: 14px;
+    inset-inline-end: 14px;
+    right: auto;
+    width: 42px;
+    height: 42px;
+  }
+
+  .favorite-btn i {
+    font-size: 1rem;
+  }
+}
+
+/* ============================================================
+   KAHVE — FINAL MOBILE PRODUCT HEART / QUANTITY ALIGNMENT FIX V2
+   Keep product heart and quantity controls stable in LTR + RTL.
+   ============================================================ */
+@media (max-width: 640px) {
+  .favorite-btn,
+  html[dir='rtl'] .favorite-btn {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    left: auto !important;
+    inset-inline-start: auto !important;
+    inset-inline-end: auto !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .favorite-btn > i,
+  .favorite-btn i {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    display: grid !important;
+    place-items: center !important;
+    line-height: 1 !important;
+    font-size: 17px !important;
+  }
+
+  .product-qty-control,
+  html[dir='rtl'] .product-qty-control {
+    direction: ltr !important;
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  .product-qty-control input {
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    line-height: 30px !important;
+  }
+
+  .product-qty-control button {
+    display: grid !important;
+    place-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+  }
+}
