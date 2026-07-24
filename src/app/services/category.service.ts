@@ -13,6 +13,10 @@ export class CategoryService {
     return this.http.get(`${this.baseUrl}?includeHidden=${includeHidden}`, { withCredentials: true });
   }
 
+  getCategoryBySlug(slug: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/slug/${encodeURIComponent(slug)}`, { withCredentials: true });
+  }
+
   syncFromProducts(): Observable<any> {
     return this.http.post(`${this.baseUrl}/sync-from-products`, {}, { withCredentials: true });
   }
