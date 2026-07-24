@@ -26,7 +26,7 @@
         <a [routerLink]="['/home']">{{ 'nav.home' | t }}</a>
         <a [href]="'tel:' + contact.phoneTel">{{ 'footer.callNow' | t }}: {{ contact.phoneDisplay }}</a>
       </div>
-      <div>
+      <div class="footer-policy-column">
         <h4>{{ 'footer.policies' | t }}</h4>
         <a [routerLink]="['/shipping-policy']">{{ 'footer.shippingPolicy' | t }}</a>
         <a [routerLink]="['/returns-refunds']">{{ 'footer.returnsPolicy' | t }}</a>

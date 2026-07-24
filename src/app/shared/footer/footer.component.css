@@ -213,3 +213,22 @@ html[dir='rtl'] .footer-hotline span {
   color: #d8a866;
   font-size: 1.05rem;
 }
+
+
+/* ===== Policy links must stay visible on desktop too ===== */
+.footer-policy-column {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 761px) {
+  .footer-links {
+    grid-template-columns: repeat(3, minmax(145px, 1fr));
+    min-width: 0;
+  }
+
+  .footer-policy-column a {
+    display: block !important;
+  }
+}
