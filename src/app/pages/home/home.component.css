@@ -1272,3 +1272,38 @@ body.kahve-modal-open {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* ============================================================
+   KAHVE — MOBILE CATEGORY/HERO SEPARATION FIX V2
+   Prevent the hero image from sitting underneath the category pills.
+   ============================================================ */
+@media (max-width: 640px) {
+  .kahve-category-nav {
+    position: relative !important;
+    top: auto !important;
+    z-index: 30 !important;
+    background: #fffaf2 !important;
+    border-bottom: 1px solid rgba(91, 54, 31, 0.12) !important;
+    box-shadow: 0 8px 20px rgba(45, 23, 13, 0.05);
+    padding: 10px 0 8px;
+  }
+
+  .kahve-category-inner {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 12px 4px !important;
+    gap: 10px !important;
+    background: #fffaf2 !important;
+    scroll-padding-inline: 12px;
+  }
+
+  .kahve-category-inner a {
+    background: #fffaf2 !important;
+    flex: 0 0 auto;
+  }
+
+  .hero-container {
+    margin-top: 14px !important;
+  }
+}

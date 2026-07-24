@@ -620,3 +620,48 @@ html[dir='rtl'] .kahve-links .nav-link {
     min-width: 0 !important;
   }
 }
+
+
+/* ============================================================
+   KAHVE — MOBILE NAV/FAVORITES INTERACTION FIX V2
+   ============================================================ */
+.nav-icon-btn > i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+@media (max-width: 575px) {
+  /* Keep the heart/cart glyphs optically centered on narrow screens. */
+  .nav-icon-btn > i {
+    transform: translateX(-1px);
+  }
+
+  .cart-badge {
+    top: -3px !important;
+    right: 1px !important;
+  }
+
+  .kahve-actions {
+    gap: 7px !important;
+    padding-inline-start: 1px;
+  }
+
+  /* Favorite product thumbnails must render immediately when panel opens on iOS/Safari. */
+  .favorite-item img {
+    width: 82px !important;
+    height: 72px !important;
+    min-width: 82px !important;
+    object-fit: contain !important;
+    background: #fffaf2 !important;
+  }
+
+  .favorite-item {
+    grid-template-columns: 82px minmax(0, 1fr) !important;
+  }
+
+  html[dir='rtl'] .favorite-item {
+    grid-template-columns: minmax(0, 1fr) 82px !important;
+  }
+}

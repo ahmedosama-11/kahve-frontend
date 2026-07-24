@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, forkJoin } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { FavoritesService } from '../../../services/favorites.service';
@@ -14,6 +14,7 @@ export class HomeNavComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   isAdmin: boolean = false;
   isMenuOpen: boolean = false;
+  isNavOpen: boolean = false;
 
   cartCount: number = 0;
 
@@ -57,10 +58,43 @@ export class HomeNavComponent implements OnInit, OnDestroy {
     window.addEventListener('kahve-cart-updated', this.cartUpdatedHandler);
   }
 
-  toggleFavorites(): void {
+  toggleFavorites(event?: Event): void {
+    event?.stopPropagation();
     this.isFavOpen = !this.isFavOpen;
     if (this.isFavOpen) {
+      this.isNavOpen = false;
       this.loadFavorites();
+    }
+  }
+
+  toggleNav(): void {
+    this.isNavOpen = !this.isNavOpen;
+    if (this.isNavOpen) {
+      this.isFavOpen = false;
+    }
+  }
+
+  closeNav(): void {
+    this.isNavOpen = false;
+    this.isMenuOpen = false;
+  }
+
+  closeAllPanels(): void {
+    this.closeNav();
+    this.isFavOpen = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as Element | null;
+    if (!target) return;
+
+    if (this.isFavOpen && !target.closest('.fav-wrapper')) {
+      this.isFavOpen = false;
+    }
+
+    if (this.isNavOpen && !target.closest('.kahve-navbar')) {
+      this.closeNav();
     }
   }
 
@@ -110,7 +144,7 @@ export class HomeNavComponent implements OnInit, OnDestroy {
     const productData = {
       name: item.name,
       price: item.price,
-      image: item.image,
+      image: this.getFavoriteImage(item),
       productId: item.productId,
       amount: 1,
     };
@@ -143,6 +177,21 @@ export class HomeNavComponent implements OnInit, OnDestroy {
   }
 
 
+
+  getFavoriteImage(item: any): string {
+    const candidates = [
+      item?.currentProduct?.image,
+      item?.currentProduct?.images?.[0],
+      item?.product?.image,
+      item?.product?.images?.[0],
+      item?.image,
+      item?.productImage,
+      item?.imageUrl,
+    ];
+
+    const image = candidates.find((value) => typeof value === 'string' && value.trim().length > 0);
+    return image ? String(image).trim() : '/assets/images/kahve-products.jpg';
+  }
 
   getFavoriteName(item: any): string {
     const product = item?.currentProduct || item?.product || item;
