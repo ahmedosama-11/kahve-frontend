@@ -176,6 +176,25 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
     return this.languageService.localizeProduct(product, 'description');
   }
 
+  getProductImage(product: any): string {
+    const candidates = [
+      product?.image,
+      product?.images?.[0],
+      product?.imageUrl,
+      product?.productImage,
+      product?.currentProduct?.image,
+      product?.currentProduct?.images?.[0],
+    ];
+
+    const image = candidates.find((value) => typeof value === 'string' && value.trim().length > 0);
+    return image ? String(image).trim() : '/assets/images/kahve-products.jpg';
+  }
+
+  getProductPrice(product: any): number {
+    const value = Number(product?.price ?? product?.currentProduct?.price ?? 0);
+    return Number.isFinite(value) ? value : 0;
+  }
+
   getProductCategory(product: any): string {
     return this.languageService.localizeProduct(product, 'category') || this.getCategoryName(this.category) || 'KAHVE Coffee';
   }
@@ -185,7 +204,7 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
   }
 
   getAvailableQuantity(product: any): number {
-    const qty = Number(product?.Quantity ?? product?.quantity ?? 0);
+    const qty = Number(product?.Quantity ?? product?.quantity ?? product?.currentProduct?.Quantity ?? product?.currentProduct?.quantity ?? 0);
     return Number.isFinite(qty) && qty > 0 ? Math.floor(qty) : 0;
   }
 
@@ -226,8 +245,8 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
 
     this.cartService.addToCart({
       name: this.getProductTitle(product),
-      price: Number(product.price || 0),
-      image: product.image,
+      price: this.getProductPrice(product),
+      image: this.getProductImage(product),
       productId: id,
       amount,
     }).subscribe({
@@ -261,8 +280,8 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
       ? this.favoritesService.deleteFavItem(id)
       : this.favoritesService.addToFavorites({
           name: this.getProductTitle(product),
-          price: Number(product.price || 0),
-          image: product.image,
+          price: this.getProductPrice(product),
+          image: this.getProductImage(product),
           productId: id,
         });
 

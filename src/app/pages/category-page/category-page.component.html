@@ -39,53 +39,75 @@
         {{ languageService.currentLanguage === 'ar' ? 'لا توجد منتجات متاحة في هذا القسم حاليًا.' : 'No products are currently available in this category.' }}
       </div>
 
-      <div class="items-container" *ngIf="products.length > 0">
-        <article class="kahve-product-card" *ngFor="let product of products; trackBy: trackByProductId">
-          <button class="favorite-btn" type="button" (click)="toggleFavorite(product)" aria-label="Add to favorites">
-            <i class="fa-solid fa-heart" [style.color]="product.isFavorite ? '#9b271a' : '#b79b7d'"></i>
-          </button>
-
-          <a class="product-image-wrap product-image-link" [routerLink]="getProductPath(product)" [attr.aria-label]="getProductTitle(product)">
-            <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'" loading="lazy" decoding="async" fetchpriority="low" />
-          </a>
-
-          <div class="product-info">
-            <span class="product-category">{{ getProductCategory(product) }}</span>
-            <h3 class="product-title"><a class="product-title-link" [routerLink]="getProductPath(product)">{{ getProductTitle(product) }}</a></h3>
-            <p class="product-description" *ngIf="getProductDescription(product)">{{ getProductDescription(product) }}</p>
-            <div class="product-meta">
-              <span class="product-price">{{ product.price | number }} {{ moneyLabel() }}</span>
-              <span class="product-stock" [class.out]="getAvailableQuantity(product) <= 0">
-                {{ getAvailableQuantity(product) > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
-              </span>
-            </div>
-          </div>
-
-          <div class="product-quantity-panel" *ngIf="getAvailableQuantity(product) > 0 && !product.isInCart">
-            <span>{{ 'home.quantity' | t }}</span>
-            <div class="product-qty-control">
-              <button type="button" (click)="decreaseProductQuantity(product)" aria-label="Decrease quantity">−</button>
-              <input type="number" min="1" [max]="getAvailableQuantity(product)" [ngModel]="getSelectedQuantity(product)" (ngModelChange)="setProductQuantity(product, $event)" />
-              <button type="button" (click)="increaseProductQuantity(product)" aria-label="Increase quantity">+</button>
-            </div>
-          </div>
-
-          <p class="product-inline-message" *ngIf="getProductMessage(product)">
-            <i class="fa-solid" [ngClass]="product.isInCart ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
-            {{ getProductMessage(product) }}
-          </p>
-
-          <div class="product-actions">
-            <a class="view-button" [routerLink]="getProductPath(product)">{{ 'home.view' | t }} <i class="fa-solid fa-eye"></i></a>
-            <button *ngIf="getAvailableQuantity(product) <= 0" class="add-to-cart disabled" disabled>{{ 'home.outOfStock' | t }}</button>
-            <a *ngIf="product.isInCart" [routerLink]="['/cart']" class="add-to-cart added">{{ 'home.added' | t }} ✓</a>
-            <button *ngIf="getAvailableQuantity(product) > 0 && !product.isInCart" class="add-to-cart" [disabled]="isAddingProduct(product)" (click)="addToCart(product)">
-              <ng-container *ngIf="!isAddingProduct(product)">{{ 'home.addToCart' | t }} <i class="fa-solid fa-cart-plus"></i></ng-container>
-              <ng-container *ngIf="isAddingProduct(product)">{{ 'home.adding' | t }}</ng-container>
-            </button>
-          </div>
-        </article>
+      <div class="items-container category-products-grid" *ngIf="products.length > 0">
+        <ng-container *ngFor="let product of products; trackBy: trackByProductId">
+          <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
+        </ng-container>
       </div>
     </section>
   </main>
+
+  <ng-template #productCard let-product>
+    <article class="kahve-product-card category-product-card">
+      <button class="favorite-btn" type="button" (click)="toggleFavorite(product)" aria-label="Add to favorites">
+        <i class="fa-solid fa-heart" [style.color]="product?.isFavorite ? '#9b271a' : '#b79b7d'"></i>
+      </button>
+
+      <a class="product-image-wrap product-image-link" [routerLink]="getProductPath(product)" [attr.aria-label]="getProductTitle(product)">
+        <img
+          class="product-image"
+          [src]="getProductImage(product)"
+          [alt]="getProductTitle(product) || 'KAHVE product'"
+          loading="lazy"
+          decoding="async" />
+      </a>
+
+      <div class="product-info">
+        <span class="product-category">{{ getProductCategory(product) }}</span>
+        <h3 class="product-title">
+          <a class="product-title-link" [routerLink]="getProductPath(product)">{{ getProductTitle(product) }}</a>
+        </h3>
+        <p class="product-description" *ngIf="getProductDescription(product)">{{ getProductDescription(product) }}</p>
+        <div class="product-meta">
+          <span class="product-price">{{ getProductPrice(product) | number }} {{ moneyLabel() }}</span>
+          <span class="product-stock" [class.out]="getAvailableQuantity(product) <= 0">
+            {{ getAvailableQuantity(product) > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="product-quantity-panel" *ngIf="getAvailableQuantity(product) > 0 && !product?.isInCart">
+        <span>{{ 'home.quantity' | t }}</span>
+        <div class="product-qty-control">
+          <button type="button" (click)="decreaseProductQuantity(product)" aria-label="Decrease quantity">−</button>
+          <input
+            type="number"
+            min="1"
+            [max]="getAvailableQuantity(product)"
+            [ngModel]="getSelectedQuantity(product)"
+            (ngModelChange)="setProductQuantity(product, $event)" />
+          <button type="button" (click)="increaseProductQuantity(product)" aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+
+      <p class="product-inline-message" *ngIf="getProductMessage(product)">
+        <i class="fa-solid" [ngClass]="product?.isInCart ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+        {{ getProductMessage(product) }}
+      </p>
+
+      <div class="product-actions">
+        <a class="view-button" [routerLink]="getProductPath(product)">{{ 'home.view' | t }} <i class="fa-solid fa-eye"></i></a>
+        <button *ngIf="getAvailableQuantity(product) <= 0" class="add-to-cart disabled" disabled>{{ 'home.outOfStock' | t }}</button>
+        <a *ngIf="product?.isInCart" [routerLink]="['/cart']" class="add-to-cart added">{{ 'home.added' | t }} ✓</a>
+        <button
+          *ngIf="getAvailableQuantity(product) > 0 && !product?.isInCart"
+          class="add-to-cart"
+          [disabled]="isAddingProduct(product)"
+          (click)="addToCart(product)">
+          <ng-container *ngIf="!isAddingProduct(product)">{{ 'home.addToCart' | t }} <i class="fa-solid fa-cart-plus"></i></ng-container>
+          <ng-container *ngIf="isAddingProduct(product)">{{ 'home.adding' | t }}</ng-container>
+        </button>
+      </div>
+    </article>
+  </ng-template>
 </div>

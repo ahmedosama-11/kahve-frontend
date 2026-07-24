@@ -73,3 +73,47 @@ html[dir='rtl'] .category-back-link i {
     padding-top: 20px;
   }
 }
+
+/* ============================================================
+   CATEGORY PRODUCTS RENDER FIX
+   Keep product cards visible even if animation/global styles differ.
+   ============================================================ */
+.category-products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 26px;
+  width: 100%;
+  min-height: 1px;
+}
+
+.category-product-card {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none;
+  animation: none !important;
+}
+
+@media (max-width: 1180px) {
+  .category-products-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .category-products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .category-products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-product-card {
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+  }
+}
