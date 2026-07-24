@@ -31,6 +31,7 @@ import { SiteContentManagementComponent } from './pages/dashboard/site-content-m
 import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { LegalPolicyComponent } from './pages/legal-policy/legal-policy.component';
+import { CategoryPageComponent } from './pages/category-page/category-page.component';
 
 const routes: Routes = [
   {
@@ -51,6 +52,15 @@ const routes: Routes = [
       title: 'Kahve',
       description: 'Shop KAHVE coffee online in Egypt. Explore Turkish coffee, light and dark roasts, coffee mixes and fresh selections.',
       canonical: '/home',
+    },
+  },
+  {
+    path: 'category/:slug',
+    component: CategoryPageComponent,
+    data: {
+      title: 'KAHVE Coffee Category',
+      description: 'Shop KAHVE coffee collections online in Egypt.',
+      type: 'website',
     },
   },
   {

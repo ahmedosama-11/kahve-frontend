@@ -22,6 +22,13 @@ export interface ProductSeoOptions {
   path: string;
 }
 
+export interface CategorySeoOptions {
+  categoryName: string;
+  description?: string;
+  path: string;
+  products?: any[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private readonly siteUrl = 'https://www.kahve-egy.com';
@@ -47,6 +54,7 @@ export class SeoService {
     this.removeStructuredData('kahve-products-schema');
     this.removeStructuredData('kahve-product-schema');
     this.removeStructuredData('kahve-product-breadcrumb-schema');
+    this.removeStructuredData('kahve-category-breadcrumb-schema');
   }
 
   setProductList(products: any[]): void {
@@ -91,6 +99,67 @@ export class SeoService {
     });
   }
 
+
+  setCategory(options: CategorySeoOptions): void {
+    const categoryName = String(options.categoryName || 'KAHVE Coffee').trim();
+    const description = String(
+      options.description || `Shop ${categoryName} from KAHVE Egypt. Discover prices, availability and order premium coffee online.`,
+    ).trim();
+    const canonicalUrl = this.absoluteUrl(options.path);
+    const title = `${categoryName} | KAHVE Egypt`;
+    const products = Array.isArray(options.products) ? options.products : [];
+
+    this.applyMeta({
+      title,
+      description,
+      canonicalUrl,
+      image: this.defaultImage,
+      robots: 'index, follow, max-image-preview:large',
+      type: 'website',
+    });
+
+    this.removeStructuredData('kahve-product-schema');
+    this.removeStructuredData('kahve-product-breadcrumb-schema');
+
+    const itemList = products.slice(0, 50).map((product, index) => {
+      const productName = String(product?.title_en || product?.title || product?.title_ar || 'KAHVE Product').trim();
+      const productUrl = this.absoluteUrl(this.productUrlService.getProductPath(product));
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        name: productName,
+        url: productUrl,
+      };
+    });
+
+    this.setStructuredData('kahve-products-schema', {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: `${categoryName} - KAHVE`,
+      url: canonicalUrl,
+      itemListElement: itemList,
+    });
+
+    this.setStructuredData('kahve-category-breadcrumb-schema', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'KAHVE',
+          item: `${this.siteUrl}/home`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: categoryName,
+          item: canonicalUrl,
+        },
+      ],
+    });
+  }
+
   setProduct(options: ProductSeoOptions): void {
     const product = options.product;
     const productName = String(options.title || 'KAHVE Product').trim();
@@ -115,6 +184,7 @@ export class SeoService {
     });
 
     this.removeStructuredData('kahve-products-schema');
+    this.removeStructuredData('kahve-category-breadcrumb-schema');
     this.setStructuredData('kahve-product-schema', {
       '@context': 'https://schema.org',
       '@type': 'Product',
@@ -178,6 +248,7 @@ export class SeoService {
     this.removeStructuredData('kahve-products-schema');
     this.removeStructuredData('kahve-product-schema');
     this.removeStructuredData('kahve-product-breadcrumb-schema');
+    this.removeStructuredData('kahve-category-breadcrumb-schema');
   }
 
   setGlobalStructuredData(): void {

@@ -30,11 +30,51 @@ function getProductPath(product) {
   return `/product/${encodeURIComponent(id)}/${encodeURIComponent(slugify(title))}`;
 }
 
+function getCategoryName(category) {
+  return String(
+    category?.name_en ||
+    category?.name ||
+    category?.category_en ||
+    category?.category ||
+    category?.name_ar ||
+    category?.category_ar ||
+    '',
+  ).trim();
+}
+
+function getCategoryPath(category) {
+  const name = getCategoryName(category);
+  if (!name) return '';
+  return `/category/${encodeURIComponent(slugify(name))}`;
+}
+
 function extractProducts(data) {
   const products = Array.isArray(data)
     ? data
     : data?.products || data?.data?.products || data?.data || data?.result || [];
   return Array.isArray(products) ? products : [];
+}
+
+function extractCategories(data, products) {
+  const responseCategories = data?.categories || data?.data?.categories || [];
+  if (Array.isArray(responseCategories) && responseCategories.length) {
+    return responseCategories.filter((category) => category?.isActive !== false && category?.showInHome !== false);
+  }
+
+  const map = new Map();
+  for (const product of products) {
+    const nameEn = String(product?.category_en || product?.category || product?.categoryId?.name_en || '').trim();
+    const nameAr = String(product?.category_ar || product?.categoryId?.name_ar || nameEn).trim();
+    if (!nameEn) continue;
+    const key = slugify(nameEn);
+    if (!key || map.has(key)) continue;
+    map.set(key, {
+      name_en: nameEn,
+      name_ar: nameAr,
+      updatedAt: product?.updatedAt || product?.createdAt,
+    });
+  }
+  return Array.from(map.values());
 }
 
 function fetchJson(url) {
@@ -90,7 +130,7 @@ function urlEntry(location, options = {}) {
   return `  <url>\n    <loc>${xmlEscape(location)}</loc>${lastmod}${changefreq}${priority}\n  </url>`;
 }
 
-function buildSitemap(products) {
+function buildSitemap(products, categories) {
   const entries = [
     urlEntry(`${SITE_URL}/`, { changefreq: 'weekly', priority: '1.0' }),
     urlEntry(`${SITE_URL}/home`, { changefreq: 'daily', priority: '0.9' }),
@@ -101,6 +141,20 @@ function buildSitemap(products) {
     urlEntry(`${SITE_URL}/privacy-policy`, { changefreq: 'yearly', priority: '0.4' }),
     urlEntry(`${SITE_URL}/terms-conditions`, { changefreq: 'yearly', priority: '0.4' }),
   ];
+
+  const seenCategories = new Set();
+  for (const category of categories) {
+    const path = getCategoryPath(category);
+    if (!path || seenCategories.has(path)) continue;
+    seenCategories.add(path);
+
+    const lastmod = validLastModified(category?.updatedAt || category?.createdAt);
+    entries.push(urlEntry(`${SITE_URL}${path}`, {
+      lastmod,
+      changefreq: 'weekly',
+      priority: '0.75',
+    }));
+  }
 
   const seen = new Set();
   for (const product of products) {
@@ -127,14 +181,16 @@ module.exports = async function sitemapHandler(req, res) {
   }
 
   let products = [];
+  let categories = [];
   try {
     const data = await fetchJson(`${API_BASE_URL}/home`);
     products = extractProducts(data);
+    categories = extractCategories(data, products);
   } catch (error) {
-    console.error('Sitemap product fetch failed:', error);
+    console.error('Sitemap catalog fetch failed:', error);
   }
 
-  const xml = buildSitemap(products);
+  const xml = buildSitemap(products, categories);
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
   res.status(200).send(req.method === 'HEAD' ? '' : xml);

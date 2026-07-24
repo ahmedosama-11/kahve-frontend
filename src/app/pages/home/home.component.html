@@ -4,8 +4,7 @@
       <a [routerLink]="['/home']" fragment="newArrivals">{{ 'home.bestSellers' | t }}</a>
       <a
         *ngFor="let category of categories"
-        [routerLink]="['/home']"
-        [fragment]="getCategoryAnchor(category)">
+        [routerLink]="getCategoryPath(category)">
         {{ getCategoryName(category) }}
       </a>
       <a [routerLink]="['/aboutUs']">{{ 'home.ourStory' | t }}</a>

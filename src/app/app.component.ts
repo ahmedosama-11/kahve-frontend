@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
     if (path === '/' || path.includes('welcome')) {
       this.showNavbar = 'welcome';
       this.showFooter = true;
-    } else if (url.includes('home') || url.includes('/product/') || url.includes('dashboard') || url.includes('contactUs')) {
+    } else if (url.includes('home') || url.includes('/product/') || url.includes('/category/') || url.includes('dashboard') || url.includes('contactUs')) {
       this.showNavbar = 'home';
       this.showFooter = !url.includes('dashboard');
     } else if (url.includes('logout')) {

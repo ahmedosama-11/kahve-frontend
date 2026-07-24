@@ -1,0 +1,91 @@
+<div class="kahve-home-page category-page-shell">
+  <section class="category-page-hero" *ngIf="!loading && category">
+    <div class="category-page-hero-inner">
+      <a class="category-back-link" [routerLink]="['/home']">
+        <i class="fa-solid fa-arrow-left"></i>
+        {{ languageService.currentLanguage === 'ar' ? 'العودة للمتجر' : 'Back to shop' }}
+      </a>
+      <span class="section-eyebrow">{{ languageService.currentLanguage === 'ar' ? 'مجموعة KAHVE' : 'KAHVE Collection' }}</span>
+      <h1>{{ getCategoryName(category) }}</h1>
+      <p>
+        {{ languageService.currentLanguage === 'ar'
+          ? 'اكتشف المنتجات المتاحة في هذا القسم واطلب أونلاين.'
+          : 'Discover available products in this collection and order online.' }}
+      </p>
+    </div>
+  </section>
+
+  <main class="kahve-main category-page-main">
+    <div class="category-loading" *ngIf="loading">
+      <div class="spinner-border" role="status"></div>
+      <span>{{ languageService.currentLanguage === 'ar' ? 'جاري تحميل المنتجات...' : 'Loading products...' }}</span>
+    </div>
+
+    <section class="kahve-empty-state" *ngIf="!loading && notFound">
+      <i class="fa-solid fa-mug-saucer"></i>
+      <h2>{{ languageService.currentLanguage === 'ar' ? 'القسم غير موجود' : 'Category not found' }}</h2>
+      <p>{{ languageService.currentLanguage === 'ar' ? 'قد يكون اسم القسم اتغير أو تم إيقافه.' : 'This category may have been renamed or disabled.' }}</p>
+      <a class="view-button category-home-button" [routerLink]="['/home']">{{ languageService.currentLanguage === 'ar' ? 'العودة للرئيسية' : 'Back to home' }}</a>
+    </section>
+
+    <section class="product-section category-section" *ngIf="!loading && category && !notFound">
+      <div class="section-heading">
+        <span class="section-eyebrow">{{ languageService.currentLanguage === 'ar' ? 'المنتجات' : 'Products' }}</span>
+        <h2>{{ getCategoryName(category) }}</h2>
+        <p>{{ products.length }} {{ languageService.currentLanguage === 'ar' ? 'منتج' : (products.length === 1 ? 'product' : 'products') }}</p>
+      </div>
+
+      <div class="kahve-empty-state small" *ngIf="products.length === 0">
+        {{ languageService.currentLanguage === 'ar' ? 'لا توجد منتجات متاحة في هذا القسم حاليًا.' : 'No products are currently available in this category.' }}
+      </div>
+
+      <div class="items-container" *ngIf="products.length > 0">
+        <article class="kahve-product-card" *ngFor="let product of products; trackBy: trackByProductId">
+          <button class="favorite-btn" type="button" (click)="toggleFavorite(product)" aria-label="Add to favorites">
+            <i class="fa-solid fa-heart" [style.color]="product.isFavorite ? '#9b271a' : '#b79b7d'"></i>
+          </button>
+
+          <a class="product-image-wrap product-image-link" [routerLink]="getProductPath(product)" [attr.aria-label]="getProductTitle(product)">
+            <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'" loading="lazy" decoding="async" fetchpriority="low" />
+          </a>
+
+          <div class="product-info">
+            <span class="product-category">{{ getProductCategory(product) }}</span>
+            <h3 class="product-title"><a class="product-title-link" [routerLink]="getProductPath(product)">{{ getProductTitle(product) }}</a></h3>
+            <p class="product-description" *ngIf="getProductDescription(product)">{{ getProductDescription(product) }}</p>
+            <div class="product-meta">
+              <span class="product-price">{{ product.price | number }} {{ moneyLabel() }}</span>
+              <span class="product-stock" [class.out]="getAvailableQuantity(product) <= 0">
+                {{ getAvailableQuantity(product) > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="product-quantity-panel" *ngIf="getAvailableQuantity(product) > 0 && !product.isInCart">
+            <span>{{ 'home.quantity' | t }}</span>
+            <div class="product-qty-control">
+              <button type="button" (click)="decreaseProductQuantity(product)" aria-label="Decrease quantity">−</button>
+              <input type="number" min="1" [max]="getAvailableQuantity(product)" [ngModel]="getSelectedQuantity(product)" (ngModelChange)="setProductQuantity(product, $event)" />
+              <button type="button" (click)="increaseProductQuantity(product)" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <p class="product-inline-message" *ngIf="getProductMessage(product)">
+            <i class="fa-solid" [ngClass]="product.isInCart ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+            {{ getProductMessage(product) }}
+          </p>
+
+          <div class="product-actions">
+            <a class="view-button" [routerLink]="getProductPath(product)">{{ 'home.view' | t }} <i class="fa-solid fa-eye"></i></a>
+            <button *ngIf="getAvailableQuantity(product) <= 0" class="add-to-cart disabled" disabled>{{ 'home.outOfStock' | t }}</button>
+            <a *ngIf="product.isInCart" [routerLink]="['/cart']" class="add-to-cart added">{{ 'home.added' | t }} ✓</a>
+            <button *ngIf="getAvailableQuantity(product) > 0 && !product.isInCart" class="add-to-cart" [disabled]="isAddingProduct(product)" (click)="addToCart(product)">
+              <ng-container *ngIf="!isAddingProduct(product)">{{ 'home.addToCart' | t }} <i class="fa-solid fa-cart-plus"></i></ng-container>
+              <ng-container *ngIf="isAddingProduct(product)">{{ 'home.adding' | t }}</ng-container>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>

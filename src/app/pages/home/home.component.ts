@@ -14,6 +14,7 @@ import { SiteContentService } from '../../services/site-content.service';
 import { SeoService } from '../../services/seo.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { ProductUrlService } from '../../services/product-url.service';
+import { CategoryUrlService } from '../../services/category-url.service';
 
 @Component({
   selector: 'app-home',
@@ -113,6 +114,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private seoService: SeoService,
     private analyticsService: AnalyticsService,
     private productUrlService: ProductUrlService,
+    private categoryUrlService: CategoryUrlService,
   ) {
     this.titleService.setTitle('Kahve');
   }
@@ -280,6 +282,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getCategoryAnchor(category: any): string {
     return this.getCategoryId(this.getCategoryName(category));
+  }
+
+  getCategoryPath(category: any): string {
+    return this.categoryUrlService.getCategoryPath(category);
   }
 
   getBestSellerProducts(): any[] {
