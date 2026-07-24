@@ -43,6 +43,7 @@ import { SiteContentManagementComponent } from './pages/dashboard/site-content-m
 import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 import { authTokenInterceptor } from './interceptors/auth-token.interceptor';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
+import { LegalPolicyComponent } from './pages/legal-policy/legal-policy.component';
 
 // const routes: Routes = [
 //   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -168,6 +169,7 @@ import { ProductDetailComponent } from './pages/product-detail/product-detail.co
     CustomerManagementComponent,
     SiteContentManagementComponent,
     ProductDetailComponent,
+    LegalPolicyComponent,
   ],
   imports: [
     BrowserModule,

@@ -96,6 +96,10 @@ function buildSitemap(products) {
     urlEntry(`${SITE_URL}/home`, { changefreq: 'daily', priority: '0.9' }),
     urlEntry(`${SITE_URL}/aboutUs`, { changefreq: 'monthly', priority: '0.7' }),
     urlEntry(`${SITE_URL}/contactUs`, { changefreq: 'monthly', priority: '0.6' }),
+    urlEntry(`${SITE_URL}/shipping-policy`, { changefreq: 'monthly', priority: '0.5' }),
+    urlEntry(`${SITE_URL}/returns-refunds`, { changefreq: 'monthly', priority: '0.5' }),
+    urlEntry(`${SITE_URL}/privacy-policy`, { changefreq: 'yearly', priority: '0.4' }),
+    urlEntry(`${SITE_URL}/terms-conditions`, { changefreq: 'yearly', priority: '0.4' }),
   ];
 
   const seen = new Set();

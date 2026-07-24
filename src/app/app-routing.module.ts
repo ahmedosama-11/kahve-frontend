@@ -30,6 +30,7 @@ import { CategorySettingsComponent } from './pages/dashboard/category-settings/c
 import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
 import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
+import { LegalPolicyComponent } from './pages/legal-policy/legal-policy.component';
 
 const routes: Routes = [
   {
@@ -86,6 +87,46 @@ const routes: Routes = [
       title: 'Contact KAHVE Egypt | Coffee Orders & Support',
       description: 'Contact KAHVE Egypt for coffee orders, product questions and customer support.',
       canonical: '/contactUs',
+    },
+  },
+  {
+    path: 'shipping-policy',
+    component: LegalPolicyComponent,
+    data: {
+      policy: 'shipping',
+      title: 'Shipping Policy | KAHVE Egypt',
+      description: 'Read KAHVE Egypt shipping costs, delivery areas and estimated delivery times.',
+      canonical: '/shipping-policy',
+    },
+  },
+  {
+    path: 'returns-refunds',
+    component: LegalPolicyComponent,
+    data: {
+      policy: 'returns',
+      title: 'Returns & Refunds Policy | KAHVE Egypt',
+      description: 'Read KAHVE Egypt return, replacement and refund conditions and timelines.',
+      canonical: '/returns-refunds',
+    },
+  },
+  {
+    path: 'privacy-policy',
+    component: LegalPolicyComponent,
+    data: {
+      policy: 'privacy',
+      title: 'Privacy Policy | KAHVE Egypt',
+      description: 'Learn how KAHVE Egypt collects, uses and protects customer information.',
+      canonical: '/privacy-policy',
+    },
+  },
+  {
+    path: 'terms-conditions',
+    component: LegalPolicyComponent,
+    data: {
+      policy: 'terms',
+      title: 'Terms & Conditions | KAHVE Egypt',
+      description: 'Read the terms and conditions for using and ordering from the KAHVE Egypt online store.',
+      canonical: '/terms-conditions',
     },
   },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], data: { title: 'Login | KAHVE', noindex: true } },

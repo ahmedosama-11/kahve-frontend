@@ -1,0 +1,48 @@
+<section class="policy-page" *ngIf="content">
+  <div class="policy-hero">
+    <div>
+      <span class="policy-eyebrow">{{ text(content.eyebrowEn, content.eyebrowAr) }}</span>
+      <h1>{{ text(content.titleEn, content.titleAr) }}</h1>
+      <p>{{ text(content.introEn, content.introAr) }}</p>
+      <span class="last-updated">{{ text('Last updated: 24 July 2026', 'آخر تحديث: 24 يوليو 2026') }}</span>
+    </div>
+
+    <div class="policy-contact-card">
+      <span>{{ text('Need help?', 'تحتاج مساعدة؟') }}</span>
+      <a routerLink="/contactUs">{{ text('Contact KAHVE', 'تواصل مع KAHVE') }}</a>
+      <a [href]="'tel:' + contact.phoneTel">{{ contact.phoneDisplay }}</a>
+    </div>
+  </div>
+
+  <div class="policy-layout">
+    <aside class="policy-nav" aria-label="Policies">
+      <a routerLink="/shipping-policy" routerLinkActive="active">{{ text('Shipping', 'الشحن') }}</a>
+      <a routerLink="/returns-refunds" routerLinkActive="active">{{ text('Returns & Refunds', 'الاستبدال والاسترجاع') }}</a>
+      <a routerLink="/privacy-policy" routerLinkActive="active">{{ text('Privacy', 'الخصوصية') }}</a>
+      <a routerLink="/terms-conditions" routerLinkActive="active">{{ text('Terms & Conditions', 'الشروط والأحكام') }}</a>
+    </aside>
+
+    <article class="policy-content">
+      <section class="policy-section" *ngFor="let section of content.sections">
+        <h2>{{ text(section.titleEn, section.titleAr) }}</h2>
+        <p *ngFor="let paragraph of (languageService.isArabic ? section.paragraphsAr : section.paragraphsEn)">
+          {{ paragraph }}
+        </p>
+
+        <ul *ngIf="(languageService.isArabic ? section.bulletsAr : section.bulletsEn) as bullets">
+          <li *ngFor="let bullet of bullets">{{ bullet }}</li>
+        </ul>
+      </section>
+
+      <div class="policy-note">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>
+          {{ text(
+            'For order-specific questions, use the Contact Us page or call the KAHVE hotline and include your order number when available.',
+            'للاستفسارات الخاصة بطلب معين، استخدم صفحة اتصل بنا أو اتصل بخدمة KAHVE مع ذكر رقم الطلب إن كان متاحًا.'
+          ) }}
+        </p>
+      </div>
+    </article>
+  </div>
+</section>
