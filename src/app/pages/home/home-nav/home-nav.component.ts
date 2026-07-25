@@ -24,7 +24,15 @@ export class HomeNavComponent implements OnInit, OnDestroy {
   favError: string = '';
 
   private subscriptions: Subscription[] = [];
-  private cartUpdatedHandler = () => this.cartService.refreshCartCount();
+  private pageShowHandler = () => {
+    if (this.isLoggedIn) this.cartService.refreshCartCount();
+  };
+
+  private visibilityHandler = () => {
+    if (document.visibilityState === 'visible' && this.isLoggedIn) {
+      this.cartService.refreshCartCount();
+    }
+  };
 
   constructor(
     private authService: AuthService,
@@ -55,7 +63,8 @@ export class HomeNavComponent implements OnInit, OnDestroy {
       this.cartService.cartCount$.subscribe(count => this.cartCount = count)
     );
 
-    window.addEventListener('kahve-cart-updated', this.cartUpdatedHandler);
+    window.addEventListener('pageshow', this.pageShowHandler);
+    document.addEventListener('visibilitychange', this.visibilityHandler);
   }
 
   toggleFavorites(event?: Event): void {
@@ -153,7 +162,6 @@ export class HomeNavComponent implements OnInit, OnDestroy {
       next: (res) => {
         item.isInCart = true;
         item.cartId = res?.data?._id || res?.cart?._id || null;
-        this.cartService.refreshCartCount();
       },
       error: (err) => console.error('Error adding to cart:', err)
     });
@@ -166,7 +174,6 @@ export class HomeNavComponent implements OnInit, OnDestroy {
       next: () => {
         item.isInCart = false;
         item.cartId = null;
-        this.cartService.refreshCartCount();
       },
       error: (err) => console.error('Error removing from cart:', err)
     });
@@ -208,6 +215,7 @@ export class HomeNavComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-    window.removeEventListener('kahve-cart-updated', this.cartUpdatedHandler);
+    window.removeEventListener('pageshow', this.pageShowHandler);
+    document.removeEventListener('visibilitychange', this.visibilityHandler);
   }
 }
