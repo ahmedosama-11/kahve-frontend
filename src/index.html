@@ -30,13 +30,22 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=kahve">
   <link rel="apple-touch-icon" href="assets/kahve-favicon.svg?v=kahve">
 
-  <!-- Keep one Font Awesome stylesheet. Bootstrap CSS/JS are bundled by Angular. -->
+  <!-- Keep only first-screen origins as preconnects. -->
   <link rel="preconnect" href="https://kahve-backend.vercel.app" crossorigin>
   <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
-  <link rel="preload" href="https://kahve-backend.vercel.app/site-content/page/home" as="fetch" crossorigin="anonymous">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+  <!-- Discover the local first hero image before Angular renders the component. -->
+  <link
+    rel="preload"
+    as="image"
+    href="/assets/images/kahve-products-hero-640.webp"
+    imagesrcset="/assets/images/kahve-products-hero-640.webp 640w, /assets/images/kahve-products-hero-960.webp 960w, /assets/images/kahve-products-hero-1440.webp 1440w"
+    imagesizes="(max-width: 575px) calc(100vw - 28px), (max-width: 1100px) calc(100vw - 42px), 1440px"
+    fetchpriority="high">
+
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">

@@ -41,6 +41,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   productMessages: Record<string, string> = {};
   selectedProduct: any | null = null;
   pageContent: Record<string, any> = {};
+  private readonly homeContentCacheKey = 'kahve_home_content_cache_v1';
+  private pendingPageContent: Record<string, any> | null = null;
+  private pageContentLoadTimer: number | null = null;
+  private pageContentInteractionBound = false;
+  private readonly applyPendingPageContent = () => {
+    if (this.pendingPageContent) {
+      this.pageContent = this.pendingPageContent;
+      this.pendingPageContent = null;
+    }
+    this.removePageContentInteractionListeners();
+  };
 
   heroSlides = [
     {
@@ -122,6 +133,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.restoreCachedPageContent();
     this.loadHomeData();
     this.loadPageContent();
     this.startAutoSlide();
@@ -210,9 +222,58 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
   loadPageContent(): void {
-    this.siteContentService.getPageContent('home').subscribe((content) => {
-      this.pageContent = content || {};
-    });
+    // Do not let dynamic content compete with the local LCP hero during startup.
+    // Returning visitors use the cached content immediately; fresh visitors keep the
+    // stable local hero until their first interaction, then receive the fetched content.
+    this.pageContentLoadTimer = window.setTimeout(() => {
+      this.siteContentService.getPageContent('home').subscribe((content) => {
+        const nextContent = content || {};
+        this.cachePageContent(nextContent);
+
+        if (Object.keys(this.pageContent).length > 0) {
+          this.pageContent = nextContent;
+          return;
+        }
+
+        this.pendingPageContent = nextContent;
+        this.addPageContentInteractionListeners();
+      });
+    }, 1800);
+  }
+
+  private restoreCachedPageContent(): void {
+    try {
+      const raw = localStorage.getItem(this.homeContentCacheKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') this.pageContent = parsed;
+    } catch {
+      // Safari private mode or corrupted storage should never block the page.
+    }
+  }
+
+  private cachePageContent(content: Record<string, any>): void {
+    try {
+      localStorage.setItem(this.homeContentCacheKey, JSON.stringify(content || {}));
+    } catch {
+      // Caching is optional.
+    }
+  }
+
+  private addPageContentInteractionListeners(): void {
+    if (this.pageContentInteractionBound) return;
+    this.pageContentInteractionBound = true;
+    window.addEventListener('pointerdown', this.applyPendingPageContent, { once: true, passive: true });
+    window.addEventListener('touchstart', this.applyPendingPageContent, { once: true, passive: true });
+    window.addEventListener('keydown', this.applyPendingPageContent, { once: true });
+  }
+
+  private removePageContentInteractionListeners(): void {
+    if (!this.pageContentInteractionBound) return;
+    this.pageContentInteractionBound = false;
+    window.removeEventListener('pointerdown', this.applyPendingPageContent);
+    window.removeEventListener('touchstart', this.applyPendingPageContent);
+    window.removeEventListener('keydown', this.applyPendingPageContent);
   }
 
   getBlock(key: string): any {
@@ -530,6 +591,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.autoSlideInterval) clearInterval(this.autoSlideInterval);
+    if (this.pageContentLoadTimer !== null) window.clearTimeout(this.pageContentLoadTimer);
+    this.removePageContentInteractionListeners();
     this.searchSubscription?.unsubscribe();
     this.languageSubscription?.unsubscribe();
     document.body.classList.remove('kahve-modal-open');
