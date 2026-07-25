@@ -114,6 +114,31 @@
   font-weight: 800;
 }
 
+
+/* Critical header icons are inline SVGs so they do not depend on the external icon font. */
+.nav-icon-svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex: 0 0 auto;
+  color: inherit;
+  pointer-events: none;
+}
+
+.favorite-nav-icon {
+  fill: currentColor;
+}
+
+.cart-nav-icon {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .nav-icon-btn:hover,
 .login-link:hover {
   transform: translateY(-2px);
@@ -764,6 +789,35 @@ html[dir='rtl'] .kahve-links .nav-link {
     place-items: center !important;
     line-height: 1 !important;
     font-size: 18px !important;
+  }
+
+
+  .nav-icon-btn > .nav-icon-svg,
+  #favoritesIcon > .nav-icon-svg,
+  .cart-btn > .nav-icon-svg {
+    position: static !important;
+    inset: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: inherit !important;
+    z-index: 2 !important;
+  }
+
+  #favoritesIcon > .favorite-nav-icon {
+    width: 19px !important;
+    height: 19px !important;
+    fill: currentColor !important;
+  }
+
+  .cart-btn > .cart-nav-icon {
+    width: 21px !important;
+    height: 21px !important;
+    fill: none !important;
+    stroke: currentColor !important;
   }
 
   .cart-badge {

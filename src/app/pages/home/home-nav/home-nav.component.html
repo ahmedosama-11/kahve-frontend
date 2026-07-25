@@ -31,8 +31,16 @@
 
       <ng-container *ngIf="isLoggedIn; else loginAction">
         <div class="fav-wrapper">
-          <button id="favoritesIcon" class="nav-icon-btn" type="button" (click)="toggleFavorites($event)" [attr.aria-label]="'nav.favorites' | t">
-            <i class="fa fa-heart" [style.color]="isFavOpen ? '#9b271a' : '#5b361f'"></i>
+          <button
+            id="favoritesIcon"
+            class="nav-icon-btn"
+            type="button"
+            (click)="toggleFavorites($event)"
+            [attr.aria-label]="'nav.favorites' | t"
+            [style.color]="isFavOpen ? '#9b271a' : '#5b361f'">
+            <svg class="nav-icon-svg favorite-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+            </svg>
           </button>
 
           <div class="favorites-panel" *ngIf="isFavOpen" (click)="$event.stopPropagation()">
@@ -73,7 +81,11 @@
         </div>
 
         <button class="nav-icon-btn cart-btn" type="button" [routerLink]="['/cart']" (click)="closeAllPanels()" [attr.aria-label]="'footer.cart' | t">
-          <i id="cart" class="fa-solid fa-cart-shopping"></i>
+          <svg id="cart" class="nav-icon-svg cart-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 4h2.1l1.55 9.05a2 2 0 0 0 1.97 1.66h8.83a2 2 0 0 0 1.95-1.57L20.6 7H6.1"></path>
+            <circle cx="9" cy="19" r="1.35"></circle>
+            <circle cx="17" cy="19" r="1.35"></circle>
+          </svg>
           <span class="cart-badge">{{ cartCount }}</span>
         </button>
       </ng-container>
