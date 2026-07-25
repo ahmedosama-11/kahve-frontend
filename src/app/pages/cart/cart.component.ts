@@ -249,26 +249,12 @@ export class CartComponent implements OnInit {
   }
 
   deleteItem(cartId: string): void {
-    const itemIndex = this.items.findIndex((item) => item._id === cartId);
-    if (itemIndex === -1) return;
-
-    const removedItem = this.items[itemIndex];
-    const removedAmount = this.normalizeAmount(removedItem.amount);
-
-    // Remove the row immediately so mobile users do not need to leave the page.
-    this.items = this.items.filter((item) => item._id !== cartId);
-
-    this.cartService.deleteCartItem(cartId, removedAmount).subscribe({
+    this.cartService.deleteCartItem(cartId).subscribe({
       next: () => {
+        this.items = this.items.filter((item) => item._id !== cartId);
         this.cartService.updateCartCountFromItems(this.items);
       },
-      error: (error) => {
-        // Roll back the UI and count when the API deletion fails.
-        this.items.splice(itemIndex, 0, removedItem);
-        this.items = [...this.items];
-        this.cartService.updateCartCountFromItems(this.items);
-        console.error('Error deleting item:', error);
-      },
+      error: (error) => console.error('Error deleting item:', error),
     });
   }
 }

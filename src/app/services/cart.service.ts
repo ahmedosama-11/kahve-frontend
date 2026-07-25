@@ -8,9 +8,6 @@ import { API_BASE_URL } from '../config/api.config';
 export class CartService {
   private baseUrl = API_BASE_URL;
   private cartCountSubject = new BehaviorSubject<number>(this.readStoredCartCount());
-  private cartItemAmounts = new Map<string, number>();
-  private cartItemProducts = new Map<string, string>();
-
   cartCount$ = this.cartCountSubject.asObservable();
 
   constructor(private http: HttpClient) {}
@@ -19,14 +16,9 @@ export class CartService {
     return this.cartCountSubject.value;
   }
 
-  private normalizeAmount(value: any): number {
-    const amount = Number(value || 1);
-    return Number.isFinite(amount) && amount > 0 ? Math.floor(amount) : 1;
-  }
-
   private readStoredCartCount(): number {
     const value = Number(localStorage.getItem('kahveCartCount') || 0);
-    return Number.isFinite(value) && value > 0 ? Math.floor(value) : 0;
+    return Number.isFinite(value) && value > 0 ? value : 0;
   }
 
   private setCartCount(count: number): void {
@@ -35,63 +27,25 @@ export class CartService {
     this.cartCountSubject.next(safeCount);
   }
 
-  private changeCartCount(delta: number): void {
-    this.setCartCount(this.cartCountSubject.value + Number(delta || 0));
-  }
-
   clearLocalCartCount(): void {
-    this.cartItemAmounts.clear();
-    this.cartItemProducts.clear();
     localStorage.removeItem('kahveCartCount');
     this.cartCountSubject.next(0);
   }
 
   private extractItems(response: any): any[] {
-    const candidates = [
-      response?.items,
-      response?.data?.items,
-      response?.cart?.items,
-      response?.data,
-      response?.cart,
-      response,
-    ];
-
-    const items = candidates.find((candidate) => Array.isArray(candidate));
+    const items = response?.items || response?.data || response?.cart || response || [];
     return Array.isArray(items) ? items : [];
   }
 
-  private getCartItemId(item: any): string {
-    return String(item?._id || item?.cartId || item?.id || '').trim();
-  }
-
-  private getProductId(item: any): string {
-    const value = item?.productId?._id || item?.productId || item?.currentProduct?._id || item?.product?._id || '';
-    return String(value || '').trim();
-  }
-
   private calculateItemsCount(items: any[]): number {
-    return items.reduce((total, item) => total + this.normalizeAmount(item?.amount), 0);
-  }
-
-  private rebuildCartIndex(items: any[]): void {
-    this.cartItemAmounts.clear();
-    this.cartItemProducts.clear();
-
-    items.forEach((item) => {
-      const cartId = this.getCartItemId(item);
-      if (!cartId) return;
-
-      this.cartItemAmounts.set(cartId, this.normalizeAmount(item?.amount));
-
-      const productId = this.getProductId(item);
-      if (productId) this.cartItemProducts.set(cartId, productId);
-    });
+    return items.reduce((total, item) => {
+      const amount = Number(item?.amount || 1);
+      return total + (Number.isFinite(amount) && amount > 0 ? Math.floor(amount) : 1);
+    }, 0);
   }
 
   updateCartCountFromItems(items: any[]): void {
-    const safeItems = Array.isArray(items) ? items : [];
-    this.rebuildCartIndex(safeItems);
-    this.setCartCount(this.calculateItemsCount(safeItems));
+    this.setCartCount(this.calculateItemsCount(items));
   }
 
   updateCartCountFromResponse(response: any): void {
@@ -101,8 +55,7 @@ export class CartService {
   refreshCartCount(): void {
     this.http.get<any>(`${this.baseUrl}/cart`).subscribe({
       next: (response) => this.updateCartCountFromResponse(response),
-      // Keep the last known value on temporary mobile/network failures.
-      error: (error) => console.warn('Refresh cart count failed:', error),
+      error: () => this.clearLocalCartCount(),
     });
   }
 
@@ -114,21 +67,8 @@ export class CartService {
   }
 
   addToCart(product: { name: string; price: number; image: string; productId: string; amount?: number }): Observable<any> {
-    const requestedAmount = this.normalizeAmount(product?.amount);
-
-    return this.http.post<any>(`${this.baseUrl}/cart`, product).pipe(
-      tap((response) => {
-        // Update the header immediately from the successful mutation.
-        // Do not issue a second GET because mobile browsers may receive a stale cached response.
-        this.changeCartCount(requestedAmount);
-
-        const createdItem = response?.data || response?.item || response?.cartItem || response?.cart;
-        const cartId = this.getCartItemId(createdItem);
-        if (cartId) {
-          this.cartItemAmounts.set(cartId, requestedAmount);
-          if (product.productId) this.cartItemProducts.set(cartId, String(product.productId));
-        }
-      }),
+    return this.http.post(`${this.baseUrl}/cart`, product).pipe(
+      tap(() => this.refreshCartCount()),
       catchError(this.handleError('Add to cart')),
     );
   }
@@ -141,30 +81,15 @@ export class CartService {
   }
 
   saveCartItem(cartId: string, amount: number): Observable<any> {
-    const safeAmount = this.normalizeAmount(amount);
-    const previousAmount = this.cartItemAmounts.get(String(cartId)) ?? safeAmount;
-
-    return this.http.patch<any>(`${this.baseUrl}/cart/save`, { cartId, amount: safeAmount }).pipe(
-      tap(() => {
-        this.cartItemAmounts.set(String(cartId), safeAmount);
-        this.changeCartCount(safeAmount - previousAmount);
-      }),
+    return this.http.patch<any>(`${this.baseUrl}/cart/save`, { cartId, amount }).pipe(
+      tap(() => this.refreshCartCount()),
       catchError(this.handleError('Save cart item')),
     );
   }
 
-  deleteCartItem(cartId: string, removedAmount?: number): Observable<any> {
-    const normalizedCartId = String(cartId || '');
-    const knownAmount = removedAmount != null
-      ? this.normalizeAmount(removedAmount)
-      : (this.cartItemAmounts.get(normalizedCartId) || 1);
-
+  deleteCartItem(cartId: string): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/cart/delete`, { body: { cartId } }).pipe(
-      tap(() => {
-        this.cartItemAmounts.delete(normalizedCartId);
-        this.cartItemProducts.delete(normalizedCartId);
-        this.changeCartCount(-knownAmount);
-      }),
+      tap(() => this.refreshCartCount()),
       catchError(this.handleError('Delete cart item')),
     );
   }
