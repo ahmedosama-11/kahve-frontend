@@ -844,8 +844,8 @@ html[dir='rtl'] .kahve-links .nav-link {
 }
 
 /* ============================================================
-   KAHVE — FINAL MOBILE HEADER ACTIONS FIX V5
-   Final authoritative sizing for language, heart, cart and badge.
+   KAHVE — FINAL MOBILE HEADER ACTIONS FIX V6
+   40px circles, 17px icons, 16px cart badge.
    ============================================================ */
 @media (max-width: 575px) {
   .kahve-actions,
@@ -856,15 +856,16 @@ html[dir='rtl'] .kahve-links .nav-link {
     flex-wrap: nowrap !important;
     justify-content: flex-start !important;
     align-items: center !important;
-    gap: 6px !important;
+    gap: 7px !important;
     padding: 0 !important;
   }
 
   .lang-btn {
     order: 1 !important;
-    min-width: 54px !important;
     width: 54px !important;
-    height: 38px !important;
+    min-width: 54px !important;
+    height: 40px !important;
+    min-height: 40px !important;
     padding: 0 10px !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -883,20 +884,20 @@ html[dir='rtl'] .kahve-links .nav-link {
     order: 3 !important;
   }
 
-  /* Heart and cart circles must have exactly the same size. */
+  /* Heart and cart circles. */
   #favoritesIcon.nav-icon-btn,
   .cart-btn.nav-icon-btn,
   #favoritesIcon,
   .cart-btn {
     position: relative !important;
     box-sizing: border-box !important;
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    max-width: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-    flex: 0 0 36px !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    flex: 0 0 40px !important;
     padding: 0 !important;
     margin: 0 !important;
     display: inline-grid !important;
@@ -905,18 +906,19 @@ html[dir='rtl'] .kahve-links .nav-link {
     overflow: visible !important;
   }
 
-  /* Heart glyph. */
+  /* Heart icon. */
   #favoritesIcon > .favorite-nav-icon,
   #favoritesIcon .favorite-nav-icon,
   #favoritesIcon > svg,
   #favoritesIcon svg {
     position: static !important;
-    width: 15px !important;
-    height: 15px !important;
-    min-width: 15px !important;
-    max-width: 15px !important;
-    min-height: 15px !important;
-    max-height: 15px !important;
+    box-sizing: border-box !important;
+    width: 17px !important;
+    height: 17px !important;
+    min-width: 17px !important;
+    max-width: 17px !important;
+    min-height: 17px !important;
+    max-height: 17px !important;
     margin: 0 !important;
     padding: 0 !important;
     display: block !important;
@@ -924,11 +926,7 @@ html[dir='rtl'] .kahve-links .nav-link {
     fill: currentColor !important;
   }
 
-  /*
-   * Cart glyph:
-   * Supports a direct SVG, an element with id="cart",
-   * or an SVG nested inside #cart.
-   */
+  /* Cart icon: direct SVG, #cart element, or nested SVG. */
   .cart-btn > .cart-nav-icon,
   .cart-btn .cart-nav-icon,
   .cart-btn > svg,
@@ -938,18 +936,18 @@ html[dir='rtl'] .kahve-links .nav-link {
   .cart-btn #cart > svg {
     position: static !important;
     box-sizing: border-box !important;
-    width: 15px !important;
-    height: 15px !important;
-    min-width: 15px !important;
-    max-width: 15px !important;
-    min-height: 15px !important;
-    max-height: 15px !important;
+    width: 17px !important;
+    height: 17px !important;
+    min-width: 17px !important;
+    max-width: 17px !important;
+    min-height: 17px !important;
+    max-height: 17px !important;
     margin: 0 !important;
     padding: 0 !important;
     display: block !important;
     transform: none !important;
-    font-size: 15px !important;
-    line-height: 15px !important;
+    font-size: 17px !important;
+    line-height: 17px !important;
   }
 
   .cart-btn > .cart-nav-icon,
@@ -959,12 +957,12 @@ html[dir='rtl'] .kahve-links .nav-link {
   .cart-btn #cart > svg {
     fill: none !important;
     stroke: currentColor !important;
-    stroke-width: 1.55 !important;
+    stroke-width: 1.7 !important;
     stroke-linecap: round !important;
     stroke-linejoin: round !important;
   }
 
-  /* Small badge, kept partly outside the circle without covering the cart. */
+  /* Cart counter badge. */
   .cart-btn > .cart-badge,
   .cart-btn .cart-badge {
     position: absolute !important;
@@ -974,9 +972,11 @@ html[dir='rtl'] .kahve-links .nav-link {
     bottom: auto !important;
     inset-inline: auto !important;
     box-sizing: border-box !important;
-    min-width: 14px !important;
     width: auto !important;
-    height: 14px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    min-height: 16px !important;
+    max-height: 16px !important;
     padding: 0 3px !important;
     margin: 0 !important;
     border: 1px solid #fffaf2 !important;
@@ -985,8 +985,8 @@ html[dir='rtl'] .kahve-links .nav-link {
     align-items: center !important;
     justify-content: center !important;
     transform: none !important;
-    font-size: 8px !important;
-    line-height: 12px !important;
+    font-size: 9px !important;
+    line-height: 14px !important;
     font-weight: 900 !important;
     letter-spacing: 0 !important;
     z-index: 5 !important;
