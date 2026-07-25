@@ -123,6 +123,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadHomeData();
+    this.loadPageContent();
     this.startAutoSlide();
 
     this.searchSubscription = this.searchSubject
@@ -260,20 +261,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.homeService.getHomeData().subscribe({
       next: (data: any) => {
         console.log('HOME RESPONSE:', data);
-
-        const bundledPageContent =
-          data?.pageContent ||
-          data?.homeContent ||
-          data?.siteContent ||
-          data?.data?.pageContent ||
-          {};
-
-        if (bundledPageContent && Object.keys(bundledPageContent).length > 0) {
-          this.pageContent = bundledPageContent;
-        } else {
-          // Backward-compatible fallback while the new backend is being deployed.
-          this.loadPageContent();
-        }
 
         const products = Array.isArray(data)
           ? data
