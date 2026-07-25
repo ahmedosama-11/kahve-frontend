@@ -114,31 +114,6 @@
   font-weight: 800;
 }
 
-
-/* Critical header icons are inline SVGs so they do not depend on the external icon font. */
-.nav-icon-svg {
-  width: 20px;
-  height: 20px;
-  display: block;
-  flex: 0 0 auto;
-  color: inherit;
-  pointer-events: none;
-}
-
-.favorite-nav-icon {
-  fill: currentColor;
-}
-
-.cart-nav-icon {
-  width: 21px;
-  height: 21px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
 .nav-icon-btn:hover,
 .login-link:hover {
   transform: translateY(-2px);
@@ -791,204 +766,23 @@ html[dir='rtl'] .kahve-links .nav-link {
     font-size: 18px !important;
   }
 
-
-  .nav-icon-btn > .nav-icon-svg,
-  #favoritesIcon > .nav-icon-svg,
-  .cart-btn > .nav-icon-svg {
-    position: static !important;
-    inset: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    transform: none !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    color: inherit !important;
-    z-index: 2 !important;
-  }
-
-  #favoritesIcon > .favorite-nav-icon {
-    width: 18px !important;
-    height: 18px !important;
-    fill: currentColor !important;
-  }
-
-  .cart-btn > .cart-nav-icon {
-    width: 18px !important;
-    height: 18px !important;
-    fill: none !important;
-    stroke: currentColor !important;
-    stroke-width: 1.75 !important;
-    transform: translateY(1px) !important;
-  }
-
   .cart-badge {
     position: absolute !important;
-    top: -3px !important;
-    right: -2px !important;
-    left: auto !important;
-    inset-inline: auto !important;
-    transform: none !important;
-    min-width: 17px !important;
-    height: 17px !important;
-    padding: 0 3px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 17px !important;
-    text-align: center !important;
-    font-size: 10px !important;
-    font-weight: 900 !important;
-    z-index: 3 !important;
-  }
-}
-
-/* ============================================================
-   KAHVE — FINAL MOBILE HEADER ACTIONS FIX V6
-   40px circles, 17px icons, 16px cart badge.
-   ============================================================ */
-@media (max-width: 575px) {
-  .kahve-actions,
-  html[dir='rtl'] .kahve-actions {
-    display: flex !important;
-    direction: ltr !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    gap: 7px !important;
-    padding: 0 !important;
-  }
-
-  .lang-btn {
-    order: 1 !important;
-    width: 54px !important;
-    min-width: 54px !important;
-    height: 40px !important;
-    min-height: 40px !important;
-    padding: 0 10px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 1 !important;
-  }
-
-  .fav-wrapper {
-    order: 2 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .cart-btn {
-    order: 3 !important;
-  }
-
-  /* Heart and cart circles. */
-  #favoritesIcon.nav-icon-btn,
-  .cart-btn.nav-icon-btn,
-  #favoritesIcon,
-  .cart-btn {
-    position: relative !important;
-    box-sizing: border-box !important;
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    max-width: 40px !important;
-    min-height: 40px !important;
-    max-height: 40px !important;
-    flex: 0 0 40px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    display: inline-grid !important;
-    place-items: center !important;
-    line-height: 1 !important;
-    overflow: visible !important;
-  }
-
-  /* Heart icon. */
-  #favoritesIcon > .favorite-nav-icon,
-  #favoritesIcon .favorite-nav-icon,
-  #favoritesIcon > svg,
-  #favoritesIcon svg {
-    position: static !important;
-    box-sizing: border-box !important;
-    width: 17px !important;
-    height: 17px !important;
-    min-width: 17px !important;
-    max-width: 17px !important;
-    min-height: 17px !important;
-    max-height: 17px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block !important;
-    transform: none !important;
-    fill: currentColor !important;
-  }
-
-  /* Cart icon: direct SVG, #cart element, or nested SVG. */
-  .cart-btn > .cart-nav-icon,
-  .cart-btn .cart-nav-icon,
-  .cart-btn > svg,
-  .cart-btn svg,
-  .cart-btn > #cart,
-  .cart-btn #cart,
-  .cart-btn #cart > svg {
-    position: static !important;
-    box-sizing: border-box !important;
-    width: 17px !important;
-    height: 17px !important;
-    min-width: 17px !important;
-    max-width: 17px !important;
-    min-height: 17px !important;
-    max-height: 17px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block !important;
-    transform: none !important;
-    font-size: 17px !important;
-    line-height: 17px !important;
-  }
-
-  .cart-btn > .cart-nav-icon,
-  .cart-btn .cart-nav-icon,
-  .cart-btn > svg.cart-nav-icon,
-  .cart-btn svg.cart-nav-icon,
-  .cart-btn #cart > svg {
-    fill: none !important;
-    stroke: currentColor !important;
-    stroke-width: 1.7 !important;
-    stroke-linecap: round !important;
-    stroke-linejoin: round !important;
-  }
-
-  /* Cart counter badge. */
-  .cart-btn > .cart-badge,
-  .cart-btn .cart-badge {
-    position: absolute !important;
-    top: -4px !important;
+    top: -5px !important;
     right: -4px !important;
     left: auto !important;
-    bottom: auto !important;
     inset-inline: auto !important;
-    box-sizing: border-box !important;
-    width: auto !important;
-    min-width: 16px !important;
-    height: 16px !important;
-    min-height: 16px !important;
-    max-height: 16px !important;
-    padding: 0 3px !important;
-    margin: 0 !important;
-    border: 1px solid #fffaf2 !important;
-    border-radius: 999px !important;
+    transform: none !important;
+    min-width: 19px !important;
+    height: 19px !important;
+    padding: 0 4px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transform: none !important;
-    font-size: 9px !important;
-    line-height: 14px !important;
+    line-height: 19px !important;
+    text-align: center !important;
+    font-size: 11px !important;
     font-weight: 900 !important;
-    letter-spacing: 0 !important;
-    z-index: 5 !important;
+    z-index: 3 !important;
   }
 }
