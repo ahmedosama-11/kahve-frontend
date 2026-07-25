@@ -15,6 +15,7 @@ import { SeoService } from '../../services/seo.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { ProductUrlService } from '../../services/product-url.service';
 import { CategoryUrlService } from '../../services/category-url.service';
+import { ImageOptimizationService } from '../../services/image-optimization.service';
 
 @Component({
   selector: 'app-home',
@@ -115,13 +116,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     private analyticsService: AnalyticsService,
     private productUrlService: ProductUrlService,
     private categoryUrlService: CategoryUrlService,
+    private imageOptimizationService: ImageOptimizationService,
   ) {
     this.titleService.setTitle('Kahve');
   }
 
   ngOnInit(): void {
     this.loadHomeData();
-    this.loadPageContent();
     this.startAutoSlide();
 
     this.searchSubscription = this.searchSubject
@@ -226,10 +227,53 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.siteContentService.image(this.getBlock(key), fallback);
   }
 
+
+  heroImage(slide: any, width = 1440): string {
+    const source = this.contentImage(slide?.key, slide?.image || '');
+    return this.imageOptimizationService.optimize(source, width);
+  }
+
+  heroImageSrcset(slide: any): string {
+    const source = this.contentImage(slide?.key, slide?.image || '');
+    return this.imageOptimizationService.srcset(source, [480, 640, 960, 1200, 1440]);
+  }
+
+  storyImage(width = 1200): string {
+    const source = this.contentImage('story', '/assets/images/kahve-products.jpg');
+    return this.imageOptimizationService.optimize(source, width);
+  }
+
+  storyImageSrcset(): string {
+    const source = this.contentImage('story', '/assets/images/kahve-products.jpg');
+    return this.imageOptimizationService.srcset(source, [480, 800, 1200]);
+  }
+
+  productImage(product: any, width = 480): string {
+    return this.imageOptimizationService.optimize(String(product?.image || ''), width, width);
+  }
+
+  productImageSrcset(product: any): string {
+    return this.imageOptimizationService.srcset(String(product?.image || ''), [240, 320, 480, 640], 1);
+  }
+
   loadHomeData(): void {
     this.homeService.getHomeData().subscribe({
       next: (data: any) => {
         console.log('HOME RESPONSE:', data);
+
+        const bundledPageContent =
+          data?.pageContent ||
+          data?.homeContent ||
+          data?.siteContent ||
+          data?.data?.pageContent ||
+          {};
+
+        if (bundledPageContent && Object.keys(bundledPageContent).length > 0) {
+          this.pageContent = bundledPageContent;
+        } else {
+          // Backward-compatible fallback while the new backend is being deployed.
+          this.loadPageContent();
+        }
 
         const products = Array.isArray(data)
           ? data
@@ -374,7 +418,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           product.isInCart = true;
           product.cartAmount = amount;
           this.productMessages[productId] = response?.message || `Added ${amount} item${amount > 1 ? 's' : ''} to cart`;
-          window.dispatchEvent(new CustomEvent('kahve-cart-updated'));
           this.analyticsService.trackAddToCart(product, amount);
 
           setTimeout(() => {

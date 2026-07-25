@@ -12,6 +12,8 @@ interface BuildVersion {
 export class AppVersionService {
   private readonly storageKey = 'kahve_app_version';
   private initialized = false;
+  private lastCheckedAt = 0;
+  private readonly minimumCheckGapMs = 5 * 60 * 1000;
 
   constructor(private http: HttpClient) {}
 
@@ -21,27 +23,26 @@ export class AppVersionService {
 
     this.removeCacheBustParam();
 
-    // Version checking is useful, but it is not part of the critical rendering path.
-    // Delay the first request so product/content requests get network priority on startup.
-    const scheduleInitialCheck = () => this.checkForUpdate();
-    const requestIdleCallback = (window as any).requestIdleCallback as undefined | ((callback: () => void, options?: { timeout: number }) => number);
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(scheduleInitialCheck, { timeout: 4000 });
-    } else {
-      window.setTimeout(scheduleInitialCheck, 2500);
-    }
+    // Version checks must never compete with the first screen, hero image or products.
+    // A fixed delay keeps Lighthouse/Safari startup requests out of the critical chain.
+    window.setTimeout(() => this.checkForUpdate(), 30_000);
 
-    // Re-check periodically and whenever the customer returns to the tab.
-    timer(5 * 60 * 1000, 5 * 60 * 1000)
+    timer(10 * 60 * 1000, 10 * 60 * 1000)
       .pipe(switchMap(() => this.fetchVersion()))
       .subscribe((version) => this.applyVersion(version));
 
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') this.checkForUpdate();
+      if (
+        document.visibilityState === 'visible' &&
+        Date.now() - this.lastCheckedAt >= this.minimumCheckGapMs
+      ) {
+        this.checkForUpdate();
+      }
     });
   }
 
   checkForUpdate(): void {
+    this.lastCheckedAt = Date.now();
     this.fetchVersion().subscribe((version) => this.applyVersion(version));
   }
 
@@ -55,17 +56,21 @@ export class AppVersionService {
     const current = String(payload?.version || '').trim();
     if (!current || current === 'development') return;
 
-    const previous = localStorage.getItem(this.storageKey);
-    if (!previous) {
-      localStorage.setItem(this.storageKey, current);
-      return;
-    }
+    try {
+      const previous = localStorage.getItem(this.storageKey);
+      if (!previous) {
+        localStorage.setItem(this.storageKey, current);
+        return;
+      }
 
-    if (previous !== current) {
-      localStorage.setItem(this.storageKey, current);
-      const url = new URL(window.location.href);
-      url.searchParams.set('_kahve_v', current);
-      window.location.replace(url.toString());
+      if (previous !== current) {
+        localStorage.setItem(this.storageKey, current);
+        const url = new URL(window.location.href);
+        url.searchParams.set('_kahve_v', current);
+        window.location.replace(url.toString());
+      }
+    } catch {
+      // Storage can be restricted on Safari private browsing; version checking is optional.
     }
   }
 
