@@ -842,44 +842,153 @@ html[dir='rtl'] .kahve-links .nav-link {
     z-index: 3 !important;
   }
 }
-/* FINAL MOBILE CART SIZE */
+
+/* ============================================================
+   KAHVE — FINAL MOBILE HEADER ACTIONS FIX V5
+   Final authoritative sizing for language, heart, cart and badge.
+   ============================================================ */
 @media (max-width: 575px) {
-
-  /* تصغير دائرة زر السلة */
-  .cart-btn {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    max-width: 38px !important;
-  }
-
-  /* تصغير رسمة السلة نفسها */
-  .cart-btn > .cart-nav-icon {
-    width: 15px !important;
-    height: 15px !important;
-    stroke-width: 1.7 !important;
-    transform: translateY(1px) !important;
-  }
-
-  /* تصغير عداد السلة وضبط مكانه */
-  .cart-btn > .cart-badge {
-    top: -2px !important;
-    right: -1px !important;
-
-    min-width: 15px !important;
-    height: 15px !important;
-    padding: 0 3px !important;
-
-    font-size: 9px !important;
-    line-height: 15px !important;
-
+  .kahve-actions,
+  html[dir='rtl'] .kahve-actions {
     display: flex !important;
+    direction: ltr !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 0 !important;
+  }
+
+  .lang-btn {
+    order: 1 !important;
+    min-width: 54px !important;
+    width: 54px !important;
+    height: 38px !important;
+    padding: 0 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+  }
+
+  .fav-wrapper {
+    order: 2 !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
   }
 
-  /* تقليل المسافة بين اللغة والقلب والسلة */
-  .kahve-actions {
-    gap: 6px !important;
+  .cart-btn {
+    order: 3 !important;
+  }
+
+  /* Heart and cart circles must have exactly the same size. */
+  #favoritesIcon.nav-icon-btn,
+  .cart-btn.nav-icon-btn,
+  #favoritesIcon,
+  .cart-btn {
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    flex: 0 0 36px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    line-height: 1 !important;
+    overflow: visible !important;
+  }
+
+  /* Heart glyph. */
+  #favoritesIcon > .favorite-nav-icon,
+  #favoritesIcon .favorite-nav-icon,
+  #favoritesIcon > svg,
+  #favoritesIcon svg {
+    position: static !important;
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    max-width: 15px !important;
+    min-height: 15px !important;
+    max-height: 15px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    transform: none !important;
+    fill: currentColor !important;
+  }
+
+  /*
+   * Cart glyph:
+   * Supports a direct SVG, an element with id="cart",
+   * or an SVG nested inside #cart.
+   */
+  .cart-btn > .cart-nav-icon,
+  .cart-btn .cart-nav-icon,
+  .cart-btn > svg,
+  .cart-btn svg,
+  .cart-btn > #cart,
+  .cart-btn #cart,
+  .cart-btn #cart > svg {
+    position: static !important;
+    box-sizing: border-box !important;
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    max-width: 15px !important;
+    min-height: 15px !important;
+    max-height: 15px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    transform: none !important;
+    font-size: 15px !important;
+    line-height: 15px !important;
+  }
+
+  .cart-btn > .cart-nav-icon,
+  .cart-btn .cart-nav-icon,
+  .cart-btn > svg.cart-nav-icon,
+  .cart-btn svg.cart-nav-icon,
+  .cart-btn #cart > svg {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.55 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  /* Small badge, kept partly outside the circle without covering the cart. */
+  .cart-btn > .cart-badge,
+  .cart-btn .cart-badge {
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    left: auto !important;
+    bottom: auto !important;
+    inset-inline: auto !important;
+    box-sizing: border-box !important;
+    min-width: 14px !important;
+    width: auto !important;
+    height: 14px !important;
+    padding: 0 3px !important;
+    margin: 0 !important;
+    border: 1px solid #fffaf2 !important;
+    border-radius: 999px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: none !important;
+    font-size: 8px !important;
+    line-height: 12px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0 !important;
+    z-index: 5 !important;
   }
 }
