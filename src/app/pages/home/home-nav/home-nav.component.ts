@@ -24,7 +24,6 @@ export class HomeNavComponent implements OnInit, OnDestroy {
   favError: string = '';
 
   private subscriptions: Subscription[] = [];
-  private cartUpdatedHandler = () => this.cartService.refreshCartCount();
 
   constructor(
     private authService: AuthService,
@@ -55,7 +54,6 @@ export class HomeNavComponent implements OnInit, OnDestroy {
       this.cartService.cartCount$.subscribe(count => this.cartCount = count)
     );
 
-    window.addEventListener('kahve-cart-updated', this.cartUpdatedHandler);
   }
 
   toggleFavorites(event?: Event): void {
@@ -107,15 +105,20 @@ export class HomeNavComponent implements OnInit, OnDestroy {
       cart: this.cartService.getUserCart()
     }).subscribe({
       next: (result: any) => {
-        const cartItems = result.cart.items || result.cart.data || result.cart.cart || [];
+        const cartItemsRaw = result?.cart?.items || result?.cart?.data || result?.cart?.cart || [];
+        const cartItems = Array.isArray(cartItemsRaw) ? cartItemsRaw : [];
         const favItems = Array.isArray(result.favs) ? result.favs : (result.favs.favorites || result.favs.data || []);
 
         this.favorites = favItems.map((f: any) => {
-          const cartEntry = cartItems.find((c: any) => String(c.productId) === String(f.productId));
+          const cartEntry = cartItems.find((c: any) => {
+            const cartProductId = c?.productId?._id || c?.productId || c?.currentProduct?._id || '';
+            return String(cartProductId) === String(f.productId);
+          });
           return {
             ...f,
             isInCart: !!cartEntry,
-            cartId: cartEntry ? cartEntry._id : null
+            cartId: cartEntry ? cartEntry._id : null,
+            cartAmount: cartEntry ? Number(cartEntry.amount || 1) : 0
           };
         });
 
@@ -152,8 +155,8 @@ export class HomeNavComponent implements OnInit, OnDestroy {
     this.cartService.addToCart(productData).subscribe({
       next: (res) => {
         item.isInCart = true;
-        item.cartId = res?.data?._id || res?.cart?._id || null;
-        this.cartService.refreshCartCount();
+        item.cartId = res?.data?._id || res?.item?._id || res?.cartItem?._id || res?.cart?._id || null;
+        item.cartAmount = 1;
       },
       error: (err) => console.error('Error adding to cart:', err)
     });
@@ -162,13 +165,21 @@ export class HomeNavComponent implements OnInit, OnDestroy {
   handleRemoveFromCart(item: any): void {
     if (!item.cartId) return;
 
-    this.cartService.deleteCartItem(item.cartId).subscribe({
-      next: () => {
-        item.isInCart = false;
-        item.cartId = null;
-        this.cartService.refreshCartCount();
-      },
-      error: (err) => console.error('Error removing from cart:', err)
+    const previousCartId = item.cartId;
+    const previousAmount = Number(item.cartAmount || 1);
+
+    item.isInCart = false;
+    item.cartId = null;
+    item.cartAmount = 0;
+
+    this.cartService.deleteCartItem(previousCartId, previousAmount).subscribe({
+      next: () => undefined,
+      error: (err) => {
+        item.isInCart = true;
+        item.cartId = previousCartId;
+        item.cartAmount = previousAmount;
+        console.error('Error removing from cart:', err);
+      }
     });
   }
 
@@ -208,6 +219,5 @@ export class HomeNavComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-    window.removeEventListener('kahve-cart-updated', this.cartUpdatedHandler);
   }
 }
