@@ -842,3 +842,44 @@ html[dir='rtl'] .kahve-links .nav-link {
     z-index: 3 !important;
   }
 }
+/* FINAL MOBILE CART SIZE */
+@media (max-width: 575px) {
+
+  /* تصغير دائرة زر السلة */
+  .cart-btn {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+  }
+
+  /* تصغير رسمة السلة نفسها */
+  .cart-btn > .cart-nav-icon {
+    width: 15px !important;
+    height: 15px !important;
+    stroke-width: 1.7 !important;
+    transform: translateY(1px) !important;
+  }
+
+  /* تصغير عداد السلة وضبط مكانه */
+  .cart-btn > .cart-badge {
+    top: -2px !important;
+    right: -1px !important;
+
+    min-width: 15px !important;
+    height: 15px !important;
+    padding: 0 3px !important;
+
+    font-size: 9px !important;
+    line-height: 15px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* تقليل المسافة بين اللغة والقلب والسلة */
+  .kahve-actions {
+    gap: 6px !important;
+  }
+}
