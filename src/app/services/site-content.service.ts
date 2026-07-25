@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, shareReplay, tap } from 'rxjs/operators';
 import { LanguageService } from './language.service';
 import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({ providedIn: 'root' })
 export class SiteContentService {
   private baseUrl = API_BASE_URL;
+  private pageRequests = new Map<string, Observable<Record<string, any>>>();
 
   constructor(private http: HttpClient, private languageService: LanguageService) {}
 
@@ -20,18 +21,34 @@ export class SiteContentService {
   }
 
   getPageContent(page: string): Observable<Record<string, any>> {
-    return this.http.get<any>(`${this.baseUrl}/site-content/page/${page}`, { withCredentials: true }).pipe(
-      map((response) => response?.byKey || this.arrayToMap(response?.items || response?.data || [])),
-      catchError(() => of({}))
-    );
+    const normalizedPage = String(page || '').trim().toLowerCase();
+    const cachedRequest = this.pageRequests.get(normalizedPage);
+    if (cachedRequest) return cachedRequest;
+
+    const request = this.http
+      .get<any>(`${this.baseUrl}/site-content/page/${encodeURIComponent(normalizedPage)}`)
+      .pipe(
+        map((response) => response?.byKey || this.arrayToMap(response?.items || response?.data || [])),
+        catchError(() => of({})),
+        shareReplay({ bufferSize: 1, refCount: false }),
+      );
+
+    this.pageRequests.set(normalizedPage, request);
+    return request;
   }
 
   saveContent(payload: FormData): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/site-content`, payload, { withCredentials: true });
+    const page = String(payload.get('page') || '').trim().toLowerCase();
+    return this.http.post<any>(`${this.baseUrl}/site-content`, payload, { withCredentials: true }).pipe(
+      tap(() => this.invalidatePage(page)),
+    );
   }
 
   updateContent(id: string, payload: FormData): Observable<any> {
-    return this.http.patch<any>(`${this.baseUrl}/site-content/${id}`, payload, { withCredentials: true });
+    const page = String(payload.get('page') || '').trim().toLowerCase();
+    return this.http.patch<any>(`${this.baseUrl}/site-content/${id}`, payload, { withCredentials: true }).pipe(
+      tap(() => this.invalidatePage(page)),
+    );
   }
 
   deleteContent(id: string): Observable<any> {
@@ -50,6 +67,11 @@ export class SiteContentService {
 
   image(block: any, fallback = ''): string {
     return String(block?.image || fallback || '').trim();
+  }
+
+  invalidatePage(page: string): void {
+    const normalizedPage = String(page || '').trim().toLowerCase();
+    if (normalizedPage) this.pageRequests.delete(normalizedPage);
   }
 
   arrayToMap(items: any[]): Record<string, any> {

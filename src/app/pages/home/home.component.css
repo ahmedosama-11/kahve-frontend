@@ -33,6 +33,9 @@
 
 .kahve-category-inner a {
   color: #5b361f;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
   font-size: 0.82rem;
   font-weight: 700;
@@ -241,18 +244,26 @@
   gap: 10px;
 }
 
-.hero-dots button {
-  width: 10px;
-  height: 10px;
-  border: 0;
+.hero-dot {
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border-radius: 20px;
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  background: rgba(255, 248, 238, 0.45);
-  transition: 0.25s ease;
 }
 
-.hero-dots button.active {
+.hero-dot span {
+  width: 10px;
+  height: 10px;
+  border-radius: 20px;
+  background: rgba(255, 248, 238, 0.45);
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.hero-dot.active span {
   width: 34px;
   background: #b98545;
 }
@@ -1312,4 +1323,13 @@ body.kahve-modal-open {
   .hero-container {
     margin-top: 14px !important;
   }
+}
+
+
+/* Skip layout/paint work for sections well below the initial viewport. */
+.kahve-story-section,
+.search-section,
+.product-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
 }

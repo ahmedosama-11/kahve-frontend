@@ -14,10 +14,16 @@
   <section class="hero-container">
     <div class="hero-slider">
       <div class="hero-slide" *ngFor="let slide of heroSlides; let i = index" [class.active]="i === currentSlide">
-        <img [src]="contentImage(slide.key, slide.image)" [alt]="contentText(slide.key, 'title', slide.titleKey)"
-          width="1600" height="900" sizes="(max-width: 640px) calc(100vw - 24px), (max-width: 1440px) calc(100vw - 42px), 1440px"
+        <img
+          [src]="contentImage(slide.key, slide.image) | kahveImage:1440"
+          [attr.srcset]="(contentImage(slide.key, slide.image) | kahveSrcset:'hero') || null"
+          sizes="(max-width: 575px) calc(100vw - 28px), (max-width: 1100px) calc(100vw - 42px), 1440px"
+          width="1600"
+          height="900"
+          [alt]="contentText(slide.key, 'title', slide.titleKey)"
           [attr.loading]="i === 0 ? 'eager' : 'lazy'"
-          [attr.fetchpriority]="i === 0 ? 'high' : 'low'" decoding="async" />
+          [attr.fetchpriority]="i === 0 ? 'high' : 'low'"
+          decoding="async" />
         <div class="hero-overlay">
           <div class="hero-content" *ngIf="i === currentSlide">
             <span class="hero-tag">{{ contentText(slide.key, 'subtitle', slide.tagKey) }}</span>
@@ -39,9 +45,11 @@
       </button>
 
       <div class="hero-dots" role="group" aria-label="Hero slides">
-        <button *ngFor="let slide of heroSlides; let i = index" type="button"
+        <button *ngFor="let slide of heroSlides; let i = index" type="button" class="hero-dot"
           [class.active]="i === currentSlide" [attr.aria-label]="'Show hero slide ' + (i + 1)"
-          [attr.aria-current]="i === currentSlide ? 'true' : null" (click)="setSlide(i)"></button>
+          [attr.aria-current]="i === currentSlide ? 'true' : null" (click)="setSlide(i)">
+          <span aria-hidden="true"></span>
+        </button>
       </div>
     </div>
   </section>
@@ -91,8 +99,17 @@
         <a [routerLink]="[getBlock('story')?.button_link || '/aboutUs']" class="story-link">{{ contentText('story', 'button_text', 'home.aboutKahve') }}</a>
       </div>
       <div class="story-collage">
-        <img class="collage-main" [src]="contentImage('story', '/assets/images/kahve-products.webp')" alt="KAHVE coffee products"
-          width="1600" height="1066" loading="lazy" decoding="async" fetchpriority="low" />
+        <img
+          class="collage-main"
+          [src]="contentImage('story', '/assets/images/kahve-products.webp') | kahveImage:1200"
+          [attr.srcset]="(contentImage('story', '/assets/images/kahve-products.webp') | kahveSrcset:'story') || null"
+          sizes="(max-width: 900px) calc(100vw - 42px), 560px"
+          width="1600"
+          height="1066"
+          alt="KAHVE coffee products"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low" />
         <div class="floating-card floating-card-top">{{ contentText('story', 'badge', 'home.premiumRoast') }}</div>
         <div class="floating-card floating-card-bottom">{{ contentText('story', 'alt', 'home.freshDaily') }}</div>
       </div>
@@ -169,8 +186,17 @@
       </button>
 
       <a class="product-image-wrap product-image-link" [routerLink]="getProductPath(product)" [attr.aria-label]="getProductTitle(product)">
-        <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'"
-          width="320" height="240" loading="lazy" decoding="async" fetchpriority="low" />
+        <img
+          class="product-image"
+          [src]="product.image | kahveImage:480:480"
+          [attr.srcset]="(product.image | kahveSrcset:'product') || null"
+          sizes="(max-width: 575px) calc(100vw - 72px), (max-width: 900px) 44vw, 280px"
+          width="640"
+          height="640"
+          [alt]="getProductTitle(product) || 'KAHVE product'"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low" />
       </a>
 
       <div class="product-info">

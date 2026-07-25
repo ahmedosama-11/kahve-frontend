@@ -6,6 +6,8 @@ import { GA_MEASUREMENT_ID } from '../config/analytics.config';
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
   private initialized = false;
+  private scriptLoaded = false;
+  private scriptScheduled = false;
 
   constructor(private router: Router) {}
 
@@ -13,17 +15,13 @@ export class AnalyticsService {
     if (this.initialized || !this.isConfigured()) return;
     this.initialized = true;
 
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
-    document.head.appendChild(script);
-
     const win = window as any;
     win.dataLayer = win.dataLayer || [];
     win.gtag = win.gtag || function (...args: any[]) {
       win.dataLayer.push(args);
     };
 
+    // Queue configuration immediately so early ecommerce events are not lost.
     win.gtag('js', new Date());
     win.gtag('config', GA_MEASUREMENT_ID, { send_page_view: false });
 
@@ -31,6 +29,8 @@ export class AnalyticsService {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => this.trackPageView(event.urlAfterRedirects));
+
+    this.scheduleScriptLoad();
   }
 
   trackEvent(name: string, params: Record<string, any> = {}): void {
@@ -87,6 +87,38 @@ export class AnalyticsService {
       value: Number(value || 0),
       items: items.map((item) => this.toAnalyticsItem(item, Number(item?.amount || 1))),
     });
+  }
+
+  private scheduleScriptLoad(): void {
+    if (this.scriptScheduled || this.scriptLoaded) return;
+    this.scriptScheduled = true;
+
+    const load = () => this.loadScript();
+    const win = window as any;
+
+    if (typeof win.requestIdleCallback === 'function') {
+      win.requestIdleCallback(load, { timeout: 2500 });
+    } else {
+      window.setTimeout(load, 1600);
+    }
+
+    // A real user interaction gets priority over the idle timeout.
+    window.addEventListener('pointerdown', load, { once: true, passive: true });
+    window.addEventListener('keydown', load, { once: true });
+  }
+
+  private loadScript(): void {
+    if (this.scriptLoaded || document.querySelector(`script[data-kahve-ga="${GA_MEASUREMENT_ID}"]`)) {
+      this.scriptLoaded = true;
+      return;
+    }
+
+    this.scriptLoaded = true;
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset['kahveGa'] = GA_MEASUREMENT_ID;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
+    document.head.appendChild(script);
   }
 
   private toAnalyticsItem(product: any, quantity: number): Record<string, any> {

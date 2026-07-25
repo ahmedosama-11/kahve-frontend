@@ -1,16 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-26YQV8R6EJ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-26YQV8R6EJ', { send_page_view: false });
-  </script>
-
-  <meta charset="utf-8">
+<meta charset="utf-8">
   <title>Kahve</title>
   <meta name="description" content="Discover premium KAHVE coffee in Egypt. Shop fresh Turkish coffee, coffee blends and carefully selected coffee products online.">
   <meta name="robots" content="index, follow, max-image-preview:large">
@@ -41,14 +32,15 @@
 
   <!-- Keep one Font Awesome stylesheet. Bootstrap CSS/JS are bundled by Angular. -->
   <link rel="preconnect" href="https://kahve-backend.vercel.app" crossorigin>
-  <link rel="preload" as="image" href="/assets/images/kahve-products-hero.webp" type="image/webp" fetchpriority="high">
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+  <link rel="preload" href="https://kahve-backend.vercel.app/site-content/page/home" as="fetch" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap"></noscript>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700;800;900&display=swap"></noscript>
 </head>
 <body>
   <app-root></app-root>
