@@ -32,7 +32,9 @@ export class DeliveryDetailsComponent implements OnInit {
 
   checkoutItems: any[] = [];
   deliveryAreas: DeliveryArea[] = [];
+  filteredAreas: DeliveryArea[] = [];
   selectedArea: DeliveryArea | null = null;
+  availableCities: string[] = [];
   couponCode = '';
   appliedCouponCode = '';
   discountAmount = 0;
@@ -132,7 +134,8 @@ export class DeliveryDetailsComponent implements OnInit {
       this.deliveryData.phone,
       this.deliveryData.email,
       this.deliveryData.address,
-      this.deliveryData.areaId,
+      this.deliveryData.city,
+      this.deliveryData.state || this.deliveryData.areaId,
       this.deliveryData.country,
     ];
 
@@ -142,7 +145,7 @@ export class DeliveryDetailsComponent implements OnInit {
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(this.deliveryData.email || '').trim());
     if (!emailOk) return false;
 
-    if (!this.selectedArea) return false;
+    if (this.deliveryAreas.length && !this.selectedArea) return false;
     return true;
   }
 
@@ -198,12 +201,15 @@ export class DeliveryDetailsComponent implements OnInit {
       next: (response) => {
         const areas = response?.areas || response?.data || [];
         this.deliveryAreas = Array.isArray(areas) ? areas : [];
+        this.availableCities = Array.from(new Set(this.deliveryAreas.map((area) => this.getAreaCity(area)).filter(Boolean)));
+        if (!this.deliveryData.city && this.availableCities.length) {
+          this.deliveryData.city = this.availableCities[0];
+          this.onCityChange();
+        }
       },
       error: () => {
         this.deliveryAreas = [];
-        this.errorMessage = this.languageService.currentLanguage === 'ar'
-          ? 'تعذر تحميل مناطق التوصيل.'
-          : 'Could not load delivery areas.';
+        this.availableCities = [];
       },
     });
   }
@@ -255,46 +261,34 @@ export class DeliveryDetailsComponent implements OnInit {
     return this.languageService.localizeProduct(product, 'title') || item?.name || item?.title || '';
   }
 
+  getAreaCity(area: DeliveryArea): string {
+    return this.languageService.currentLanguage === 'ar'
+      ? (area.city_ar || area.city_en || '')
+      : (area.city_en || area.city_ar || '');
+  }
+
   getAreaName(area: DeliveryArea): string {
     return this.languageService.currentLanguage === 'ar'
       ? (area.area_ar || area.area_en || '')
       : (area.area_en || area.area_ar || '');
   }
 
-  areaSearchFn = (term: string, area: DeliveryArea): boolean => {
-    const normalizedTerm = this.normalizeSearchText(term);
-    if (!normalizedTerm) return true;
-    const localizedName = this.languageService.currentLanguage === 'ar'
-      ? (area.area_ar || area.area_en || '')
-      : (area.area_en || area.area_ar || '');
-    return this.normalizeSearchText(localizedName).includes(normalizedTerm);
-  };
-
-  private normalizeSearchText(value: string): string {
-    return String(value || '')
-      .trim()
-      .toLowerCase()
-      .replace(/[أإآ]/g, 'ا')
-      .replace(/ة/g, 'ه')
-      .replace(/ى/g, 'ي')
-      .replace(/\s+/g, ' ');
+  onCityChange(): void {
+    this.filteredAreas = this.deliveryAreas.filter((area) => this.getAreaCity(area) === this.deliveryData.city);
+    this.deliveryData.areaId = '';
+    this.deliveryData.state = '';
+    this.selectedArea = null;
+    this.clearCoupon(false);
   }
 
-  onAreaIdChange(areaId: string | null): void {
-    this.deliveryData.areaId = areaId || '';
+  onAreaChange(): void {
     this.selectedArea = this.deliveryAreas.find((area) => area._id === this.deliveryData.areaId) || null;
     if (this.selectedArea) {
       this.deliveryData.state = this.getAreaName(this.selectedArea);
       this.deliveryData.area_en = this.selectedArea.area_en;
       this.deliveryData.area_ar = this.selectedArea.area_ar;
-      this.deliveryData.city = this.selectedArea.area_en;
-    } else {
-      this.deliveryData.state = '';
-      this.deliveryData.area_en = '';
-      this.deliveryData.area_ar = '';
-      this.deliveryData.city = '';
+      this.deliveryData.city = this.getAreaCity(this.selectedArea);
     }
-    this.clearCoupon(false);
   }
 
   applyCoupon(): void {
@@ -337,7 +331,8 @@ export class DeliveryDetailsComponent implements OnInit {
       { key: 'phone', value: this.deliveryData.phone },
       { key: 'email', value: this.deliveryData.email },
       { key: 'address', value: this.deliveryData.address },
-      { key: 'area', value: this.deliveryData.areaId },
+      { key: 'city', value: this.deliveryData.city },
+      { key: 'area', value: this.deliveryData.state || this.deliveryData.areaId },
       { key: 'country', value: this.deliveryData.country },
     ];
 
@@ -362,7 +357,7 @@ export class DeliveryDetailsComponent implements OnInit {
 
   canSubmitCheckout(): boolean {
     if (this.submitting || this.checkoutItems.length === 0) return false;
-    if (!this.selectedArea) return false;
+    if (this.deliveryAreas.length && !this.selectedArea) return false;
     if (this.isManualPayment()) {
       if (!String(this.paymentSettings.instapayLink || '').trim()) return false;
       if (!this.instapayLinkOpened) return false;
@@ -380,10 +375,8 @@ export class DeliveryDetailsComponent implements OnInit {
       return;
     }
 
-    if (!this.selectedArea) {
-      this.errorMessage = this.languageService.currentLanguage === 'ar'
-        ? 'ابحث عن منطقة التوصيل واختارها قبل تأكيد الطلب.'
-        : 'Search for and select a delivery area before placing the order.';
+    if (this.deliveryAreas.length && !this.selectedArea) {
+      this.errorMessage = this.languageService.translate('checkout.areaRequired');
       return;
     }
 
@@ -443,11 +436,14 @@ export class DeliveryDetailsComponent implements OnInit {
         address: this.deliveryData.address,
         phone: this.deliveryData.phone,
         email: this.deliveryData.email,
+        city: this.deliveryData.city,
+        state: this.deliveryData.state,
         areaId: this.deliveryData.areaId,
         area_en: this.deliveryData.area_en,
         area_ar: this.deliveryData.area_ar,
         zip: this.deliveryData.zip,
         country: this.deliveryData.country,
+        deliveryFee: this.getDeliveryFee(),
       },
       items,
       couponCode: this.appliedCouponCode || this.couponCode.trim(),

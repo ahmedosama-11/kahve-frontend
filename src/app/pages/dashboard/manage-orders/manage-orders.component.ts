@@ -128,10 +128,6 @@ export class ManageOrdersComponent implements OnInit, OnDestroy {
           address: order.address || order.deliveryAddress || order.shippingAddress || '',
           city: order.city || '',
           state: order.state || '',
-          areaNameEn: order.areaNameEn || order.area_en || '',
-          areaNameAr: order.areaNameAr || order.area_ar || '',
-          deliveryTimeEn: order.deliveryTimeEn || '',
-          deliveryTimeAr: order.deliveryTimeAr || '',
           country: order.country || '',
           status: order.status || 'pending',
           createdAt: order.createdAt || order.updatedAt,
@@ -335,10 +331,7 @@ export class ManageOrdersComponent implements OnInit, OnDestroy {
   }
 
   getOrderLocation(order: any): string {
-    const area = this.isArabic()
-      ? (order?.areaNameAr || order?.areaNameEn || order?.state || order?.city)
-      : (order?.areaNameEn || order?.areaNameAr || order?.state || order?.city);
-    const parts = [order?.address, area, order?.country].filter(Boolean);
+    const parts = [order?.address, order?.city, order?.state, order?.country].filter(Boolean);
     return parts.length ? parts.join(', ') : (this.isArabic() ? 'لا يوجد عنوان' : 'No location');
   }
 

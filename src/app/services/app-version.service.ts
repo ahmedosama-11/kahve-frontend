@@ -21,10 +21,18 @@ export class AppVersionService {
 
     this.removeCacheBustParam();
 
-    // Version checks are useful, but they must not compete with the hero or APIs.
-    window.setTimeout(() => this.checkForUpdate(), 30_000);
+    // Version checking is useful, but it is not part of the critical rendering path.
+    // Delay the first request so product/content requests get network priority on startup.
+    const scheduleInitialCheck = () => this.checkForUpdate();
+    const requestIdleCallback = (window as any).requestIdleCallback as undefined | ((callback: () => void, options?: { timeout: number }) => number);
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(scheduleInitialCheck, { timeout: 4000 });
+    } else {
+      window.setTimeout(scheduleInitialCheck, 2500);
+    }
 
-    timer(10 * 60 * 1000, 10 * 60 * 1000)
+    // Re-check periodically and whenever the customer returns to the tab.
+    timer(5 * 60 * 1000, 5 * 60 * 1000)
       .pipe(switchMap(() => this.fetchVersion()))
       .subscribe((version) => this.applyVersion(version));
 

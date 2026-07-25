@@ -8,6 +8,10 @@ import { HomeComponent } from './pages/home/home.component';
 import { AboutusComponent } from './pages/aboutus/aboutus.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { OrderComponent } from './pages/order/order.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { AddProductComponent } from './pages/dashboard/add-product/add-product.component';
+import { ManageOrdersComponent } from './pages/dashboard/manage-orders/manage-orders.component';
+import { ViewProductsComponent } from './pages/dashboard/view-products/view-products.component';
 import { ErrorComponent } from './pages/error/error.component';
 import { BestStyleComponent } from './pages/best-style/best-style.component';
 import { VirtualTryOnComponent } from './pages/virtual-try-on/virtual-try-on.component';
@@ -20,6 +24,11 @@ import { ModelErrorComponent } from './pages/model-error/model-error.component';
 import { LiveSessionComponent } from './pages/live-session/live-session.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
+import { DeliverySettingsComponent } from './pages/dashboard/delivery-settings/delivery-settings.component';
+import { CouponSettingsComponent } from './pages/dashboard/coupon-settings/coupon-settings.component';
+import { CategorySettingsComponent } from './pages/dashboard/category-settings/category-settings.component';
+import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
+import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { LegalPolicyComponent } from './pages/legal-policy/legal-policy.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
@@ -143,10 +152,21 @@ const routes: Routes = [
   { path: 'liveSession', component: LiveSessionComponent, data: { title: 'Live Session | KAHVE', noindex: true } },
   {
     path: 'dashboard',
+    component: DashboardComponent,
     canActivate: [AuthGuard, AdminGuard],
-    loadChildren: () =>
-      import('./pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
+    canActivateChild: [AdminGuard],
     data: { title: 'Admin Dashboard | KAHVE', noindex: true },
+    children: [
+      { path: 'addproduct', component: AddProductComponent, data: { title: 'Add Product | KAHVE', noindex: true } },
+      { path: 'manageorder', component: ManageOrdersComponent, data: { title: 'Manage Orders | KAHVE', noindex: true } },
+      { path: 'view', component: ViewProductsComponent, data: { title: 'Manage Products | KAHVE', noindex: true } },
+      { path: 'delivery-settings', component: DeliverySettingsComponent, data: { title: 'Delivery Settings | KAHVE', noindex: true } },
+      { path: 'coupons', component: CouponSettingsComponent, data: { title: 'Coupons | KAHVE', noindex: true } },
+      { path: 'categories', component: CategorySettingsComponent, data: { title: 'Categories | KAHVE', noindex: true } },
+      { path: 'site-content', component: SiteContentManagementComponent, data: { title: 'Site Content | KAHVE', noindex: true } },
+      { path: 'customers', component: CustomerManagementComponent, data: { title: 'Customers | KAHVE', noindex: true } },
+      { path: '', redirectTo: 'addproduct', pathMatch: 'full' },
+    ],
   },
   { path: 'error', component: ErrorComponent, data: { title: 'Page Not Found | KAHVE', noindex: true } },
   { path: 'model-error', component: ModelErrorComponent, data: { title: 'Error | KAHVE', noindex: true } },

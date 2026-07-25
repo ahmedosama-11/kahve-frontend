@@ -7,7 +7,7 @@
 
       <div class="checkout-items" *ngIf="checkoutItems.length > 0">
         <div class="checkout-item" *ngFor="let item of checkoutItems">
-          <img [src]="item.image" [alt]="getItemName(item)" width="72" height="72" loading="lazy" decoding="async">
+          <img [src]="item.image" [alt]="getItemName(item)">
           <div>
             <strong>{{ getItemName(item) }}</strong>
             <span>{{ item.amount }} × {{ item.price | number }} {{ moneyLabel() }}</span>
@@ -73,42 +73,25 @@
           <input type="text" name="address" [(ngModel)]="deliveryData.address" required [placeholder]="'checkout.addressPlaceholder' | t">
         </label>
 
-        <label class="area-search-field">
-          {{ languageService.currentLanguage === 'ar' ? 'ابحث عن منطقة التوصيل' : 'Search delivery area' }}
-          <ng-select
-            name="areaId"
-            [items]="deliveryAreas"
-            bindValue="_id"
-            [(ngModel)]="deliveryData.areaId"
-            [searchFn]="areaSearchFn"
-            [searchable]="true"
-            [clearable]="true"
-            [placeholder]="languageService.currentLanguage === 'ar' ? 'اكتب اسم المنطقة بالعربي' : 'Type the area name in English'"
-            [notFoundText]="languageService.currentLanguage === 'ar' ? 'المنطقة غير موجودة' : 'Area not found'"
-            (ngModelChange)="onAreaIdChange($event)"
-            required>
-            <ng-template ng-label-tmp let-item="item">
-              <span>{{ getAreaName(item) }}</span>
-            </ng-template>
-            <ng-template ng-option-tmp let-item="item">
-              <div class="area-option">
-                <span>{{ getAreaName(item) }}</span>
-                <strong>{{ item.deliveryFee | number }} {{ moneyLabel() }}</strong>
-              </div>
-            </ng-template>
-          </ng-select>
+        <label>
+          {{ 'checkout.city' | t }}
+          <select name="city" [(ngModel)]="deliveryData.city" (change)="onCityChange()" *ngIf="availableCities.length > 0" required>
+            <option value="" disabled>{{ 'checkout.selectCity' | t }}</option>
+            <option *ngFor="let city of availableCities" [value]="city">{{ city }}</option>
+          </select>
+          <input *ngIf="availableCities.length === 0" type="text" name="cityManual" [(ngModel)]="deliveryData.city" required [placeholder]="'checkout.cityPlaceholder' | t">
         </label>
 
-        <div class="selected-delivery-box" *ngIf="selectedArea">
-          <div>
-            <span>{{ languageService.currentLanguage === 'ar' ? 'منطقة التوصيل' : 'Delivery area' }}</span>
-            <strong>{{ getAreaName(selectedArea) }}</strong>
-          </div>
-          <div>
-            <span>{{ 'checkout.deliveryFee' | t }}</span>
-            <strong>{{ selectedArea.deliveryFee | number }} {{ moneyLabel() }}</strong>
-          </div>
-        </div>
+        <label>
+          {{ 'checkout.area' | t }}
+          <select name="areaId" [(ngModel)]="deliveryData.areaId" (change)="onAreaChange()" *ngIf="deliveryAreas.length > 0" required>
+            <option value="" disabled>{{ 'checkout.selectArea' | t }}</option>
+            <option *ngFor="let area of filteredAreas" [value]="area._id">
+              {{ getAreaName(area) }} - {{ area.deliveryFee | number }} {{ moneyLabel() }}
+            </option>
+          </select>
+          <input *ngIf="deliveryAreas.length === 0" type="text" name="stateManual" [(ngModel)]="deliveryData.state" required [placeholder]="'checkout.statePlaceholder' | t">
+        </label>
 
         <label>
           {{ 'checkout.zip' | t }}

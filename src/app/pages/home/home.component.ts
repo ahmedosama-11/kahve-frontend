@@ -15,7 +15,6 @@ import { SeoService } from '../../services/seo.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { ProductUrlService } from '../../services/product-url.service';
 import { CategoryUrlService } from '../../services/category-url.service';
-import { ImageOptimizationService } from '../../services/image-optimization.service';
 
 @Component({
   selector: 'app-home',
@@ -41,22 +40,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   productMessages: Record<string, string> = {};
   selectedProduct: any | null = null;
   pageContent: Record<string, any> = {};
-  private readonly homeContentCacheKey = 'kahve_home_content_cache_v1';
-  private pendingPageContent: Record<string, any> | null = null;
-  private pageContentLoadTimer: number | null = null;
-  private pageContentInteractionBound = false;
-  private readonly applyPendingPageContent = () => {
-    if (this.pendingPageContent) {
-      this.pageContent = this.pendingPageContent;
-      this.pendingPageContent = null;
-    }
-    this.removePageContentInteractionListeners();
-  };
 
   heroSlides = [
     {
       key: 'hero_1',
-      image: '/assets/images/kahve-products-hero.webp',
+      image: '/assets/images/kahve-products.jpg',
       tagKey: 'home.hero1Tag',
       titleKey: 'home.hero1Title',
       descKey: 'home.hero1Desc',
@@ -127,13 +115,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     private analyticsService: AnalyticsService,
     private productUrlService: ProductUrlService,
     private categoryUrlService: CategoryUrlService,
-    private imageOptimizationService: ImageOptimizationService,
   ) {
     this.titleService.setTitle('Kahve');
   }
 
   ngOnInit(): void {
-    this.restoreCachedPageContent();
     this.loadHomeData();
     this.loadPageContent();
     this.startAutoSlide();
@@ -222,58 +208,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
   loadPageContent(): void {
-    // Do not let dynamic content compete with the local LCP hero during startup.
-    // Returning visitors use the cached content immediately; fresh visitors keep the
-    // stable local hero until their first interaction, then receive the fetched content.
-    this.pageContentLoadTimer = window.setTimeout(() => {
-      this.siteContentService.getPageContent('home').subscribe((content) => {
-        const nextContent = content || {};
-        this.cachePageContent(nextContent);
-
-        if (Object.keys(this.pageContent).length > 0) {
-          this.pageContent = nextContent;
-          return;
-        }
-
-        this.pendingPageContent = nextContent;
-        this.addPageContentInteractionListeners();
-      });
-    }, 1800);
-  }
-
-  private restoreCachedPageContent(): void {
-    try {
-      const raw = localStorage.getItem(this.homeContentCacheKey);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') this.pageContent = parsed;
-    } catch {
-      // Safari private mode or corrupted storage should never block the page.
-    }
-  }
-
-  private cachePageContent(content: Record<string, any>): void {
-    try {
-      localStorage.setItem(this.homeContentCacheKey, JSON.stringify(content || {}));
-    } catch {
-      // Caching is optional.
-    }
-  }
-
-  private addPageContentInteractionListeners(): void {
-    if (this.pageContentInteractionBound) return;
-    this.pageContentInteractionBound = true;
-    window.addEventListener('pointerdown', this.applyPendingPageContent, { once: true, passive: true });
-    window.addEventListener('touchstart', this.applyPendingPageContent, { once: true, passive: true });
-    window.addEventListener('keydown', this.applyPendingPageContent, { once: true });
-  }
-
-  private removePageContentInteractionListeners(): void {
-    if (!this.pageContentInteractionBound) return;
-    this.pageContentInteractionBound = false;
-    window.removeEventListener('pointerdown', this.applyPendingPageContent);
-    window.removeEventListener('touchstart', this.applyPendingPageContent);
-    window.removeEventListener('keydown', this.applyPendingPageContent);
+    this.siteContentService.getPageContent('home').subscribe((content) => {
+      this.pageContent = content || {};
+    });
   }
 
   getBlock(key: string): any {
@@ -287,35 +224,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   contentImage(key: string, fallback: string): string {
     return this.siteContentService.image(this.getBlock(key), fallback);
-  }
-
-
-  heroImage(slide: any, width = 1440): string {
-    const source = this.contentImage(slide?.key, slide?.image || '');
-    return this.imageOptimizationService.optimize(source, width);
-  }
-
-  heroImageSrcset(slide: any): string {
-    const source = this.contentImage(slide?.key, slide?.image || '');
-    return this.imageOptimizationService.srcset(source, [480, 640, 960, 1200, 1440]);
-  }
-
-  storyImage(width = 1200): string {
-    const source = this.contentImage('story', '/assets/images/kahve-products.jpg');
-    return this.imageOptimizationService.optimize(source, width);
-  }
-
-  storyImageSrcset(): string {
-    const source = this.contentImage('story', '/assets/images/kahve-products.jpg');
-    return this.imageOptimizationService.srcset(source, [480, 800, 1200]);
-  }
-
-  productImage(product: any, width = 480): string {
-    return this.imageOptimizationService.optimize(String(product?.image || ''), width, width);
-  }
-
-  productImageSrcset(product: any): string {
-    return this.imageOptimizationService.srcset(String(product?.image || ''), [240, 320, 480, 640], 1);
   }
 
   loadHomeData(): void {
@@ -466,6 +374,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           product.isInCart = true;
           product.cartAmount = amount;
           this.productMessages[productId] = response?.message || `Added ${amount} item${amount > 1 ? 's' : ''} to cart`;
+          window.dispatchEvent(new CustomEvent('kahve-cart-updated'));
           this.analyticsService.trackAddToCart(product, amount);
 
           setTimeout(() => {
@@ -591,8 +500,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.autoSlideInterval) clearInterval(this.autoSlideInterval);
-    if (this.pageContentLoadTimer !== null) window.clearTimeout(this.pageContentLoadTimer);
-    this.removePageContentInteractionListeners();
     this.searchSubscription?.unsubscribe();
     this.languageSubscription?.unsubscribe();
     document.body.classList.remove('kahve-modal-open');

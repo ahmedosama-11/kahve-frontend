@@ -24,11 +24,7 @@ export class HomeNavComponent implements OnInit, OnDestroy {
   favError: string = '';
 
   private subscriptions: Subscription[] = [];
-  private pageShowHandler = () => {
-    if (this.authService.isLoggedInValue) {
-      this.cartService.refreshCartCount(50);
-    }
-  };
+  private cartUpdatedHandler = () => this.cartService.refreshCartCount();
 
   constructor(
     private authService: AuthService,
@@ -59,7 +55,7 @@ export class HomeNavComponent implements OnInit, OnDestroy {
       this.cartService.cartCount$.subscribe(count => this.cartCount = count)
     );
 
-    window.addEventListener('pageshow', this.pageShowHandler);
+    window.addEventListener('kahve-cart-updated', this.cartUpdatedHandler);
   }
 
   toggleFavorites(event?: Event): void {
@@ -157,7 +153,7 @@ export class HomeNavComponent implements OnInit, OnDestroy {
       next: (res) => {
         item.isInCart = true;
         item.cartId = res?.data?._id || res?.cart?._id || null;
-        // CartService updates the shared count immediately after the successful add.
+        this.cartService.refreshCartCount();
       },
       error: (err) => console.error('Error adding to cart:', err)
     });
@@ -166,17 +162,11 @@ export class HomeNavComponent implements OnInit, OnDestroy {
   handleRemoveFromCart(item: any): void {
     if (!item.cartId) return;
 
-    const removedAmount = Math.max(
-      1,
-      Math.floor(Number(item?.cartAmount ?? item?.amount ?? 1) || 1),
-    );
-
     this.cartService.deleteCartItem(item.cartId).subscribe({
       next: () => {
         item.isInCart = false;
         item.cartId = null;
-        this.cartService.decrementCartCount(removedAmount);
-        this.cartService.refreshCartCount(250);
+        this.cartService.refreshCartCount();
       },
       error: (err) => console.error('Error removing from cart:', err)
     });
@@ -218,6 +208,6 @@ export class HomeNavComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-    window.removeEventListener('pageshow', this.pageShowHandler);
+    window.removeEventListener('kahve-cart-updated', this.cartUpdatedHandler);
   }
 }

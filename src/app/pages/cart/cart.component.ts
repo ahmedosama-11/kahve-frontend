@@ -14,7 +14,6 @@ export class CartComponent implements OnInit {
   items: any[] = [];
   loading: boolean = false;
   checkoutMessage: string = '';
-  private deletingItemIds = new Set<string>();
 
   constructor(
     private titleService: Title,
@@ -185,8 +184,6 @@ export class CartComponent implements OnInit {
             stockMessage: '',
           };
 
-          this.cartService.updateCartCountFromItems(this.items);
-
           setTimeout(() => {
             if (this.items[index]) this.items[index].isSaved = false;
           }, 2000);
@@ -252,35 +249,12 @@ export class CartComponent implements OnInit {
   }
 
   deleteItem(cartId: string): void {
-    if (!cartId || this.deletingItemIds.has(cartId)) return;
-
-    const itemIndex = this.items.findIndex((item) => item._id === cartId);
-    if (itemIndex === -1) return;
-
-    const removedItem = this.items[itemIndex];
-    this.deletingItemIds.add(cartId);
-
-    // Remove immediately on screen. If the API fails, restore the exact item and position.
-    this.items = this.items.filter((item) => item._id !== cartId);
-    this.cartService.updateCartCountFromItems(this.items);
-
     this.cartService.deleteCartItem(cartId).subscribe({
       next: () => {
-        this.deletingItemIds.delete(cartId);
-        this.cartService.refreshCartCount(250);
+        this.items = this.items.filter((item) => item._id !== cartId);
+        this.cartService.updateCartCountFromItems(this.items);
       },
-      error: (error) => {
-        console.error('Error deleting item:', error);
-
-        if (!this.items.some((item) => item._id === cartId)) {
-          const restoredItems = [...this.items];
-          restoredItems.splice(Math.min(itemIndex, restoredItems.length), 0, removedItem);
-          this.items = restoredItems;
-          this.cartService.updateCartCountFromItems(this.items);
-        }
-
-        this.deletingItemIds.delete(cartId);
-      },
+      error: (error) => console.error('Error deleting item:', error),
     });
   }
 }

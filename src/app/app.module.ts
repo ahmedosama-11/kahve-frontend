@@ -6,7 +6,9 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HomeComponent } from './pages/home/home.component';
 import { AboutusComponent } from './pages/aboutus/aboutus.component';
+import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { FooterComponent } from './shared/footer/footer.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -25,16 +27,24 @@ import { VirtualTryOnComponent } from './pages/virtual-try-on/virtual-try-on.com
 import { DeliveryDetailsComponent } from './pages/delivery-details/delivery-details.component';
 import { ContactNavComponent } from './pages/contactus/contact-nav/contact-nav.component';
 import { LogoutComponent } from './pages/logout/logout.component';
+import { AddProductComponent } from './pages/dashboard/add-product/add-product.component';
+import { ManageOrdersComponent } from './pages/dashboard/manage-orders/manage-orders.component';
+import { ViewProductsComponent } from './pages/dashboard/view-products/view-products.component';
 import { AuthGuard } from './guards/auth.guard';
 import { ModelErrorComponent } from './pages/model-error/model-error.component';
 import { LiveSessionComponent } from './pages/live-session/live-session.component';
+import { TranslatePipe } from './pipes/translate.pipe';
 import { VerifyEmailComponent } from './pages/verify-email/verify-email.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { DeliverySettingsComponent } from './pages/dashboard/delivery-settings/delivery-settings.component';
+import { CouponSettingsComponent } from './pages/dashboard/coupon-settings/coupon-settings.component';
+import { CategorySettingsComponent } from './pages/dashboard/category-settings/category-settings.component';
+import { SiteContentManagementComponent } from './pages/dashboard/site-content-management/site-content-management.component';
+import { CustomerManagementComponent } from './pages/dashboard/customer-management/customer-management.component';
 import { authTokenInterceptor } from './interceptors/auth-token.interceptor';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { LegalPolicyComponent } from './pages/legal-policy/legal-policy.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
-import { SharedModule } from './shared/shared.module';
 
 // const routes: Routes = [
 //   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -131,6 +141,8 @@ import { SharedModule } from './shared/shared.module';
     AppComponent,
     HomeComponent,
     AboutusComponent,
+    SidebarComponent,
+    DashboardComponent,
     LoginComponent,
     NavbarComponent,
     FooterComponent,
@@ -144,10 +156,19 @@ import { SharedModule } from './shared/shared.module';
     DeliveryDetailsComponent,
     ContactNavComponent,
     LogoutComponent,
+    AddProductComponent,
+    ManageOrdersComponent,
+    ViewProductsComponent,
     ModelErrorComponent,
     LiveSessionComponent,
+    TranslatePipe,
     VerifyEmailComponent,
     ForgotPasswordComponent,
+    DeliverySettingsComponent,
+    CouponSettingsComponent,
+    CategorySettingsComponent,
+    CustomerManagementComponent,
+    SiteContentManagementComponent,
     ProductDetailComponent,
     LegalPolicyComponent,
     CategoryPageComponent,
@@ -159,7 +180,6 @@ import { SharedModule } from './shared/shared.module';
     FormsModule,
     CommonModule,
     NgSelectModule,
-    SharedModule,
   ],
   exports: [RouterModule],
   providers: [provideHttpClient(withInterceptors([authTokenInterceptor])), AuthGuard],

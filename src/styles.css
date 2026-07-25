@@ -46,7 +46,7 @@
   /* --- Typography --- */
   --font-serif:   'Playfair Display', 'Georgia', serif;
   --font-sans:    'Inter', 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'Cormorant Garamond', 'Playfair Display', serif;
 
   /* Font Sizes */
   --fs-xs:   0.75rem;
