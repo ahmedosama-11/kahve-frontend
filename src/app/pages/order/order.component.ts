@@ -81,6 +81,10 @@ export class OrderComponent implements OnInit {
           address: order.address,
           city: order.city,
           state: order.state,
+          areaNameEn: order.areaNameEn || order.area_en || '',
+          areaNameAr: order.areaNameAr || order.area_ar || '',
+          deliveryTimeEn: order.deliveryTimeEn || '',
+          deliveryTimeAr: order.deliveryTimeAr || '',
           country: order.country,
           phone: order.phone,
           email: order.email,
@@ -187,7 +191,11 @@ export class OrderComponent implements OnInit {
   }
 
   getOrderAddress(item: any): string {
-    const parts = [item?.address, item?.city, item?.state].filter(Boolean);
+    const isArabic = this.languageService.currentLanguage === 'ar';
+    const area = isArabic
+      ? (item?.areaNameAr || item?.areaNameEn || item?.state || item?.city)
+      : (item?.areaNameEn || item?.areaNameAr || item?.state || item?.city);
+    const parts = [item?.address, area].filter(Boolean);
     return parts.length ? parts.join(', ') : (item?.deliveryAddress || item?.shippingAddress || this.languageService.translate('orders.noAddress'));
   }
 

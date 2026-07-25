@@ -1,16 +1,23 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../config/api.config';
 
 export interface DeliveryArea {
   _id?: string;
-  city_en: string;
-  city_ar: string;
   area_en: string;
   area_ar: string;
   deliveryFee: number;
-  active: boolean;
+}
+
+
+export interface DeliveryAreasImportSummary {
+  totalRows: number;
+  validRows: number;
+  inserted: number;
+  updated: number;
+  skipped: number;
+  errors: string[];
 }
 
 export interface PaymentSettings {
@@ -55,29 +62,31 @@ export class CheckoutSettingsService {
     return this.http.patch<any>(`${this.baseUrl}/admin/payment-settings`, settings, { withCredentials: true });
   }
 
-  getDeliveryAreas(includeInactive = false): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/checkout/delivery-areas`, {
-      params: includeInactive ? { includeInactive: 'true' } : {},
-      withCredentials: true,
-    });
+  getDeliveryAreas(search = ''): Observable<any> {
+    let params = new HttpParams();
+    if (search.trim()) params = params.set('q', search.trim());
+    return this.http.get<any>(`${this.baseUrl}/checkout/delivery-areas`, { params, withCredentials: true });
   }
 
   getAdminDeliveryAreas(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/admin/delivery-areas`, {
-      params: { includeInactive: 'true' },
-      withCredentials: true,
-    });
+    return this.http.get<any>(`${this.baseUrl}/admin/delivery-areas`, { withCredentials: true });
   }
 
   createDeliveryArea(area: Partial<DeliveryArea>): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/admin/delivery-areas`, area, { withCredentials: true });
   }
 
-  importDeliveryAreas(file: File, replaceAll = false): Observable<any> {
+  importDeliveryAreas(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('replaceAll', String(replaceAll));
     return this.http.post<any>(`${this.baseUrl}/admin/delivery-areas/import`, formData, { withCredentials: true });
+  }
+
+  downloadDeliveryAreasTemplate(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/admin/delivery-areas/template`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
   }
 
   updateDeliveryArea(id: string, area: Partial<DeliveryArea>): Observable<any> {

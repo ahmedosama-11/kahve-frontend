@@ -15,6 +15,7 @@
     <div class="hero-slider">
       <div class="hero-slide" *ngFor="let slide of heroSlides; let i = index" [class.active]="i === currentSlide">
         <img [src]="contentImage(slide.key, slide.image)" [alt]="contentText(slide.key, 'title', slide.titleKey)"
+          width="1600" height="900" sizes="(max-width: 640px) calc(100vw - 24px), (max-width: 1440px) calc(100vw - 42px), 1440px"
           [attr.loading]="i === 0 ? 'eager' : 'lazy'"
           [attr.fetchpriority]="i === 0 ? 'high' : 'low'" decoding="async" />
         <div class="hero-overlay">
@@ -30,15 +31,17 @@
         </div>
       </div>
 
-      <button class="hero-arrow hero-arrow-left" type="button" (click)="setSlide(currentSlide === 0 ? heroSlides.length - 1 : currentSlide - 1)">
+      <button class="hero-arrow hero-arrow-left" type="button" aria-label="Previous hero slide" (click)="setSlide(currentSlide === 0 ? heroSlides.length - 1 : currentSlide - 1)">
         <i class="fa-solid fa-arrow-left"></i>
       </button>
-      <button class="hero-arrow hero-arrow-right" type="button" (click)="nextSlide()">
+      <button class="hero-arrow hero-arrow-right" type="button" aria-label="Next hero slide" (click)="nextSlide()">
         <i class="fa-solid fa-arrow-right"></i>
       </button>
 
-      <div class="hero-dots">
-        <span *ngFor="let slide of heroSlides; let i = index" [class.active]="i === currentSlide" (click)="setSlide(i)"></span>
+      <div class="hero-dots" role="group" aria-label="Hero slides">
+        <button *ngFor="let slide of heroSlides; let i = index" type="button"
+          [class.active]="i === currentSlide" [attr.aria-label]="'Show hero slide ' + (i + 1)"
+          [attr.aria-current]="i === currentSlide ? 'true' : null" (click)="setSlide(i)"></button>
       </div>
     </div>
   </section>
@@ -88,7 +91,8 @@
         <a [routerLink]="[getBlock('story')?.button_link || '/aboutUs']" class="story-link">{{ contentText('story', 'button_text', 'home.aboutKahve') }}</a>
       </div>
       <div class="story-collage">
-        <img class="collage-main" [src]="contentImage('story', '/assets/images/kahve-products.jpg')" alt="KAHVE coffee products" loading="lazy" decoding="async" />
+        <img class="collage-main" [src]="contentImage('story', '/assets/images/kahve-products.webp')" alt="KAHVE coffee products"
+          width="1600" height="1066" loading="lazy" decoding="async" fetchpriority="low" />
         <div class="floating-card floating-card-top">{{ contentText('story', 'badge', 'home.premiumRoast') }}</div>
         <div class="floating-card floating-card-bottom">{{ contentText('story', 'alt', 'home.freshDaily') }}</div>
       </div>
@@ -104,6 +108,7 @@
           name="searchInput"
           type="search"
           [placeholder]="'home.searchPlaceholder' | t"
+          [attr.aria-label]="'home.searchPlaceholder' | t"
           (input)="onSearchChange($event)" />
       </form>
     </section>
@@ -164,7 +169,8 @@
       </button>
 
       <a class="product-image-wrap product-image-link" [routerLink]="getProductPath(product)" [attr.aria-label]="getProductTitle(product)">
-        <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'" loading="lazy" decoding="async" fetchpriority="low" />
+        <img class="product-image" [src]="product.image" [alt]="getProductTitle(product) || 'KAHVE product'"
+          width="320" height="240" loading="lazy" decoding="async" fetchpriority="low" />
       </a>
 
       <div class="product-info">
@@ -188,6 +194,7 @@
             min="1"
             [max]="getAvailableQuantity(product)"
             [ngModel]="getSelectedQuantity(product)"
+            [attr.aria-label]="('home.quantity' | t) + ': ' + getProductTitle(product)"
             (ngModelChange)="setProductQuantity(product, $event)" />
           <button type="button" (click)="increaseProductQuantity(product)" aria-label="Increase quantity">+</button>
         </div>
@@ -227,7 +234,7 @@
         <span class="product-modal-stock" [class.out]="modalProduct.Quantity <= 0">
           {{ modalProduct.Quantity > 0 ? ('home.inStock' | t) : ('home.outOfStock' | t) }}
         </span>
-        <img [src]="modalProduct.image" [alt]="getProductTitle(modalProduct)" decoding="async" />
+        <img [src]="modalProduct.image" [alt]="getProductTitle(modalProduct)" width="520" height="420" decoding="async" />
       </div>
 
       <div class="product-modal-content">
@@ -259,14 +266,15 @@
         <div class="product-modal-qty" *ngIf="modalProduct.Quantity > 0 && !modalProduct.isInCart">
           <span>{{ 'home.quantity' | t }}</span>
           <div class="product-qty-control">
-            <button type="button" (click)="decreaseProductQuantity(modalProduct)">−</button>
+            <button type="button" (click)="decreaseProductQuantity(modalProduct)" aria-label="Decrease quantity">−</button>
             <input
               type="number"
               min="1"
               [max]="getAvailableQuantity(modalProduct)"
               [ngModel]="getSelectedQuantity(modalProduct)"
+              [attr.aria-label]="('home.quantity' | t) + ': ' + getProductTitle(modalProduct)"
               (ngModelChange)="setProductQuantity(modalProduct, $event)" />
-            <button type="button" (click)="increaseProductQuantity(modalProduct)">+</button>
+            <button type="button" (click)="increaseProductQuantity(modalProduct)" aria-label="Increase quantity">+</button>
           </div>
         </div>
 
@@ -297,12 +305,12 @@
   </div>
 
   <div class="kahve-floating-actions">
-    <a [routerLink]="['/cart']" title="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
-    <a [routerLink]="['/contactUs']" title="Contact"><i class="fa-solid fa-message"></i></a>
-    <button type="button" (click)="scrollToTop()" title="Go to top"><i class="fa-solid fa-arrow-up"></i></button>
+    <a [routerLink]="['/cart']" title="Cart" aria-label="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
+    <a [routerLink]="['/contactUs']" title="Contact" aria-label="Contact"><i class="fa-solid fa-message"></i></a>
+    <button type="button" (click)="scrollToTop()" title="Go to top" aria-label="Go to top"><i class="fa-solid fa-arrow-up"></i></button>
   </div>
 
-  <button class="back-to-top" [class.show]="showScrollBtn" (click)="scrollToTop()" title="Go to top">
+  <button class="back-to-top" type="button" [class.show]="showScrollBtn" (click)="scrollToTop()" title="Go to top" aria-label="Go to top">
     <i class="fa-solid fa-arrow-up"></i>
   </button>
 </div>

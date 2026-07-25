@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   heroSlides = [
     {
       key: 'hero_1',
-      image: '/assets/images/kahve-products.jpg',
+      image: '/assets/images/kahve-products-hero.webp',
       tagKey: 'home.hero1Tag',
       titleKey: 'home.hero1Title',
       descKey: 'home.hero1Desc',

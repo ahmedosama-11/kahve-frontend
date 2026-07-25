@@ -1,0 +1,70 @@
+<section class="settings-page">
+  <div class="settings-header">
+    <span>{{ isArabic() ? 'إدارة الفروع' : 'Branch Management' }}</span>
+    <h2>{{ isArabic() ? 'الفروع' : 'Store branches' }}</h2>
+    <p>{{ isArabic() ? 'أضف وعدّل الفروع من هنا، وبعدها اربط مناطق التوصيل بكل فرع.' : 'Create and manage store branches, then link delivery areas to each branch.' }}</p>
+  </div>
+
+  <form class="settings-card settings-form" (ngSubmit)="saveBranch()">
+    <div class="form-grid">
+      <label>
+        {{ isArabic() ? 'اسم الفرع بالإنجليزي' : 'Branch Name EN' }}
+        <input name="nameEn" [(ngModel)]="form.nameEn" placeholder="Heliopolis" required>
+      </label>
+      <label>
+        {{ isArabic() ? 'اسم الفرع بالعربي' : 'Branch Name AR' }}
+        <input name="nameAr" [(ngModel)]="form.nameAr" placeholder="مصر الجديدة" required>
+      </label>
+      <label>
+        {{ isArabic() ? 'كود الفرع' : 'Branch Code' }}
+        <input name="code" [(ngModel)]="form.code" placeholder="HEL" required>
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" name="active" [(ngModel)]="form.active">
+        {{ isArabic() ? 'نشط' : 'Active' }}
+      </label>
+    </div>
+
+    <p class="settings-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="settings-success" *ngIf="successMessage">{{ successMessage }}</p>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="saving">
+        <i class="fa fa-floppy-disk"></i>
+        {{ saving ? (isArabic() ? 'جاري الحفظ...' : 'Saving...') : (editingId ? (isArabic() ? 'تحديث الفرع' : 'Update Branch') : (isArabic() ? 'إضافة فرع' : 'Add Branch')) }}
+      </button>
+      <button type="button" class="ghost" (click)="resetForm()" *ngIf="editingId">
+        {{ isArabic() ? 'إلغاء التعديل' : 'Cancel edit' }}
+      </button>
+    </div>
+  </form>
+
+  <div class="settings-card table-card">
+    <div *ngIf="loading" class="empty-state">{{ isArabic() ? 'جاري التحميل...' : 'Loading...' }}</div>
+    <div *ngIf="!loading && branches.length === 0" class="empty-state">{{ isArabic() ? 'لا توجد فروع بعد.' : 'No branches yet.' }}</div>
+
+    <table *ngIf="!loading && branches.length > 0">
+      <thead>
+        <tr>
+          <th>{{ isArabic() ? 'الفرع' : 'Branch' }}</th>
+          <th>{{ isArabic() ? 'الاسم الآخر' : 'Other name' }}</th>
+          <th>{{ isArabic() ? 'الكود' : 'Code' }}</th>
+          <th>{{ isArabic() ? 'الحالة' : 'Status' }}</th>
+          <th>{{ isArabic() ? 'الإجراء' : 'Action' }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let branch of branches">
+          <td>{{ isArabic() ? branch.nameAr : branch.nameEn }}</td>
+          <td>{{ isArabic() ? branch.nameEn : branch.nameAr }}</td>
+          <td><strong>{{ branch.code }}</strong></td>
+          <td><span class="status-pill" [class.off]="!branch.active">{{ branch.active ? (isArabic() ? 'نشط' : 'Active') : (isArabic() ? 'متوقف' : 'Inactive') }}</span></td>
+          <td class="row-actions">
+            <button type="button" (click)="editBranch(branch)" aria-label="Edit branch"><i class="fa fa-pen"></i></button>
+            <button type="button" class="danger" (click)="deleteBranch(branch)" aria-label="Delete branch"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
