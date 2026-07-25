@@ -374,6 +374,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           product.isInCart = true;
           product.cartAmount = amount;
           this.productMessages[productId] = response?.message || `Added ${amount} item${amount > 1 ? 's' : ''} to cart`;
+          window.dispatchEvent(new CustomEvent('kahve-cart-updated'));
           this.analyticsService.trackAddToCart(product, amount);
 
           setTimeout(() => {

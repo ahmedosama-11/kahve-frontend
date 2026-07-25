@@ -180,6 +180,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         product.isInCart = true;
         product.cartAmount = this.quantity;
         this.message = response?.message || this.languageService.translate('product.addedMessage');
+        window.dispatchEvent(new CustomEvent('kahve-cart-updated'));
         this.analyticsService.trackAddToCart(product, this.quantity);
       },
       error: (error: any) => {

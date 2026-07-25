@@ -600,6 +600,9 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
           this.productMessages[id] =
             response?.message || 'Added to cart';
 
+          window.dispatchEvent(
+            new CustomEvent('kahve-cart-updated')
+          );
 
           this.analyticsService.trackAddToCart(
             product,

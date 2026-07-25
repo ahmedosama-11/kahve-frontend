@@ -249,10 +249,7 @@ export class CartComponent implements OnInit {
   }
 
   deleteItem(cartId: string): void {
-    const removedItem = this.items.find((item) => item._id === cartId);
-    const removedAmount = removedItem ? this.normalizeAmount(removedItem.amount) : 1;
-
-    this.cartService.deleteCartItem(cartId, removedAmount).subscribe({
+    this.cartService.deleteCartItem(cartId).subscribe({
       next: () => {
         this.items = this.items.filter((item) => item._id !== cartId);
         this.cartService.updateCartCountFromItems(this.items);
