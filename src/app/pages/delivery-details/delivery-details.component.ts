@@ -19,6 +19,7 @@ export class DeliveryDetailsComponent implements OnInit {
   deliveryData = {
     name: '',
     address: '',
+    city: '',
     state: '',
     areaId: '',
     area_en: '',
@@ -131,6 +132,7 @@ export class DeliveryDetailsComponent implements OnInit {
       this.deliveryData.phone,
       this.deliveryData.email,
       this.deliveryData.address,
+      this.deliveryData.city,
       this.deliveryData.areaId,
       this.deliveryData.country,
     ];
@@ -334,6 +336,7 @@ export class DeliveryDetailsComponent implements OnInit {
       { key: 'phone', value: this.deliveryData.phone },
       { key: 'email', value: this.deliveryData.email },
       { key: 'address', value: this.deliveryData.address },
+      { key: 'city', value: this.deliveryData.city },
       { key: 'area', value: this.deliveryData.areaId },
       { key: 'country', value: this.deliveryData.country },
     ];
@@ -438,6 +441,7 @@ export class DeliveryDetailsComponent implements OnInit {
         name: this.deliveryData.name,
         username: this.deliveryData.name,
         address: this.deliveryData.address,
+        city: this.deliveryData.city,
         phone: this.deliveryData.phone,
         email: this.deliveryData.email,
         areaId: this.deliveryData.areaId,

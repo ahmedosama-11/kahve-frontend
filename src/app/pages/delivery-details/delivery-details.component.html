@@ -73,6 +73,16 @@
           <input type="text" name="address" [(ngModel)]="deliveryData.address" required [placeholder]="'checkout.addressPlaceholder' | t">
         </label>
 
+        <label>
+          {{ languageService.currentLanguage === 'ar' ? 'المدينة' : 'City' }}
+          <input
+            type="text"
+            name="city"
+            [(ngModel)]="deliveryData.city"
+            required
+            [placeholder]="languageService.currentLanguage === 'ar' ? 'اكتب اسم المدينة' : 'Enter city name'">
+        </label>
+
         <label class="area-search-field">
           {{ languageService.currentLanguage === 'ar' ? 'ابحث عن منطقة التوصيل' : 'Search delivery area' }}
           <ng-select
