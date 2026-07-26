@@ -19,7 +19,6 @@ export class DeliveryDetailsComponent implements OnInit {
   deliveryData = {
     name: '',
     address: '',
-    city: '',
     state: '',
     areaId: '',
     area_en: '',
@@ -287,12 +286,10 @@ export class DeliveryDetailsComponent implements OnInit {
       this.deliveryData.state = this.getAreaName(this.selectedArea);
       this.deliveryData.area_en = this.selectedArea.area_en;
       this.deliveryData.area_ar = this.selectedArea.area_ar;
-      this.deliveryData.city = this.selectedArea.area_en;
     } else {
       this.deliveryData.state = '';
       this.deliveryData.area_en = '';
       this.deliveryData.area_ar = '';
-      this.deliveryData.city = '';
     }
     this.clearCoupon(false);
   }
