@@ -603,3 +603,48 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   KAHVE — CATEGORY MOBILE CARD/IMAGE MATCH HOME
+   Keep category cards visually identical to the mobile Home cards.
+   ============================================================ */
+@media (max-width: 640px) {
+  .category-main .items-container {
+    justify-items: center !important;
+  }
+
+  .category-main .kahve-product-card {
+    width: min(100%, 302px) !important;
+    max-width: 302px !important;
+    margin-inline: auto !important;
+  }
+
+  .category-main .product-image-wrap {
+    width: 100% !important;
+    height: 190px !important;
+    min-height: 190px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .category-main .product-image {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    padding: 14px !important;
+    margin: 0 !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 340px) {
+  .category-main .kahve-product-card {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
